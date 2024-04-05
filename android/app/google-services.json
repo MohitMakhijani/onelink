@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "406735724106",
+    "project_id": "onelink-81367",
+    "storage_bucket": "onelink-81367.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406735724106:android:4f89ba67a0bdae98a050b3",
+        "android_client_info": {
+          "package_name": "com.example.onelink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhF1pSbNIZcHZPahbru6e4wo-CbnReWnw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
