@@ -142,10 +142,13 @@ class FireStoreMethods {
     required String email,
     required String EventCount,
     required String JobCount,
+    required final List<String> following,
+    required final List<String> followers,
     required String profilePhotoUrl,
     required DateTime dateOfBirth,
     required int postCount,
     required String phoneNumber,
+
     Uint8List? imageBytes,
   }) async {
     try {
@@ -199,6 +202,8 @@ class FireStoreMethods {
         uuid: userId,
         EventCount: '0',
         JobCount: '0',
+        following: [],
+        followers: [],
       );
 
       await FirebaseFirestore.instance

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../Models/EventmodelUI.dart'; // Import your EventPost widget or data model
 
 class My_events extends StatefulWidget {
@@ -31,14 +32,16 @@ class _EventsPageState extends State<My_events> {
         .where('userUid', isEqualTo: _currentUser!.phoneNumber)
         .snapshots();
 
-    print('Current User ID: ${_currentUser!.uid}');
+    print('Current User ID: ${_currentUser!.phoneNumber}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Events'),
+        backgroundColor: Color(0xFF888BF4),
+        title: Text('Hosted Events',style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.06),),
+
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _userEventsStream,
@@ -57,17 +60,24 @@ class _EventsPageState extends State<My_events> {
             itemBuilder: (context, index) {
               var eventData = eventDocs[index].data() as Map<String, dynamic>;
 
-              return EventUICard(
-                eventName: eventData['eventName'],
-                location: eventData['location'],
-                eventTime: eventData['time'],
-                description: eventData['description'],
-                imageUrl: eventData['imageUrl'],
-                eventType: eventData['eventType'],
-                eventID: eventDocs[index].id,
-                userId: eventData['userUid'],
-                eventDate: eventData['datePublished'],
-                EventStatus: eventData['EventStatus'],
+              return Column(
+                children: [
+                  Container(
+                      color: Colors.grey[200],
+                      child: Text("Event Status- ${eventData['EventStatus']}",style: GoogleFonts.acme(fontSize: 15),)),
+                  EventUICard(
+                    eventName: eventData['eventName'],
+                    location: eventData['location'],
+                    eventTime: eventData['time'],
+                    description: eventData['description'],
+                    imageUrl: eventData['imageUrl'],
+                    eventType: eventData['eventType'],
+                    eventID: eventDocs[index].id,
+                    userId: eventData['userUid'],
+                    eventDate: eventData['datePublished'],
+                    EventStatus: eventData['EventStatus'],
+                  ),
+                ],
               );
             },
           );

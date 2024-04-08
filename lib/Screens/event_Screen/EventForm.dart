@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:onelink/components/myTextField.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onelink/components/myButton.dart';
 
 class EventForm extends StatefulWidget {
   final String eventId;
@@ -18,46 +17,56 @@ class _EventFormState extends State<EventForm> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
-  TextEditingController _resumeController = TextEditingController();
-  TextEditingController _linkedinController = TextEditingController();
-  TextEditingController _githubController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _experienceController = TextEditingController();
-  TextEditingController _skillsController = TextEditingController();
-  TextEditingController _portfolioController = TextEditingController();
+  TextEditingController _occupationController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
   TextEditingController _educationController = TextEditingController();
 
   Future<void> _joinEvent() async {
-    try {print(widget.eventId);
-      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(widget.eventId);
+    print(widget.eventId);
+    try {
+      // Query the collection for the event document where 'eventId' is equal to widget.eventId
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('events')
+          .where('eventID', isEqualTo: widget.eventId)
+          .get();
 
-      Map<String, dynamic> participantData = {
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'phone': _phoneController.text,
-        'resume': _resumeController.text,
-        'linkedin': _linkedinController.text,
-        'github': _githubController.text,
-        'description': _descriptionController.text,
-        'experience': _experienceController.text,
-        'skills': _skillsController.text,
-        'portfolio': _portfolioController.text,
-        'education': _educationController.text,
-        // 'phoneNumber': FirebaseAuth.instance..currentUser!.phoneNumber.toString,
+      // Check if the query returned any documents
+      if (querySnapshot.docs.isNotEmpty) {
+        // Get the reference to the first document (assuming eventId is unique)
+        DocumentReference eventRef = querySnapshot.docs.first.reference;
 
-      };
+        // Create participant data
+        Map<String, dynamic> participantData = {
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'phone': _phoneController.text,
+          'occupation': _occupationController.text,
+          'gender': _genderController.text,
+          'education': _educationController.text,
+          'UserId':FirebaseAuth.instance.currentUser!.phoneNumber.toString()
+        };
 
-      await eventRef.update({
-        'participants': FieldValue.arrayUnion([participantData]),
-      });
+        // Add participant data to the event document
+        await eventRef.update({
+          'participants': FieldValue.arrayUnion([participantData]),
+        });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Applied for the event successfully'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Applied for the event successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        // Handle case where no document with matching eventId is found
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Event not found'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -72,7 +81,7 @@ class _EventFormState extends State<EventForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor:  Color(0xFF888BF4),
         title: Text('Apply for Event'),
       ),
       body: SingleChildScrollView(
@@ -83,124 +92,60 @@ class _EventFormState extends State<EventForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                MyTextField(
+                TextFormField(
                   controller: _nameController,
-                  hint: 'Name',
-                  keyboardtype: TextInputType.text,
-                  preIcon: Icons.person,
-                  obscure: false,
-                  selection: false,
+                  decoration: InputDecoration(labelText: 'Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 10),
-                MyTextField(
+                TextFormField(
                   controller: _emailController,
-                  hint: 'Email',
-                  keyboardtype: TextInputType.emailAddress,
-                  preIcon: Icons.email,
-                  obscure: false,
-                  selection: false,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 10),
-                MyTextField(
+                TextFormField(
                   controller: _phoneController,
-                  hint: 'Phone Number',
-                  keyboardtype: TextInputType.phone,
-                  preIcon: Icons.phone,
-                  obscure: false,
-                  selection: false,
+                  decoration: InputDecoration(labelText: 'Phone Number'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 10),
-                MyTextField(
-                  controller: _resumeController,
-                  hint: 'Resume Link',
-                  keyboardtype: TextInputType.url,
-                  preIcon: Icons.link,
-                  obscure: false,
-                  selection: false,
+                TextFormField(
+                  controller: _occupationController,
+                  decoration: InputDecoration(labelText: 'Occupation'),
                 ),
                 SizedBox(height: 10),
-                MyTextField(
-                  controller: _linkedinController,
-                  hint: 'LinkedIn Link',
-                  keyboardtype: TextInputType.url,
-                  preIcon: Icons.link,
-                  obscure: false,
-                  selection: false,
+                TextFormField(
+                  controller: _genderController,
+                  decoration: InputDecoration(labelText: 'Gender'),
                 ),
                 SizedBox(height: 10),
-                MyTextField(
-                  controller: _githubController,
-                  hint: 'GitHub Link',
-                  keyboardtype: TextInputType.url,
-                  preIcon: Icons.link,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _descriptionController,
-                  hint: 'Description',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.description,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _experienceController,
-                  hint: 'Past Experience',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.work,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _skillsController,
-                  hint: 'Skills',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.star,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _portfolioController,
-                  hint: 'Portfolio Link',
-                  keyboardtype: TextInputType.url,
-                  preIcon: Icons.link,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
+                TextFormField(
                   controller: _educationController,
-                  hint: 'Education',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.school,
-                  obscure: false,
-                  selection: false,
+                  decoration: InputDecoration(labelText: 'Education'),
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Form is valid, proceed with submission
-                      _joinEvent();
-                      // Now you can use these values for further processing or submission
-                    }
-                  },
-                  child: Text('Submit'),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
-                    onPrimary: Colors.white,
-                    elevation: 4,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
+                MyButton1(onTap: () {
+                  if (_formKey.currentState!.validate()) {
+                    // Form is valid, proceed with submission
+                    _joinEvent();
+                  }
+                }, text: "Join Event", color: Color(0xFF888BF4))
               ],
             ),
           ),

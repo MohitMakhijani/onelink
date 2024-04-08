@@ -193,7 +193,9 @@ class _SetUpProfileState extends State<SetUpProfile> {
                         phoneNumber:
                             "${FirebaseAuth.instance.currentUser!.phoneNumber}",
                         EventCount: '0',
-                        JobCount: '0');
+                        JobCount: '0',
+                        following: [],
+                        followers: []);
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
                         return HomeScreen();

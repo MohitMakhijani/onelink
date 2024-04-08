@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onelink/components/myTextField.dart';
 
@@ -59,9 +60,13 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
           'skills': currentUserSkills,
           'portfolio': currentUserPortfolio,
           'education': currentUserEducation,
+          'UserId': FirebaseAuth.instance.currentUser!.phoneNumber,
         };
 
-        await jobDoc.reference.collection('appliedCandidates').add(candidateData);
+        // Add candidate data to the appliedCandidates array using FieldValue.arrayUnion
+        await jobDoc.reference.update({
+          'appliedCandidates': FieldValue.arrayUnion([candidateData])
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -70,7 +75,6 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
           ),
         );
         Navigator.pop(context);
-        // You can add any other action here after successful application
       } else {
         print('No job found with ID: ${widget.jobId}');
       }
@@ -202,19 +206,6 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Form is valid, proceed with submission
-                      // Access the form values using the controllers
-                      String name = _nameController.text;
-                      String email = _emailController.text;
-                      String phone = _phoneController.text;
-                      String resume = _resumeController.text;
-                      String linkedin = _linkedinController.text;
-                      String github = _githubController.text;
-                      String description = _descriptionController.text;
-                      String experience = _experienceController.text;
-                      String skills = _skillsController.text;
-                      String portfolio = _portfolioController.text;
-                      String education = _educationController.text;
                       _joinJob(); // Corrected method call
                       // Now you can use these values for further processing or submission
                     }

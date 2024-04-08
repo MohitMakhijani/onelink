@@ -36,7 +36,8 @@ class _EventUICardState extends State<EventUICard> {
   @override
   Widget build(BuildContext context) {
     // Check if the EventStatus is 'Accepted'
-    if (widget.EventStatus == 'Accepted') {
+    print(widget.eventID);
+    // if (widget.EventStatus == 'Accepted') {
       return Card(
         elevation: 4.0,
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -48,13 +49,24 @@ class _EventUICardState extends State<EventUICard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                widget.eventName,
-                style: GoogleFonts.poppins(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.eventName,
+                    style: GoogleFonts.poppins(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ), Text(
+                    "Price 0\$",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 8.0),
               Text(
@@ -143,13 +155,15 @@ class _EventUICardState extends State<EventUICard> {
           ),
         ),
       );
-    } else {
-      // If EventStatus is not 'Accepted', return an empty container
-      return Container(
-        child: Center(
-          child: Text('No Events Found'),
-        ),
-      );
-    }
+    // }
+    //
+    // else {
+    //   // If EventStatus is not 'Accepted', return an empty container
+    //   return Container(
+    //     child: Center(
+    //       child: Text('No Events Found'),
+    //     ),
+    //   );
+    // }
   }
 }

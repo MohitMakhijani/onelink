@@ -45,7 +45,6 @@ class _JobTabState extends State<JobUICard> {
   @override
   Widget build(BuildContext context) {
     // Check if the JobStatus is 'Accepted'
-    if (widget.JobStatus == 'Accepted') {
       return Card(
         elevation: 4.0,
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -159,11 +158,5 @@ class _JobTabState extends State<JobUICard> {
           ),
         ),
       );
-    } else {
-      // If JobStatus is not 'Accepted', return an empty container
-      return Container(
-        child: Center(child: Text("NO JOBS FOUND")),
-      );
     }
   }
-}

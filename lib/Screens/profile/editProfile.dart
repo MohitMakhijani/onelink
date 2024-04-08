@@ -95,6 +95,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           // Add other fields as needed
         });
 
+        // Upload profile image if _image is not null
+        if (_image != null) {
+          String profileImageUrl = await _uploadProfileImage(currentUserPhoneNumber!, _image!);
+          // Update profilePhotoUrl in Firestore
+          await usersCollection.doc(documentId).update({'profilePhotoUrl': profileImageUrl});
+        }
+
         // Update the user information in the UserFetchController using Provider
         final userFetchController = Provider.of<UserFetchController>(context, listen: false);
         userFetchController.fetchUserData(); // Fetch updated user data

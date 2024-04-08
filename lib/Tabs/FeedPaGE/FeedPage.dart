@@ -1,5 +1,10 @@
+
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../Models/feed_postUi.dart';
 
@@ -9,18 +14,44 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  StreamController<QuerySnapshot>? _streamController;
+
+  @override
+  void initState() {
+    super.initState();
+    _streamController = StreamController<QuerySnapshot>();
+    _fetchPosts();
+  }
+
+  void _fetchPosts() {
+    FirebaseFirestore.instance.collection('posts').orderBy('datePublished',descending: true).snapshots().listen((snapshot) {
+      if (_streamController != null && !_streamController!.isClosed) {
+        _streamController!.add(snapshot); // Add the snapshot to the stream controller
+      } else {
+        _streamController = StreamController<QuerySnapshot>(); // Create a new stream controller
+        _streamController!.add(snapshot); // Add the snapshot to the new stream controller
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _streamController?.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _streamController?.stream,
+        builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return _buildLoadingShimmer(); // Show shimmer loading effect
           }
 
           List<QueryDocumentSnapshot> postDocs = snapshot.data!.docs;
@@ -28,35 +59,75 @@ class _HomeTabState extends State<HomeTab> {
             itemCount: postDocs.length,
             itemBuilder: (context, index) {
               var post = postDocs[index].data() as Map<String, dynamic>;
-              return FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection('posts')
-                    .doc(post['postId'])
-                    .collection('comments')
-                    .get(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> commentSnapshot) {
-                  if (commentSnapshot.connectionState == ConnectionState.waiting) {
-                    return SizedBox.shrink(); // Return an empty widget while waiting for data
-                  }
-
-                  int commentsLength = commentSnapshot.data!.docs.length;
-
-                  return PostCard(
-                    username: post['username'] ?? '',
-                    likes: post['likes'] ?? "0",
-                    time: post['datePublished'],
-                    profilePicture: post['profImage'] ?? '',
-                    image: post['postUrl'] ?? '',
-                    description: post['description'],
-                    postId: post['postId'],
-                    uid: post['uid'],
-                    comments: commentsLength.toString(),
-                  );
-                },
+              return PostCard(
+                username: post['username'] ?? '',
+                likes: post['likes'] ?? "0",
+                time: post['datePublished'],
+                profilePicture: post['profImage'] ?? '',
+                image: post['postUrl'] ?? '',
+                description: post['description'],
+                postId: post['postId'],
+                uid: post['uid'],
+                comments: post['commentsCount'].toString(),
               );
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildLoadingShimmer() {
+    return ListView.builder(
+      itemCount: 5, // Adjust this number as needed
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: ShimmerPostCard(), // Use ShimmerPostCard instead of PostCard
+        );
+      },
+    );
+  }
+}
+
+class ShimmerPostCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            color: Colors.grey[200],
+            height: 50.0,
+            width: double.infinity,
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            height: MediaQuery.of(context).size.width / 1.75,
+            color: Colors.grey[200],
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            color: Colors.grey[200],
+            height: 50.0,
+            width: double.infinity,
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            color: Colors.grey[200],
+            height: 20.0,
+            width: double.infinity,
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            color: Colors.grey[200],
+            height: 20.0,
+            width: double.infinity,
+          ),
+        ],
       ),
     );
   }

@@ -34,6 +34,7 @@ class CustomDrawer extends StatelessWidget {
           builder: (context, userFetchController, _) {
             if (userFetchController.isDataFetched) {
               var myUser = userFetchController.myUser;
+
               return ListView(
                 padding: EdgeInsets.zero,
                 children: [
@@ -84,8 +85,9 @@ class CustomDrawer extends StatelessWidget {
                       ],
                     ),
                     onTap: () {
+                      print(myUser.phoneNumber);
                       Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return ProfilePage();
+                        return ProfileScreen(uid: myUser.phoneNumber.toString());
                       },));
                     },
                   ),

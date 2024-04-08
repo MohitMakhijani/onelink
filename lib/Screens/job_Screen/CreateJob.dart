@@ -214,7 +214,7 @@ final uuid =Uuid();
               ),
               SizedBox(height: 20.0),
               MyButton(onTap: () {
-                _submitForm;
+                _submitForm();
               }, text: "Submit", color: Color(0xFF888BF4))
 
             ],
@@ -255,9 +255,12 @@ final uuid =Uuid();
         final Userid= FirebaseAuth.instance.currentUser!.phoneNumber;
 
         final jobData = {
-          'UserId':"+91${Userid}",
+
+          'appliedCandidates':[],
+          'jobStatus':'pending',
+          'UserId':"${Userid}",
           'JobId': uuid.v1(),
-          'name': _jobTitleController.text,
+          'jobTitle': _jobTitleController.text,
           'description': _descriptionController.text,
           'location': _locationController.text,
           'salary': _salaryController.text,

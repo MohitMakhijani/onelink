@@ -80,7 +80,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
 
     EventModel newEvent = EventModel(
-      userUid: "+91${UserID}",
+      userUid: "${UserID}",
       eventID: uuid.v1(),
       name: _eventNameController.text.trim(),
       location: _locationController.text.trim(),
@@ -119,6 +119,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Event uploaded successfully')),
       );
+      Navigator.pop(context);
     } catch (e) {
       print('Error uploading event: $e');
       // Handle error if any occurred during upload

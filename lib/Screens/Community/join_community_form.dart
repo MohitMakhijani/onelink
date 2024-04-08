@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -223,6 +224,7 @@ class JoinCommunityForm extends StatelessWidget {
         'marks': marks,
         'city': city,
         'state': state,
+        'senderId ':FirebaseAuth.instance.currentUser!.phoneNumber
       });
     });
   }

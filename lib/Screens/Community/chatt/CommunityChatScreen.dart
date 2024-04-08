@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../Get/fetchdata.dart';
+import '../../../Get/fetchdata.dart';
 
 enum ChatStreamEvent {
   refresh,
@@ -279,6 +279,18 @@ class BubbleMessage extends StatelessWidget {
     required this.timestamp,
   }) : super(key: key);
 
+  void _openImageFullScreen(BuildContext context, String imageUrl) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(),
+          body: Center(
+            child: Image.network(imageUrl), // Show image in full-screen view
+          ),
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return SlideTransition(
@@ -288,39 +300,47 @@ class BubbleMessage extends StatelessWidget {
       ).animate(
         CurvedAnimation(
           parent: ModalRoute.of(context)!.animation!,
-          curve: Curves.easeInOut,
+
+          curve: Curves.easeIn,
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          margin: const EdgeInsets.symmetric(vertical: 2),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(7)),
-            color: isCurrentUser ? Colors.green[200] : Colors.grey[300],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Show sender's name only for received messages
-              if (!isCurrentUser) Text(sender, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 4),
-              // Display image from URL or downloaded image
-              imageUrl != null && (imageUrl!.startsWith('http') || imageUrl!.startsWith('file://'))
-                  ? imageUrl!.startsWith('http')
-                  ? Container(width: MediaQuery.of(context).size.width * 0.5, child: Image.network(imageUrl!))
-                  : Container(width: MediaQuery.of(context).size.width * 0.5, child: Image.file(File(imageUrl!.replaceAll('file://', ''))))
-                  : const SizedBox(),
-              // Display text if not empty
-              if (text.isNotEmpty) Text(text, style: GoogleFonts.poppins(fontSize: 16)),
-              const SizedBox(height: 4),
-              // Display timestamp
-              Text(
-                DateFormat.yMd().add_jm().format(timestamp.toDate()),
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 10, color: Colors.black54),
-              ),
-            ],
+      child: GestureDetector( onTap: () {
+        if (imageUrl != null) {
+          _openImageFullScreen(context, imageUrl!); // Open image in full-screen view
+        }
+      } ,
+        child: Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            margin: const EdgeInsets.symmetric(vertical: 2),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(7)),
+              color: isCurrentUser ? Colors.green[200] : Colors.grey[300],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Show sender's name only for received messages
+                if (!isCurrentUser) Text(sender, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                // Display image from URL or downloaded image
+
+                imageUrl != null && (imageUrl!.startsWith('http') || imageUrl!.startsWith('file://'))
+                    ? imageUrl!.startsWith('http')
+                    ? Container(width: MediaQuery.of(context).size.width * 0.5, child: Image.network(imageUrl!))
+                    : Container(width: MediaQuery.of(context).size.width * 0.5, child: Image.file(File(imageUrl!.replaceAll('file://', ''))))
+                    : const SizedBox(),
+                // Display text if not empty
+                if (text.isNotEmpty) Text(text, style: GoogleFonts.poppins(fontSize: 16)),
+                const SizedBox(height: 4),
+                // Display timestamp
+                Text(
+                  DateFormat.yMd().add_jm().format(timestamp.toDate()),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 10, color: Colors.black54),
+                ),
+              ],
+            ),
           ),
         ),
       ),

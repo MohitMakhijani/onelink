@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onelink/Models/Job%20Detail%20model.dart';
@@ -13,10 +14,12 @@ class JobDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUserPhone = FirebaseAuth.instance.currentUser!.phoneNumber;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Job Details',style:kAppBarFont),
+        title: Text('Job Details', style: kAppBarFont),
       ),
       body: FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
@@ -34,9 +37,23 @@ class JobDetailScreen extends StatelessWidget {
             return Center(child: Text('Job not found'));
           }
 
+          // Check if jobId is present in the jobs collection
+          bool jobExists = snapshot.data!.docs.isNotEmpty;
+
           // Retrieve job data from snapshot
           Map<String, dynamic> jobData =
-              snapshot.data!.docs.first.data() as Map<String, dynamic>;
+          snapshot.data!.docs.first.data() as Map<String, dynamic>;
+
+          final jobUserId = jobData['UserId'];
+          final appliedCandidates = jobData['appliedCandidates'];
+
+          bool isJobCreatedByUser = jobUserId == currentUserPhone;
+          bool hasUserApplied = appliedCandidates != null &&
+              appliedCandidates.any((candidate) =>
+              candidate['UserId'] == currentUserPhone);
+
+          // Get the document ID of the job
+          String jobDocumentId = snapshot.data!.docs.first.id;
 
           return SingleChildScrollView(
             padding: EdgeInsets.all(20.0),
@@ -58,19 +75,100 @@ class JobDetailScreen extends StatelessWidget {
                   JobID: jobId,
                   numberOfOpenings: jobData['openings'] ?? 0,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: MyButton(
+                if (jobExists && !isJobCreatedByUser && !hasUserApplied)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: MyButton(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return ApplyJobPage(jobId: jobId,);
-                          },
-                        ));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ApplyJobPage(jobId: jobId);
+                            },
+                          ),
+                        );
                       },
                       text: "Apply Now",
-                      color: Colors.blue),
-                )
+                      color: Colors.blue,
+                    ),
+                  ),
+                if (jobExists && isJobCreatedByUser)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: MyButton(
+                      onTap: () async {
+                        bool confirmDelete = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Confirm Delete'),
+                              content: Text('Are you sure you want to delete this job?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (confirmDelete != null && confirmDelete) {
+                          await FirebaseFirestore.instance
+                              .collection('jobs')
+                              .doc(jobDocumentId) // Use jobDocumentId to target the specific job document
+                              .delete();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Job deleted')),
+                          );
+                          Navigator.pop(context); // Pop back to previous screen after deletion
+                        }
+                      },
+                      text: 'Delete Job',
+                      color: Colors.red,
+                    ),
+                  ),
+                if (jobExists && hasUserApplied)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: MyButton(
+                      onTap: () async {
+                        try {
+                          // Find the index of the user's application in the appliedCandidates array
+                          int userIndex = appliedCandidates.indexWhere(
+                                  (candidate) =>
+                              candidate['UserId'] == currentUserPhone);
+
+                          // Remove the user's application from the appliedCandidates array
+                          if (userIndex != -1) {
+                            appliedCandidates.removeAt(userIndex);
+
+                            await FirebaseFirestore.instance
+                                .collection('jobs')
+                                .doc(jobDocumentId)
+                                .update({'appliedCandidates': appliedCandidates});
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('You left the job')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Failed to leave the job: $e'),
+                            ),
+                          );
+                        }
+                      },
+                      text: "Leave Job",
+                   color: Colors.red,
+                    ),
+                  ),
               ],
             ),
           );

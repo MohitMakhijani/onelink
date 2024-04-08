@@ -9,10 +9,14 @@ class UserModel {
   final int postCount;
   final String phoneNumber;
   final String uuid;
+  final List<String> following;
+  final List<String> followers;
   final String JobCount;
   final String EventCount;
 
-  UserModel({
+  UserModel( {
+    required this.following,
+    required this.followers,
     required this.userId,
     required this.name,
     required this.email,
@@ -38,7 +42,9 @@ class UserModel {
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
       postCount: data['postCount'] ?? 0,
       phoneNumber: data['phoneNumber'] ?? '', // Add phoneNumber field
-      uuid: data['uuid'] ?? '', // Add uuid field
+      uuid: data['uuid'] ?? '',
+      following: [],
+      followers: [], // Add uuid field
     );
   }
 

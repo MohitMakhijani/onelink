@@ -48,7 +48,7 @@ Future<void> signInWithGoogle(BuildContext context) async {
           dateOfBirth: DateTime.now(), // Set default value or fetch from user profile
           postCount: 0, // Set default value
           phoneNumber: '', // Set default value
-          uuid: FirebaseAuth.instance.currentUser!.uid, EventCount: '0', JobCount: '0', // Set default value
+          uuid: FirebaseAuth.instance.currentUser!.uid, EventCount: '0', JobCount: '0', following: [], followers: [], // Set default value
         );
         await UserService().addUserToFirestore(user);
       }

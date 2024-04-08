@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:onelink/Models/eventModel.dart';
 
 import '../../Models/EventmodelUI.dart';
@@ -30,7 +31,7 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
   }
 
   void _fetchParticipatedEvents() {
-    print('Fetching participated events for user: ${_currentUser!.uid}');
+    print('Fetching participated events for user: ${_currentUser!.phoneNumber}');
     _participatedEventsStream = FirebaseFirestore.instance
         .collection('events')
         .snapshots();
@@ -40,7 +41,8 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Participated Events'),
+        backgroundColor: Color(0xFF888BF4),
+        title: Text('Participated Events',style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.06),),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _participatedEventsStream,
@@ -58,7 +60,7 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
             if (data != null && data is Map<String, dynamic>) {
               var participants = data['participants'] as List<dynamic>?; // Cast to List<dynamic> or specific type
               if (participants != null) {
-                return participants.any((participant) => participant is Map<String, dynamic> && participant['id'] == _currentUser!.uid);
+                return participants.any((participant) => participant is Map<String, dynamic> && participant['UserId'] == _currentUser!.phoneNumber);
               }
             }
             return false;

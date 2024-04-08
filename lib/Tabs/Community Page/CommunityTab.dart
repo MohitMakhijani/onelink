@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:onelink/components/myButton.dart';
 import '../../Models/CommunityModel.dart';
-import '../../Screens/Community/CommunityChatScreen.dart';
+import '../../Screens/Community/chatt/CommunityChatScreen.dart';
 import '../../Screens/Community/join_community_form.dart';
 class CommunityList extends StatelessWidget {
   final String currentUser = FirebaseAuth.instance.currentUser!.uid;
@@ -62,6 +62,7 @@ class CommunityList extends StatelessWidget {
                       builder: (context) => CommunityChatScreen(
                         communityId: communities[index].id,
                         currentUserId: currentUser,
+                        communityName: communities[index].name,
                       ),
                     ),
                   );
@@ -116,6 +117,7 @@ class CommunityList extends StatelessWidget {
                                 builder: (context) => CommunityChatScreen(
                                   communityId: communities[index].id,
                                   currentUserId: currentUser,
+                                  communityName: communities[index].name,
                                 ),
                               ),
                             );
