@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(
                             builder: (context) {
                               return AddPostScreen(
-                                uid: uuid.v1(),
+                                uid: myUser.userId!,
                                 username: myUser.name!,
                                 profImage: myUser.profilePhotoUrl!,
                               );

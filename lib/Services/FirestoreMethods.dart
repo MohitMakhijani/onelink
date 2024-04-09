@@ -1,6 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -106,34 +105,50 @@ class FireStoreMethods {
     return res;
   }
 
-  Future<void> followUser(String uid, String followId) async {
+  Future<void> followUser(String currentUserUid, String targetUserUid) async {
     try {
-      DocumentSnapshot snap =
-      await _firestore.collection('users').doc(uid).get();
-      List following = (snap.data()! as dynamic)['following'];
+      // Create a query to fetch the target user's document
+      QuerySnapshot targetUserQuerySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('uuid', isEqualTo: targetUserUid)
+          .limit(1) // Limit to 1 document (assuming 'uuid' is unique)
+          .get();
 
-      if (following.contains(followId)) {
-        await _firestore.collection('users').doc(followId).update({
-          'followers': FieldValue.arrayRemove([uid])
-        });
+      if (targetUserQuerySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot targetUserDoc = targetUserQuerySnapshot.docs.first;
+        List<dynamic> followers = targetUserDoc.get('followers');
 
-        await _firestore.collection('users').doc(uid).update({
-          'following': FieldValue.arrayRemove([followId])
-        });
+        // Check if the current user is already in the followers list of the target user
+        if (!followers.contains(currentUserUid)) {
+          // Update followers list of target user and following list of current user
+          await FirebaseFirestore.instance.collection('users').doc(
+              targetUserUid).update({
+            'followers': FieldValue.arrayUnion([currentUserUid])
+          });
+
+          await FirebaseFirestore.instance.collection('users').doc(
+              currentUserUid).update({
+            'following': FieldValue.arrayUnion([targetUserUid])
+          });
+        } else {
+          // If already following, unfollow by removing from both followers and following lists
+          await FirebaseFirestore.instance.collection('users').doc(
+              targetUserUid).update({
+            'followers': FieldValue.arrayRemove([currentUserUid])
+          });
+
+          await FirebaseFirestore.instance.collection('users').doc(
+              currentUserUid).update({
+            'following': FieldValue.arrayRemove([targetUserUid])
+          });
+        }
       } else {
-        await _firestore.collection('users').doc(followId).update({
-          'followers': FieldValue.arrayUnion([uid])
-        });
-
-        await _firestore.collection('users').doc(uid).update({
-          'following': FieldValue.arrayUnion([followId])
-        });
+        print('Target user not found with UID: $targetUserUid');
       }
     } catch (e) {
-      if (kDebugMode) print(e.toString());
+      print(e.toString());
     }
   }
-
 
   Future<void> createUser({
     required String userId,
@@ -142,13 +157,12 @@ class FireStoreMethods {
     required String email,
     required String EventCount,
     required String JobCount,
-    required final List<String> following,
-    required final List<String> followers,
+    required List<String> following,
+    required List<String> followers,
     required String profilePhotoUrl,
     required DateTime dateOfBirth,
     required int postCount,
     required String phoneNumber,
-
     Uint8List? imageBytes,
   }) async {
     try {
@@ -195,15 +209,18 @@ class FireStoreMethods {
         userId: userId,
         name: name,
         email: email,
-        profilePhotoUrl: imageUrl, // Use imageUrl as profilePhotoUrl
+        profilePhotoUrl: imageUrl,
+        // Use imageUrl as profilePhotoUrl
         dateOfBirth: dateOfBirth,
         postCount: postCount,
         phoneNumber: phoneNumber,
         uuid: userId,
-        EventCount: '0',
-        JobCount: '0',
-        following: [],
-        followers: [],
+        EventCount: EventCount,
+        JobCount: JobCount,
+        following: following,
+        // Set following
+        followers: followers,
+        // Set followers
       );
 
       await FirebaseFirestore.instance
@@ -237,21 +254,20 @@ class FireStoreMethods {
       // Handle error here, e.g., show an error dialog to the user
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to create user. Please try again.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
+        builder: (context) =>
+            AlertDialog(
+              title: Text('Error'),
+              content: Text('Failed to create user. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
   }
-
 }
-

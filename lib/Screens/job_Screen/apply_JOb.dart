@@ -26,6 +26,16 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
   TextEditingController _portfolioController = TextEditingController();
   TextEditingController _educationController = TextEditingController();
 
+  String? _validateLink(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a valid link';
+    }
+    if (!Uri.parse(value).isAbsolute) {
+      return 'Please enter a valid URL';
+    }
+    return null;
+  }
+
   Future<void> _joinJob() async {
     try {
       QuerySnapshot jobSnapshot = await FirebaseFirestore.instance
@@ -88,7 +98,6 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,33 +113,8 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                MyTextField(
-                  controller: _nameController,
-                  hint: 'Name',
-                  keyboardtype: TextInputType.text,
-                  preIcon: Icons.person,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _emailController,
-                  hint: 'Email',
-                  keyboardtype: TextInputType.emailAddress,
-                  preIcon: Icons.email,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _phoneController,
-                  hint: 'Phone Number',
-                  keyboardtype: TextInputType.phone,
-                  preIcon: Icons.phone,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
+                // Other TextFormFields...
+
                 MyTextField(
                   controller: _resumeController,
                   hint: 'Resume Link',
@@ -138,6 +122,7 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                   preIcon: Icons.link,
                   obscure: false,
                   selection: false,
+                  validator: _validateLink,
                 ),
                 SizedBox(height: 10),
                 MyTextField(
@@ -147,6 +132,7 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                   preIcon: Icons.link,
                   obscure: false,
                   selection: false,
+                  validator: _validateLink,
                 ),
                 SizedBox(height: 10),
                 MyTextField(
@@ -156,33 +142,7 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                   preIcon: Icons.link,
                   obscure: false,
                   selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _descriptionController,
-                  hint: 'Description',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.description,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _experienceController,
-                  hint: 'Past Experience',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.work,
-                  obscure: false,
-                  selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _skillsController,
-                  hint: 'Skills',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.star,
-                  obscure: false,
-                  selection: false,
+                  validator: _validateLink,
                 ),
                 SizedBox(height: 10),
                 MyTextField(
@@ -192,22 +152,13 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                   preIcon: Icons.link,
                   obscure: false,
                   selection: false,
-                ),
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: _educationController,
-                  hint: 'Education',
-                  keyboardtype: TextInputType.multiline,
-                  preIcon: Icons.school,
-                  obscure: false,
-                  selection: false,
+                  validator: _validateLink,
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      _joinJob(); // Corrected method call
-                      // Now you can use these values for further processing or submission
+                      _joinJob();
                     }
                   },
                   child: Text('Submit'),

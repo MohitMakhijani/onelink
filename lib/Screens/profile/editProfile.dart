@@ -22,6 +22,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   DateTime? _selectedDate;
   File? _image; // Initialize _image to null
   late UserModel1 myUser; // Define myUser variable
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -117,6 +118,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your name';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    } else if (!value.contains('@') || !value.contains('.')) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    } else if (value.length != 10) {
+      return 'Phone number must be 10 digits';
+    }
+    return null;
+  }
 
   Future<String> _uploadProfileImage(String userId, File imageFile) async {
     try {
@@ -140,61 +165,71 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              GestureDetector(
-                onTap: _selectImage,
-                child:CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: NetworkImage(
-                      myUser.profilePhotoUrl??
-                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
-                )
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Phone'),
-              ),
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        myUser.dateOfbirth.toString()==null
-                            ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(_selectedDate!)}'
-                            : 'Select Date of Birth',
-                      ),
-                      Icon(Icons.calendar_today),
-                    ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                GestureDetector(
+                    onTap: _selectImage,
+                    child:CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage(
+                            myUser.profilePhotoUrl??
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
+                    )
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                  validator: _validateName,
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  validator: _validateEmail,
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(labelText: 'Phone'),
+                  validator: _validatePhone,
+                ),
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () => _selectDate(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          myUser.dateOfbirth.toString()==null
+                              ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(_selectedDate!)}'
+                              : 'Select Date of Birth',
+                        ),
+                        Icon(Icons.calendar_today),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              MyButton(
-                onTap: _updateUserProfile,
-                text: 'Save Changes',
-                color: Color(0xFF888BF4),
-              ),
-            ],
+                SizedBox(height: 20),
+                MyButton(
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      _updateUserProfile();
+                    }
+                  },
+                  text: 'Save Changes',
+                  color: Color(0xFF888BF4),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -99,11 +99,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
       isLoading = true;
     });
 
-    try {final String PhoneNO =FirebaseAuth.instance.currentUser!.phoneNumber.toString();
+    try {
       String res = await FireStoreMethods().uploadPost(
         _descriptionController.text,
         _file!,
-        PhoneNO,
+        widget.uid,
         widget.username,
         widget.profImage,
       );

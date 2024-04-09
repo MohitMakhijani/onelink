@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onelink/Get/fetchdata.dart';
 import 'package:onelink/Screens/Home/BottomNavPage.dart';
-
 import 'package:onelink/Services/FirestoreMethods.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:onelink/components/myTextfield.dart';
@@ -54,15 +53,26 @@ class _SetUpProfileState extends State<SetUpProfile> {
     );
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
-
         _selectedDate = pickedDate;
       });
     }
   }
 
-  String? _validateInput(String? value) {
+  String? _validateInput(String? value, {String? fieldName}) {
     if (value == null || value.isEmpty) {
       return 'This field is required';
+    }
+    if (fieldName == 'Email') {
+      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+        return 'Please enter a valid email address';
+      }
+    }
+    if (fieldName == 'Date of Birth') {
+      if (_selectedDate == null) {
+        return 'Please select Date of Birth';
+      } else if (_selectedDate!.year < 1960 || _selectedDate!.year > 2018) {
+        return 'Date of Birth should be between 1960 and 2018';
+      }
     }
     return null;
   }
@@ -110,9 +120,9 @@ class _SetUpProfileState extends State<SetUpProfile> {
                     CircleAvatar(
                       backgroundImage: _file != null
                           ? MemoryImage(_file!)
-                              as ImageProvider // Cast MemoryImage to ImageProvider
+                      as ImageProvider // Cast MemoryImage to ImageProvider
                           : AssetImage('Assets/images/Avatar.png')
-                              as ImageProvider, // Cast AssetImage to ImageProvider
+                      as ImageProvider, // Cast AssetImage to ImageProvider
                       radius: 60,
                     ),
                     MyButton1(
@@ -138,7 +148,7 @@ class _SetUpProfileState extends State<SetUpProfile> {
                 selection: true,
                 preIcon: Icons.drive_file_rename_outline,
                 keyboardtype: TextInputType.name,
-                validator: _validateInput,
+                validator: (value) => _validateInput(value, fieldName: 'Name'),
               ),
               MyTextField(
                 controller: _emailController,
@@ -147,7 +157,7 @@ class _SetUpProfileState extends State<SetUpProfile> {
                 selection: true,
                 preIcon: Icons.mail,
                 keyboardtype: TextInputType.emailAddress,
-                validator: _validateInput,
+                validator: (value) => _validateInput(value, fieldName: 'Email'),
               ),
               SizedBox(height: 15),
               // Date of Birth Picker
@@ -178,24 +188,24 @@ class _SetUpProfileState extends State<SetUpProfile> {
               SizedBox(height: 15),
               MyButton(
                 onTap: () {
-                  if (_validateInput(_nameController.text) == null &&
-                      _validateInput(_emailController.text) == null &&
-                      _selectedDate != null) {
+                  String? nameError = _validateInput(_nameController.text, fieldName: 'Name');
+                  String? emailError = _validateInput(_emailController.text, fieldName: 'Email');
+                  if (nameError == null && emailError == null && _selectedDate != null) {
                     FireStoreMethods().createUser(
-                        userId: FirebaseAuth.instance.currentUser!.uid,
-                        name: _nameController.text.trim(),
-                        email: _emailController.text.trim(),
-                        profilePhotoUrl: '', // Don't pass anything here
-                        dateOfBirth: _selectedDate!,
-                        postCount: 0,
-                        context: context,
-                        imageBytes: _file,
-                        phoneNumber:
-                            "${FirebaseAuth.instance.currentUser!.phoneNumber}",
-                        EventCount: '0',
-                        JobCount: '0',
-                        following: [],
-                        followers: []);
+                      userId: FirebaseAuth.instance.currentUser!.uid,
+                      name: _nameController.text.trim(),
+                      email: _emailController.text.trim(),
+                      profilePhotoUrl: '', // Don't pass anything here
+                      dateOfBirth: _selectedDate!,
+                      postCount: 0,
+                      context: context,
+                      imageBytes: _file,
+                      phoneNumber: "${FirebaseAuth.instance.currentUser!.phoneNumber}",
+                      EventCount: '0',
+                      JobCount: '0',
+                      following: [], // Initialize following list here
+                      followers: [],
+                    );
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
                         return HomeScreen();
@@ -205,7 +215,7 @@ class _SetUpProfileState extends State<SetUpProfile> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Please fill all the fields and select Date of Birth',
+                          'Please fill all the fields correctly and select Date of Birth',
                         ),
                       ),
                     );

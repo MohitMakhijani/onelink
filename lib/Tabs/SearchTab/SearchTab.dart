@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/Screens/profile/profilePage.dart';
 import 'getx.dart';
 
 class SearchPage extends StatelessWidget {
@@ -14,7 +16,8 @@ class SearchPage extends StatelessWidget {
         title: Text(
           "Search",
           style: GoogleFonts.aladin(
-              fontSize: MediaQuery.of(context).size.width * 0.06),
+            fontSize: MediaQuery.of(context).size.width * 0.06,
+          ),
         ),
       ),
       body: Padding(
@@ -25,12 +28,12 @@ class SearchPage extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(20)),
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: TextField(
                 controller: _controller.searchController,
                 decoration: InputDecoration(
-
                   hintText: 'Search...',
                   suffixIcon: IconButton(
                     icon: Icon(Icons.search),
@@ -47,21 +50,65 @@ class SearchPage extends StatelessWidget {
               child: Obx(() {
                 if (_controller.searchResults.isEmpty) {
                   return Center(
-                      child: Text(
-                    'Search Jobs Events Peoples....',
-                    style: GoogleFonts.aladin(),
-                  ));
+                    child: Text(
+                      'Search Jobs Events Peoples....',
+                      style: GoogleFonts.aladin(),
+                    ),
+                  );
                 } else {
                   return ListView.builder(
                     itemCount: _controller.searchResults.length,
                     itemBuilder: (context, index) {
                       return Card(
+                        color: Colors.grey[100],
                         elevation: 3,
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
-                          title: Text(
-                            _controller.searchResults[index]['name'],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return ProfileScreen(uid: _controller.searchResults[index]['uuid']);
+                            },));
+                          },
+
+                          title: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundImage: CachedNetworkImageProvider(
+                                  _controller.searchResults[index]
+                                  ['profilePhotoUrl'],
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  _controller.searchResults[index]['name'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Followers: ${_controller.searchResults[index]['followers'].length.toString()}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              Text(
+                                "Following: ${_controller.searchResults[index]['following'].length.toString()}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
                           ),
                           // Handle tap on search result item onTap
                         ),

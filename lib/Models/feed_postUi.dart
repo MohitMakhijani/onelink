@@ -1,15 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart'; // Import GetX package
+import 'package:onelink/Screens/profile/profilePage.dart';
 import 'package:share/share.dart';
 import '../Screens/commentScreen/commentdart.dart';
 import '../Services/FirestoreMethods.dart';
 import 'likegetx.dart';
-
-
 
 class PostCard extends StatelessWidget {
   final String username;
@@ -40,7 +39,7 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     int commentsLength =
     comments.isEmpty ? 0 : int.tryParse(comments) ?? 0;
-
+final currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('posts')
@@ -62,6 +61,11 @@ class PostCard extends StatelessWidget {
           FirebaseAuth.instance.currentUser!.phoneNumber.toString(),
         );
 
+        CollectionReference commentsRef = FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .collection('comments');
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -74,9 +78,19 @@ class PostCard extends StatelessWidget {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        CircleAvatar(
-                          radius: 20.0,
-                          backgroundImage: CachedNetworkImageProvider(profilePicture),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileScreen(uid: uid),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 20.0,
+                            backgroundImage: CachedNetworkImageProvider(profilePicture),
+                          ),
                         ),
                         SizedBox(width: 10.0),
                         Text(
@@ -88,6 +102,46 @@ class PostCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                    DropdownButton<String>(
+                      icon: Icon(Icons.more_vert),
+                      items: <String>['Report', if (currentUser != null && currentUser.uid == uid) 'Delete']
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue == 'Delete') {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirm Delete"),
+                                content: Text("Are you sure you want to delete this post?"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("Delete"),
+                                    onPressed: () {
+                                      FireStoreMethods().deletePost(postId);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else if (newValue == 'Report') {
+                          // Implement report functionality
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -170,21 +224,40 @@ class PostCard extends StatelessWidget {
                             },
                             child: Icon(Icons.comment_outlined, color: Color(0xFF888BF4)),
                           ),
-                          Text(
-                            '$commentsLength',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0,
-                              color: Color(0xFF888BF4),
-                            ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: commentsRef.snapshots(),
+                            builder: (context, commentsSnapshot) {
+                              if (commentsSnapshot.hasError) {
+                                return Text('Error: ${commentsSnapshot.error}');
+                              }
+
+                              if (!commentsSnapshot.hasData ||
+                                  commentsSnapshot.data == null) {
+                                return SizedBox.shrink();
+                              }
+
+                              int numComments = commentsSnapshot.data!.docs.length;
+
+                              return Text(
+                                '$numComments',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0,
+                                  color: Color(0xFF888BF4),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 18.0,left: 15),
-                        child: IconButton(onPressed: () {
-                          Share.share('Check out this cool app!/username=${username}');
-                        }, icon: FaIcon(FontAwesomeIcons.share,color: Color(0xFF888BF4),)),
+                        padding: const EdgeInsets.only(bottom: 18.0, left: 15),
+                        child: IconButton(
+                          onPressed: () {
+                            Share.share('Check out this cool app!/username=${username}');
+                          },
+                          icon: FaIcon(FontAwesomeIcons.share, color: Color(0xFF888BF4)),
+                        ),
                       )
                     ],
                   ),

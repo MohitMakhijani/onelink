@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -47,7 +49,7 @@ class CustomDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
-                          backgroundImage: NetworkImage(myUser.profilePhotoUrl!),
+                          backgroundImage: CachedNetworkImageProvider(myUser.profilePhotoUrl!),
                           radius: MediaQuery.of(context).size.width * 0.085,
                         ),
                         SizedBox(height: 10),
@@ -87,7 +89,7 @@ class CustomDrawer extends StatelessWidget {
                     onTap: () {
                       print(myUser.phoneNumber);
                       Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return ProfileScreen(uid: myUser.phoneNumber.toString());
+                        return ProfileScreen(uid: myUser.userId.toString());
                       },));
                     },
                   ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:onelink/components/myTextField.dart';
 import 'package:uuid/uuid.dart';
+import 'package:validators/validators.dart' as validator;
+
 
 class JobPostingPage extends StatefulWidget {
   @override
@@ -30,13 +31,17 @@ class _JobPostingPageState extends State<JobPostingPage> {
   final TextEditingController _eligibilityController = TextEditingController();
   final TextEditingController _openingsController = TextEditingController();
   File? _image;
-final uuid =Uuid();
+  final uuid = Uuid();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF888BF4),
-        title: Text('Post a Job',style: GoogleFonts.aladin(fontSize: 25),),
+        title: Text(
+          'Post a Job',
+          style: GoogleFonts.aladin(fontSize: 25),
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
@@ -154,7 +159,8 @@ final uuid =Uuid();
                     return 'Please provide information about the job';
                   }
                   return null;
-                }, preIcon: Icons.align_vertical_bottom_outlined,
+                },
+                preIcon: Icons.align_vertical_bottom_outlined,
               ),
               MyTextField(
                 controller: _aboutCompanyController,
@@ -195,6 +201,9 @@ final uuid =Uuid();
                   if (value == null || value.isEmpty) {
                     return 'Please specify the number of job openings';
                   }
+                  if (!validator.isNumeric(value)) {
+                    return 'Please enter a valid number';
+                  }
                   return null;
                 },
               ),
@@ -213,17 +222,19 @@ final uuid =Uuid();
                 ),
               ),
               SizedBox(height: 20.0),
-              MyButton(onTap: () {
-                _submitForm();
-              }, text: "Submit", color: Color(0xFF888BF4))
-
+              MyButton(
+                onTap: () {
+                  _submitForm();
+                },
+                text: "Submit",
+                color: Color(0xFF888BF4),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
 
   void _selectImage() async {
     final picker = ImagePicker();
@@ -247,18 +258,18 @@ final uuid =Uuid();
           return;
         }
 
-        final imageRef = FirebaseStorage.instance.ref().child(
-            'job_images/${DateTime.now().toIso8601String()}');
+        final imageRef = FirebaseStorage.instance
+            .ref()
+            .child('job_images/${DateTime.now().toIso8601String()}');
         final UploadTask uploadTask = imageRef.putFile(_image!);
         final TaskSnapshot downloadUrl = await uploadTask;
         final String imageUrl = await downloadUrl.ref.getDownloadURL();
-        final Userid= FirebaseAuth.instance.currentUser!.phoneNumber;
+        final Userid = FirebaseAuth.instance.currentUser!.phoneNumber;
 
         final jobData = {
-
-          'appliedCandidates':[],
-          'jobStatus':'pending',
-          'UserId':"${Userid}",
+          'appliedCandidates': [],
+          'jobStatus': 'pending',
+          'UserId': "${Userid}",
           'JobId': uuid.v1(),
           'jobTitle': _jobTitleController.text,
           'description': _descriptionController.text,
@@ -292,10 +303,10 @@ final uuid =Uuid();
           _image = null;
         });
 
-        (
-        SnackBar(
-          content: Text('Job posted successfully'),
-        ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Job posted successfully'),
+          ),
         );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(

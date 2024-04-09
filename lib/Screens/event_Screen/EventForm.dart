@@ -77,6 +77,29 @@ class _EventFormState extends State<EventForm> {
     }
   }
 
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your name';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,34 +118,19 @@ class _EventFormState extends State<EventForm> {
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(labelText: 'Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
+                  validator: _validateName,
                 ),
                 SizedBox(height: 10),
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(labelText: 'Email'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
+                  validator: _validateEmail,
                 ),
                 SizedBox(height: 10),
                 TextFormField(
                   controller: _phoneController,
                   decoration: InputDecoration(labelText: 'Phone Number'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
-                    }
-                    return null;
-                  },
+                  validator: _validatePhone,
                 ),
                 SizedBox(height: 10),
                 TextFormField(

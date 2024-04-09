@@ -27,7 +27,7 @@ class SearchTabController extends GetxController {
       // Search for jobs
       QuerySnapshot jobsSnapshot = await FirebaseFirestore.instance
           .collection('jobs')
-          .where('name', isEqualTo: query)
+          .where('title', isEqualTo: query)
           .get();
       results.addAll(jobsSnapshot.docs);
 

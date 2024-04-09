@@ -79,7 +79,7 @@ class _OTPScreenState extends State<OTPSUCCESS> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: MyButton(onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
                     transitionDuration: Duration(

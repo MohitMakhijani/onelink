@@ -129,58 +129,81 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an event name';
+    }
+    return null;
+  }
+
+  String? _validateLocation(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter the event location';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Color(0xFF888BF4), title:   Text(
-        'Event Details',
-        style: GoogleFonts.aladin(fontSize: 20, fontWeight: FontWeight.bold),
-      ),),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF888BF4),
+        title: Text(
+          'Event Details',
+          style: GoogleFonts.aladin(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               SizedBox(height: 10),
               MyTextField(
-                  controller: _eventNameController,
-                  hint: "Event Name",
-                  obscure: false,
-                  selection: true,
-                  preIcon: Icons.drive_file_rename_outline,
-                  keyboardtype: TextInputType.name),
+                controller: _eventNameController,
+                hint: "Event Name",
+                obscure: false,
+                selection: true,
+                preIcon: Icons.drive_file_rename_outline,
+                keyboardtype: TextInputType.name,
+                validator: _validateName,
+              ),
               SizedBox(height: 16),
               MyTextField(
-                  controller: _locationController,
-                  hint: "Event Location",
-                  obscure: false,
-                  selection: true,
-                  preIcon: FontAwesomeIcons.locationArrow,
-                  keyboardtype: TextInputType.name),
+                controller: _locationController,
+                hint: "Event Location",
+                obscure: false,
+                selection: true,
+                preIcon: FontAwesomeIcons.locationArrow,
+                keyboardtype: TextInputType.name,
+                validator: _validateLocation,
+              ),
               SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
                     child: MyTextField(
-                        controller: TextEditingController(
-                          text: _selectedDate == null
-                              ? ''
-                              : DateFormat('dd/MM/yyyy').format(_selectedDate!),
-                        ),
-                        hint: "Select Date",
-                        obscure: false,
-                        selection: true,
-                        preIcon: FontAwesomeIcons.calendar,
-                        keyboardtype: TextInputType.name),
+                      controller: TextEditingController(
+                        text: _selectedDate == null
+                            ? ''
+                            : DateFormat('dd/MM/yyyy').format(_selectedDate!),
+                      ),
+                      hint: "Select Date",
+                      obscure: false,
+                      selection: true,
+                      preIcon: FontAwesomeIcons.calendar,
+                      keyboardtype: TextInputType.name,
+                    ),
                   ),
                   SizedBox(width: 8.0),
                   ElevatedButton(
                     style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xFF888BF4))),
                     onPressed: () => _selectDate(context),
-                    child: Text('Select Date',style: TextStyle(color: Colors.white),),
+                    child: Text(
+                      'Select Date',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -188,37 +211,39 @@ class _CreateEventPageState extends State<CreateEventPage> {
               Row(
                 children: [
                   Expanded(
-
-                    child:MyTextField(
-                        controller:     TextEditingController(
-                          text: _selectedTime == null
-                              ? ''
-                              : _selectedTime!.format(context),
-                        ),
-                        hint: "Select Time",
-                        obscure: false,
-                        selection: true,
-                        preIcon: FontAwesomeIcons.timesCircle,
-                        keyboardtype: TextInputType.name),
+                    child: MyTextField(
+                      controller: TextEditingController(
+                        text: _selectedTime == null
+                            ? ''
+                            : _selectedTime!.format(context),
+                      ),
+                      hint: "Select Time",
+                      obscure: false,
+                      selection: true,
+                      preIcon: FontAwesomeIcons.timesCircle,
+                      keyboardtype: TextInputType.name,
+                    ),
                   ),
                   SizedBox(width: 8.0),
                   ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xFF888BF4))),
+                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xFF888BF4))),
                     onPressed: () => _selectTime(context),
-                    child: Text('Select Time',style: TextStyle(color: Colors.white),
+                    child: Text(
+                      'Select Time',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  )],
+                ],
               ),
-
-
               SizedBox(height: 16),
               MyTextField(
-                  controller: _descriptionController,
-                  hint: "Add Description",
-                  obscure: false,
-                  selection: true,
-                  preIcon: Icons.description,
-                  keyboardtype: TextInputType.text),
+                controller: _descriptionController,
+                hint: "Add Description",
+                obscure: false,
+                selection: true,
+                preIcon: Icons.description,
+                keyboardtype: TextInputType.text,
+              ),
               SizedBox(height: 16),
               CupertinoSegmentedControl<String>(
                 children: {
@@ -253,16 +278,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     });
                   }
                 },
-                text: 'Select Image', color: Colors.blue[300],
+                text: 'Select Image',
+                color: Colors.blue[300],
               ),
               SizedBox(height: 16),
-              MyButton(color:Color(0xFF888BF4),
-                onTap:
-                 () => _uploadEvent(),
-                text:"Upload Event" ,
-
+              MyButton(
+                color: Color(0xFF888BF4),
+                onTap: () => _uploadEvent(),
+                text: "Upload Event",
               )
-
             ],
           ),
         ),

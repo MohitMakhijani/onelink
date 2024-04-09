@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -13,7 +14,7 @@ class CommentCard extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(
+            backgroundImage: CachedNetworkImageProvider(
               snap.data()['profilePic'],
             ),
             radius: 18,
@@ -25,7 +26,6 @@ class CommentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
-
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
