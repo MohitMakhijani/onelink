@@ -17,7 +17,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
 
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor:  Color(0xFF888BF4),
         title: Text(
           'App Settings',
           style: kAppBarFont,
@@ -92,6 +92,7 @@ class SettingsListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.grey[200],
            borderRadius: BorderRadius.circular(12)),
       child: ListTile(
 /*

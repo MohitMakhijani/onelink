@@ -20,6 +20,8 @@ class SetUpProfile extends StatefulWidget {
 class _SetUpProfileState extends State<SetUpProfile> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+
   Uint8List? _file;
   DateTime? _selectedDate;
   Uuid uuid = Uuid();
@@ -159,6 +161,16 @@ class _SetUpProfileState extends State<SetUpProfile> {
                 keyboardtype: TextInputType.emailAddress,
                 validator: (value) => _validateInput(value, fieldName: 'Email'),
               ),
+              MyTextField(
+                controller: _bioController,
+                hint: "Bio",
+                obscure: false,
+                selection: true,
+                preIcon: Icons.info,
+                keyboardtype: TextInputType.multiline,
+                validator: (value) => null, // You can add validation if needed
+              ),
+
               SizedBox(height: 15),
               // Date of Birth Picker
               GestureDetector(
@@ -201,12 +213,9 @@ class _SetUpProfileState extends State<SetUpProfile> {
                       context: context,
                       imageBytes: _file,
                       phoneNumber: "${FirebaseAuth.instance.currentUser!.phoneNumber}",
-                      EventCount: '0',
-                      JobCount: '0',
-                      following: [], // Initialize following list here
-                      followers: [],
+                      bio: _bioController.text.trim(),
                     );
-                    Navigator.push(context, MaterialPageRoute(
+                    Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {
                         return HomeScreen();
                       },

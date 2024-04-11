@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -13,6 +14,7 @@ import '../../Get/fetchdata.dart';
 import '../../Tabs/FeedPaGE/FeedPage.dart';
 import '../../Widgets/Drawer/drawer.dart';
 import '../Add Post/adddPost.dart';
+import '../chat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     HomeTab(),
     CommunityList(),
+    const ChatScreen(),
     JobTab(),
     EventTab(),
   ];
@@ -38,36 +41,36 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Fetch user data immediately when HomeScreen is initialized
+
     Provider.of<UserFetchController>(context, listen: false).fetchUserData();
   }
 
-  Uuid uuid = Uuid();
+  Uuid uuid = const Uuid();
 
   @override
   Widget build(BuildContext context) {
+    var myUser = Provider.of<UserFetchController>(context).myUser;
     return Scaffold(
       drawer: CustomDrawer(),
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: CircleAvatar(
+                radius: 17,
+                backgroundImage: myUser != null && myUser.profilePhotoUrl != null
+                    ? CachedNetworkImageProvider(myUser.profilePhotoUrl!)
+                    : AssetImage('Assets/images/Avatar.png') as ImageProvider<Object>?,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
       title:  Text("Ts Bridge Edu",style: GoogleFonts.aladin(fontSize: 15),),
         actions: [
-          Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            child: IconButton(
-              icon: const FaIcon(Bootstrap.search),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SearchPage();
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
           Consumer<UserFetchController>(
             builder: (context, userController, _) {
               if (userController.isDataFetched) {
@@ -77,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: CircleAvatar(
                     child: IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.camera),
+                      icon:  FaIcon(FontAwesomeIcons.camera,size: MediaQuery.of(context).size.width*0.04),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -101,16 +104,35 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            child: IconButton(
+              icon:  FaIcon(Bootstrap.search,size:MediaQuery.of(context).size.width*0.04),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SearchPage();
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+
+          Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
               child: IconButton(
-                icon: const FaIcon(FontAwesomeIcons.bell),
+                icon:  FaIcon(FontAwesomeIcons.bell,size:MediaQuery.of(context).size.width*0.04,),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return Notifications();
+                        return const Notifications();
                       },
                     ),
                   );
@@ -122,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _pages[_selectedIndex], // Use directly from the list
       bottomNavigationBar: BottomNavigationBar(
+        type:BottomNavigationBarType.fixed ,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         backgroundColor: Colors.white,
@@ -132,19 +155,22 @@ class _HomeScreenState extends State<HomeScreen> {
         iconSize: 20,
         elevation: 1,
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.peopleGroup),
             label: 'Communiy',
+          ), const BottomNavigationBarItem(
+            icon: FaIcon(Bootstrap.chat_dots),
+            label: 'Chats',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: FaIcon(FontAwesome.joget_brand),
             label: 'Jobs',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: FaIcon(Clarity.event_outline_badged),
             label: 'Events',
           ),

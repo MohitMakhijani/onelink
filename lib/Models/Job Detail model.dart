@@ -53,7 +53,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Color(0xFF888BF4),
                 ),
               ),
               Icon(Icons.more_vert, color: Colors.grey),
@@ -75,7 +75,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
           padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             children: <Widget>[
-              Icon(Icons.location_on, color: Colors.blue),
+              Icon(Icons.location_on, color: Color(0xFF888BF4)),
               SizedBox(width: 5.0),
               Text(
                 widget.location,
@@ -92,7 +92,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
           padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             children: <Widget>[
-              Icon(Icons.attach_money, color: Colors.blue),
+              Icon(Icons.attach_money, color: Color(0xFF888BF4)),
               SizedBox(width: 5.0),
               Text(
                 widget.salary,
@@ -109,7 +109,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
           padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             children: <Widget>[
-              Icon(Icons.timer, color: Colors.blue),
+              Icon(Icons.timer, color: Color(0xFF888BF4)),
               SizedBox(width: 5.0),
               Text(
                 widget.experience,
@@ -126,7 +126,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
           padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             children: <Widget>[
-              Icon(FontAwesomeIcons.building, color: Colors.blue),
+              Icon(FontAwesomeIcons.building, color: Color(0xFF888BF4)),
               SizedBox(width: 5.0),
               Text(
                 widget.companyName,
@@ -157,7 +157,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Color(0xFF888BF4),
             ),
           ),
         ),
@@ -179,7 +179,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Color(0xFF888BF4),
             ),
           ),
         ),
@@ -201,7 +201,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Color(0xFF888BF4),
             ),
           ),
         ),
@@ -223,7 +223,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Color(0xFF888BF4),
             ),
           ),
         ),
@@ -245,7 +245,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: Color(0xFF888BF4),
             ),
           ),
         ),

@@ -4,13 +4,15 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:onelink/Screens/profile/profilePage.dart';
 import 'package:share/share.dart';
 import '../Screens/commentScreen/commentdart.dart';
 import '../Services/FirestoreMethods.dart';
+import '../others/report.dart';
 import 'likegetx.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final String username;
   final List<dynamic> likes;
   final Timestamp time;
@@ -33,25 +35,25 @@ class PostCard extends StatelessWidget {
     required this.comments,
   });
 
+  @override
+  _PostCardState createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
   final postController = Get.put(PostController());
 
   @override
   Widget build(BuildContext context) {
-    int commentsLength =
-    comments.isEmpty ? 0 : int.tryParse(comments) ?? 0;
-final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('posts')
-          .doc(postId)
-          .snapshots(),
+      stream: FirebaseFirestore.instance.collection('posts').doc(widget.postId).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
-          return CircularProgressIndicator();
+           // Placeholder for loading state
         }
 
         var postData = snapshot.data!.data() as Map<String, dynamic>;
@@ -63,7 +65,7 @@ final currentUser = FirebaseAuth.instance.currentUser;
 
         CollectionReference commentsRef = FirebaseFirestore.instance
             .collection('posts')
-            .doc(postId)
+            .doc(widget.postId)
             .collection('comments');
 
         return Column(
@@ -83,18 +85,18 @@ final currentUser = FirebaseAuth.instance.currentUser;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProfileScreen(uid: uid),
+                                builder: (context) => ProfileScreen(uid: widget.uid),
                               ),
                             );
                           },
                           child: CircleAvatar(
                             radius: 20.0,
-                            backgroundImage: CachedNetworkImageProvider(profilePicture),
+                            backgroundImage: CachedNetworkImageProvider(widget.profilePicture),
                           ),
                         ),
                         SizedBox(width: 10.0),
                         Text(
-                          username,
+                          widget.username,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16.0,
@@ -105,13 +107,15 @@ final currentUser = FirebaseAuth.instance.currentUser;
                     ),
                     DropdownButton<String>(
                       icon: Icon(Icons.more_vert),
-                      items: <String>['Report', if (currentUser != null && currentUser.uid == uid) 'Delete']
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                      items: currentUser != null && currentUser.uid == widget.uid
+                          ? <DropdownMenuItem<String>>[
+                        DropdownMenuItem(value: 'Report', child: Text('Report')),
+                        DropdownMenuItem(value: 'Delete', child: Text('Delete')),
+                        DropdownMenuItem(value: 'Edit', child: Text('Edit')),
+                      ]
+                          : <DropdownMenuItem<String>>[
+                        DropdownMenuItem(value: 'Report', child: Text('Report')),
+                      ],
                       onChanged: (String? newValue) {
                         if (newValue == 'Delete') {
                           showDialog(
@@ -130,7 +134,7 @@ final currentUser = FirebaseAuth.instance.currentUser;
                                   TextButton(
                                     child: Text("Delete"),
                                     onPressed: () {
-                                      FireStoreMethods().deletePost(postId);
+                                      FireStoreMethods().deletePost(widget.postId);
                                       Navigator.of(context).pop();
                                     },
                                   ),
@@ -139,7 +143,25 @@ final currentUser = FirebaseAuth.instance.currentUser;
                             },
                           );
                         } else if (newValue == 'Report') {
-                          // Implement report functionality
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReportPostScreen(
+                                uid: widget.uid,
+                                postId: widget.postId,
+                              ),
+                            ),
+                          );
+                        } else if (newValue == 'Edit') {
+                          // Navigate to the edit post screen
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => EditPostScreen(
+                          //       postId: widget.postId,
+                          //     ),
+                          //   ),
+                          // );
                         }
                       },
                     ),
@@ -154,7 +176,7 @@ final currentUser = FirebaseAuth.instance.currentUser;
                 height: MediaQuery.of(context).size.width / 1.75,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(image),
+                    image: CachedNetworkImageProvider(widget.image),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -167,45 +189,46 @@ final currentUser = FirebaseAuth.instance.currentUser;
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Obx(() => postController.isLiking
-                          ? CircularProgressIndicator()
-                          : IconButton(
-                        icon: Column(
-                          children: [
-                            Icon(
-                              isLiked ? Icons.favorite : Icons.favorite_border,
-                              color: Color(0xFF888BF4),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    '${postLikes.length} ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14.0,
-                                      color: Color(0xFF888BF4),
-                                    ),
-                                  ),
-                                ],
+                      Obx(
+                            () => postController.isLiking
+                            ? CircularProgressIndicator()
+                            : IconButton(
+                          icon: Column(
+                            children: [
+                              Icon(
+                                isLiked ? Icons.favorite : Icons.favorite_border,
+                                color: Color(0xFF888BF4),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      '${postLikes.length} ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14.0,
+                                        color: Color(0xFF888BF4),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () async {
+                            if (postController.isLiking) return;
+                            postController.setLiking(true);
+
+                            await FireStoreMethods().likePost(
+                              widget.postId,
+                              FirebaseAuth.instance.currentUser!.phoneNumber.toString(),
+                              postLikes,
+                            );
+
+                            postController.setLiking(false);
+                          },
                         ),
-                        onPressed: () async {
-                          if (postController.isLiking) return;
-                          postController.setLiking(true);
-
-                          await FireStoreMethods().likePost(
-                            postId,
-                            FirebaseAuth.instance.currentUser!.phoneNumber.toString(),
-                            postLikes,
-                          );
-
-                          postController.setLiking(false);
-                        },
-                      ),
                       ),
                       SizedBox(width: 12.0),
                       Column(
@@ -216,8 +239,8 @@ final currentUser = FirebaseAuth.instance.currentUser;
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => CommentsScreen(
-                                    postId: postId,
-                                    image: image,
+                                    postId: widget.postId,
+                                    image: widget.image,
                                   ),
                                 ),
                               );
@@ -231,8 +254,7 @@ final currentUser = FirebaseAuth.instance.currentUser;
                                 return Text('Error: ${commentsSnapshot.error}');
                               }
 
-                              if (!commentsSnapshot.hasData ||
-                                  commentsSnapshot.data == null) {
+                              if (!commentsSnapshot.hasData || commentsSnapshot.data == null) {
                                 return SizedBox.shrink();
                               }
 
@@ -254,7 +276,7 @@ final currentUser = FirebaseAuth.instance.currentUser;
                         padding: const EdgeInsets.only(bottom: 18.0, left: 15),
                         child: IconButton(
                           onPressed: () {
-                            Share.share('Check out this cool app!/username=${username}');
+                            Share.share('Check out this cool app!/username=${widget.username}');
                           },
                           icon: FaIcon(FontAwesomeIcons.share, color: Color(0xFF888BF4)),
                         ),
@@ -264,17 +286,41 @@ final currentUser = FirebaseAuth.instance.currentUser;
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Text(
-                description,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17,
-                  color: Colors.blue,
+            Obx(() =>
+               Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.description,
+                      style: GoogleFonts.roboto(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: Colors.blue,
+                      ),
+                      maxLines: postController.showAllDescription ? 50 : 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (widget.description.length > 50) // Adjust the threshold as needed
+                      TextButton(
+                        onPressed: () {
+                          postController.ShowDescription(!postController.showAllDescription);
+                          print('Button tapped: showAllDescription: ${postController.showAllDescription}');
+                        },
+                        child: Text(
+                          postController.showAllDescription ? 'Show less' : 'Show more',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
+            Divider()
           ],
         );
       },

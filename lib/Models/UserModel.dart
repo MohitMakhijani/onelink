@@ -5,18 +5,13 @@ class UserModel {
   final String name;
   final String email;
   final String profilePhotoUrl;
+  final String bio;
   final DateTime dateOfBirth;
   final int postCount;
   final String phoneNumber;
   final String uuid;
-  final List<String> following;
-  final List<String> followers;
-  final String JobCount;
-  final String EventCount;
 
-  UserModel( {
-    required this.following,
-    required this.followers,
+  UserModel(  {required this.bio,
     required this.userId,
     required this.name,
     required this.email,
@@ -25,26 +20,21 @@ class UserModel {
     required this.postCount,
     required this.phoneNumber,
     required this.uuid,
-    required this.EventCount,
-    required this.JobCount,
   });
 
   // Create a factory constructor to convert Firestore snapshot to UserModel
   factory UserModel.fromSnapshot(DocumentSnapshot snapshot) {
     var data = snapshot.data() as Map<String, dynamic>;
     return UserModel(
-        JobCount:data['JobCount'],
-      EventCount:data['EventCount'],
       userId: snapshot.id,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
       profilePhotoUrl: data['profilePhotoUrl'] ?? '',
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
       postCount: data['postCount'] ?? 0,
-      phoneNumber: data['phoneNumber'] ?? '', // Add phoneNumber field
+      phoneNumber: data['phoneNumber'] ?? '',
       uuid: data['uuid'] ?? '',
-      following: [],
-      followers: [], // Add uuid field
+ bio: data['bio'],
     );
   }
 

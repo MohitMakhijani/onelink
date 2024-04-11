@@ -6,7 +6,9 @@ import 'package:onelink/Auth/OTP%20SUCESS.dart';
 import 'package:onelink/Screens/Home/BottomNavPage.dart';
 import 'package:onelink/Screens/profile/SetUpProfile/setupProfilePage.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 
+import '../Get/fetchdata.dart';
 import '../components/myButton.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -148,6 +150,7 @@ class _OTPScreenState extends State<OTPScreen> {
               await isPhoneNumberAlreadyRegistered(phoneNumber);
           if (isPhoneNumberRegistered) {
             // Phone number is registered, navigate to home page
+            // Provider.of<UserFetchController>(context, listen: false).fetchUserData();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),

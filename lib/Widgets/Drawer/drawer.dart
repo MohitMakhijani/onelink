@@ -23,6 +23,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+
       width: 250,
       child: Container(
         decoration: BoxDecoration(
@@ -36,7 +37,6 @@ class CustomDrawer extends StatelessWidget {
           builder: (context, userFetchController, _) {
             if (userFetchController.isDataFetched) {
               var myUser = userFetchController.myUser;
-
               return ListView(
                 padding: EdgeInsets.zero,
                 children: [

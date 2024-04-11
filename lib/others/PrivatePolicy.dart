@@ -7,7 +7,7 @@ class PrivacySettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Privacy Settings'),
-        backgroundColor: ksecColor,
+        backgroundColor:  Color(0xFF888BF4),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

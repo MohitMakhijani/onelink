@@ -18,6 +18,7 @@ class _MyHomePageState extends State<FAQ_Page> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+
           title: Text(
             "FAQ's",
             style: GoogleFonts.poppins(
@@ -26,7 +27,7 @@ class _MyHomePageState extends State<FAQ_Page> {
               fontSize: 22,
             ),
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: Color(0xFF888BF4),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -36,11 +37,11 @@ class _MyHomePageState extends State<FAQ_Page> {
                 question: "Question 1",
                 answer: data,
                 ansDecoration: BoxDecoration(
-                  color: kbgColor,
+                  color:  Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 queDecoration: BoxDecoration(
-                  color: Colors.blue,
+                  color:  Color(0xFF888BF4),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
@@ -50,11 +51,11 @@ class _MyHomePageState extends State<FAQ_Page> {
                 question: "Question 2",
                 answer: data,
                 ansDecoration: BoxDecoration(
-                  color: kbgColor,
+                  color:  Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 queDecoration: BoxDecoration(
-                  color: Colors.blue,
+                  color:  Color(0xFF888BF4),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
@@ -64,11 +65,11 @@ class _MyHomePageState extends State<FAQ_Page> {
                 question: "Question 3",
                 answer: data,
                 ansDecoration: BoxDecoration(
-                  color: kbgColor,
+                  color:  Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 queDecoration: BoxDecoration(
-                  color: Colors.blue,
+                  color:  Color(0xFF888BF4),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),

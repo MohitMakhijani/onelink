@@ -12,7 +12,7 @@ class TermsAndConditionsPage extends StatelessWidget {
           "Terms and Conditions",
           style: kAppBarFont.copyWith(color: Colors.white),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor:  Color(0xFF888BF4),
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -22,7 +22,7 @@ class TermsAndConditionsPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color:  Color(0xFF888BF4),
             ),
           ),
           SizedBox(height: 16),
@@ -36,7 +36,7 @@ class TermsAndConditionsPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color:  Color(0xFF888BF4),
             ),
           ),
           SizedBox(height: 16),

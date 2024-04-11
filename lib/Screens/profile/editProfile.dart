@@ -15,13 +15,14 @@ class EditProfilePage extends StatefulWidget {
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
+
 class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
-  late TextEditingController _phoneController;
+  late TextEditingController _bioController;
   DateTime? _selectedDate;
-  File? _image; // Initialize _image to null
-  late UserModel1 myUser; // Define myUser variable
+  File? _image;
+  late UserModel1 myUser;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -29,23 +30,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     _nameController = TextEditingController();
     _emailController = TextEditingController();
-    _phoneController = TextEditingController();
+    _bioController = TextEditingController();
     final userFetchController = Provider.of<UserFetchController>(context, listen: false);
-    myUser = userFetchController.myUser; // Fetch user data from UserFetchController
+    myUser = userFetchController.myUser;
     _nameController.text = myUser.name!;
     _emailController.text = myUser.email!;
-    _phoneController.text = myUser.phoneNumber!;
+    _bioController.text = myUser.bio!;
     _selectedDate = myUser.dateOfbirth as DateTime?;
     _image = myUser.profilePhotoUrl != null ? File(myUser.profilePhotoUrl!) : File('ed');
   }
 
-
-  // Remainig
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
+    _bioController.dispose();
     super.dispose();
   }
 
@@ -74,48 +73,47 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
     }
   }
+
   Future<void> _updateUserProfile() async {
     try {
       final currentUserPhoneNumber = FirebaseAuth.instance.currentUser!.phoneNumber;
       final usersCollection = FirebaseFirestore.instance.collection('users');
 
-      // Query Firestore for the document with the current user's phoneNumber
-      QuerySnapshot querySnapshot = await usersCollection.where('phoneNumber', isEqualTo: currentUserPhoneNumber).get();
+      QuerySnapshot querySnapshot =
+      await usersCollection.where('phoneNumber', isEqualTo: currentUserPhoneNumber).get();
 
-      // Check if a document matching the phoneNumber exists
       if (querySnapshot.size == 1) {
-        // Extract the document ID from the query result
         String documentId = querySnapshot.docs[0].id;
 
-        // Update the document fields
         await usersCollection.doc(documentId).update({
           'name': _nameController.text,
           'email': _emailController.text,
-          'phoneNumber': _phoneController.text,
-          'dateOfBirth': _selectedDate, // Assuming _selectedDate is already DateTime type
-          // Add other fields as needed
+          'dateOfBirth': _selectedDate,
+          'bio': _bioController.text,
         });
 
-        // Upload profile image if _image is not null
         if (_image != null) {
           String profileImageUrl = await _uploadProfileImage(currentUserPhoneNumber!, _image!);
-          // Update profilePhotoUrl in Firestore
           await usersCollection.doc(documentId).update({'profilePhotoUrl': profileImageUrl});
         }
 
-        // Update the user information in the UserFetchController using Provider
         final userFetchController = Provider.of<UserFetchController>(context, listen: false);
-        userFetchController.fetchUserData(); // Fetch updated user data
+        userFetchController.fetchUserData();
 
-        // Navigate back to profile page after successful update
         Navigator.pop(context);
       } else {
         print('User document not found for phone number: $currentUserPhoneNumber');
       }
     } catch (e) {
       print('Error updating user profile: $e');
-      // Handle error
     }
+  }
+
+  String? _validateBio(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your bio';
+    }
+    return null;
   }
 
   String? _validateName(String? value) {
@@ -134,21 +132,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return null;
   }
 
-  String? _validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your phone number';
-    } else if (value.length != 10) {
-      return 'Phone number must be 10 digits';
-    }
-    return null;
-  }
-
   Future<String> _uploadProfileImage(String userId, File imageFile) async {
     try {
-      Reference ref = FirebaseStorage.instance
-          .ref()
-          .child('profile_images')
-          .child('$userId.jpg');
+      Reference ref = FirebaseStorage.instance.ref().child('profile_images').child('$userId.jpg');
       UploadTask uploadTask = ref.putFile(imageFile);
       TaskSnapshot taskSnapshot = await uploadTask;
       return await taskSnapshot.ref.getDownloadURL();
@@ -161,57 +147,79 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(backgroundColor: Color(0xFF888BF4),title: Text("Edit Profile",style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.05)),) ,
+      appBar: AppBar(
+        backgroundColor: Color(0xFF888BF4),
+        title: Text(
+          "Edit Profile",
+          style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width * 0.05),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                GestureDetector(
+                Center(
+                  child: GestureDetector(
                     onTap: _selectImage,
-                    child:CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.grey,
-                        backgroundImage: NetworkImage(
-                            myUser.profilePhotoUrl??
-                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
-                    )
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: NetworkImage(
+                        myUser.profilePhotoUrl ??
+                            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
                   validator: _validateName,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
                   validator: _validateEmail,
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                  controller: _phoneController,
-                  decoration: InputDecoration(labelText: 'Phone'),
-                  validator: _validatePhone,
+                  controller: _bioController,
+                  decoration: InputDecoration(
+                    labelText: 'Bio',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: _validateBio,
+                  maxLines: 3,
                 ),
                 SizedBox(height: 20),
                 GestureDetector(
                   onTap: () => _selectDate(context),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.grey)),
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          myUser.dateOfbirth.toString()==null
+                          myUser.dateOfbirth.toString() == null
                               ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(_selectedDate!)}'
                               : 'Select Date of Birth',
+                          style: TextStyle(fontSize: 16),
                         ),
                         Icon(Icons.calendar_today),
                       ],

@@ -9,6 +9,10 @@ class Notifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF888BF4),
+        title: Text('Notifications', style: kAppBarFont),
+      ),
 
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
@@ -33,14 +37,14 @@ class Notifications extends StatelessWidget {
                 // Customize the UI to display each notification
                 return Column(
                   children: [
-                    Card( color:Color(0xFF888BF4),
+                    Card(
                       elevation: 3,
                       surfaceTintColor: Colors.blue,
                       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       child: ListTile(
                         title: Text(
                           notification['title'],
-                          style: GoogleFonts.aladin(fontSize: 22),
+                          style: kListHeadText,
                         ),
                         subtitle: Text(
                           notification['message'],

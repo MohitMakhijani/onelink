@@ -18,7 +18,7 @@ class JobDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFF888BF4),
         title: Text('Job Details', style: kAppBarFont),
       ),
       body: FutureBuilder<QuerySnapshot>(
