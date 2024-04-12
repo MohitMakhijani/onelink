@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:onelink/Screens/Notifications/Notificationsd.dart';
+import 'package:onelink/Screens/chats/chat_screen.dart';
 import 'package:onelink/Tabs/EventTab/EventTab.dart';
 import 'package:onelink/Tabs/JobPage/jobTAb.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +13,9 @@ import 'package:onelink/Tabs/SearchTab/SearchTab.dart';
 import 'package:uuid/uuid.dart';
 import '../../Get/fetchdata.dart';
 import '../../Tabs/FeedPaGE/FeedPage.dart';
+import '../../Tabs/chatTab/chatPage.dart';
 import '../../Widgets/Drawer/drawer.dart';
 import '../Add Post/adddPost.dart';
-import '../chat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     HomeTab(),
     CommunityList(),
-    const ChatScreen(),
+    RecentChatsPage(),
     JobTab(),
     EventTab(),
   ];

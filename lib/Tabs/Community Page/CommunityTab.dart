@@ -49,7 +49,7 @@ class CommunityList extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => JoinCommunityFormPage(
+                      builder: (context) => JoinCommunityForm(
                         communityId: communities[index].id,
                         userId: currentUser,
                       ),
@@ -125,7 +125,7 @@ class CommunityList extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => JoinCommunityFormPage(
+                                builder: (context) => JoinCommunityForm(
                                   communityId: communities[index].id,
                                   userId: currentUser,
                                 ),

@@ -89,7 +89,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (ctx, index) => CommentCard(
-                    snap: snapshot.data!.docs[index],
+                    snap: snapshot.data!.docs[index], postId: widget.postId,
                   ),
                 );
               },

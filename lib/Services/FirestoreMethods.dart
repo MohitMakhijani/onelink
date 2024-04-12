@@ -180,7 +180,7 @@ class FireStoreMethods {
 
 
 
-  Future<void> createFollowersAndFollowingArrays() async {
+  Future<void> createFollowersAndFollowingArrays(String bio) async {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
     try {
@@ -188,6 +188,7 @@ class FireStoreMethods {
       await FirebaseFirestore.instance.collection('users')
           .doc(currentUserUid)
           .set({
+        'bio' : bio,
         'followers': [], // Initialize with an empty array
       }, SetOptions(merge: true)); // Merge with existing document if it exists
 
@@ -274,7 +275,7 @@ class FireStoreMethods {
           .doc(userId)
           .set(user.toMap());
 
-      createFollowersAndFollowingArrays();
+      createFollowersAndFollowingArrays(bio);
 
       Navigator.pushReplacement(
         context,
@@ -316,6 +317,20 @@ class FireStoreMethods {
               ],
             ),
       );
+    }
+  }
+  Future<String> deleteComment(String postId, String commentId) async {
+    try {
+      await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('comments')
+          .doc(commentId)
+          .delete();
+
+      return 'success';
+    } catch (e) {
+      return 'Error deleting comment: $e';
     }
   }
 }

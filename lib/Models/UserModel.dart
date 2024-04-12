@@ -11,7 +11,8 @@ class UserModel {
   final String phoneNumber;
   final String uuid;
 
-  UserModel(  {required this.bio,
+  UserModel(  {
+    required this.bio,
     required this.userId,
     required this.name,
     required this.email,
@@ -34,7 +35,7 @@ class UserModel {
       postCount: data['postCount'] ?? 0,
       phoneNumber: data['phoneNumber'] ?? '',
       uuid: data['uuid'] ?? '',
- bio: data['bio'],
+      bio: data['bio'] ?? '', // Check if 'bio' exists in Firestore data
     );
   }
 
@@ -47,7 +48,8 @@ class UserModel {
       'dateOfBirth': dateOfBirth,
       'postCount': postCount,
       'phoneNumber': phoneNumber, // Add phoneNumber field
-      'uuid': uuid, // Add uuid field
+      'uuid': uuid,
+      'bio':bio// Add uuid field
     };
   }
 
