@@ -1,15 +1,17 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:onelink/Get/fetchdata.dart';
-import 'package:provider/provider.dart';
-import '../../Models/xx.dart';
-import '../../components/myButton.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:onelink/components/myButton.dart';
+import 'package:provider/provider.dart';
+
+import '../../Get/fetchdata.dart';
+import '../../Models/xx.dart';
+import 'editProfileGetx.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -19,11 +21,15 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
+  late TextEditingController _linkController;
   late TextEditingController _bioController;
   DateTime? _selectedDate;
   File? _image;
-  late UserModel1 myUser;
+  late UserModel1 _myUser;
   final _formKey = GlobalKey<FormState>();
+  bool _hideEmail = false;
+  bool _hidePhone = false;
+  bool _hideLinkedIn = false;
 
   @override
   void initState() {
@@ -31,13 +37,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _nameController = TextEditingController();
     _emailController = TextEditingController();
     _bioController = TextEditingController();
+    _linkController = TextEditingController();
     final userFetchController = Provider.of<UserFetchController>(context, listen: false);
-    myUser = userFetchController.myUser;
-    _nameController.text = myUser.name!;
-    _emailController.text = myUser.email!;
-    _bioController.text = myUser.bio!;
-    _selectedDate = myUser.dateOfbirth as DateTime?;
-    _image = myUser.profilePhotoUrl != null ? File(myUser.profilePhotoUrl!) : File('ed');
+    _myUser = userFetchController.myUser;
+    _nameController.text = _myUser.name ?? '';
+    _emailController.text = _myUser.email ?? '';
+    _bioController.text = _myUser.bio ?? '';
+    _linkController.text = _myUser.LinkedIn ?? '';
+    _selectedDate = _myUser.dateOfbirth as DateTime?;
+    _image = _myUser.profilePhotoUrl != null ? File(_myUser.profilePhotoUrl!) : null;
+    _hideEmail = _myUser.showEmail;
+    _hidePhone = _myUser.showPhone;
+    _hideLinkedIn = _myUser.showLinkedin;
   }
 
   @override
@@ -71,41 +82,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         _selectedDate = pickedDate;
       });
-    }
-  }
-
-  Future<void> _updateUserProfile() async {
-    try {
-      final currentUserPhoneNumber = FirebaseAuth.instance.currentUser!.phoneNumber;
-      final usersCollection = FirebaseFirestore.instance.collection('users');
-
-      QuerySnapshot querySnapshot =
-      await usersCollection.where('phoneNumber', isEqualTo: currentUserPhoneNumber).get();
-
-      if (querySnapshot.size == 1) {
-        String documentId = querySnapshot.docs[0].id;
-
-        await usersCollection.doc(documentId).update({
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'dateOfBirth': _selectedDate,
-          'bio': _bioController.text,
-        });
-
-        if (_image != null) {
-          String profileImageUrl = await _uploadProfileImage(currentUserPhoneNumber!, _image!);
-          await usersCollection.doc(documentId).update({'profilePhotoUrl': profileImageUrl});
-        }
-
-        final userFetchController = Provider.of<UserFetchController>(context, listen: false);
-        userFetchController.fetchUserData();
-
-        Navigator.pop(context);
-      } else {
-        print('User document not found for phone number: $currentUserPhoneNumber');
-      }
-    } catch (e) {
-      print('Error updating user profile: $e');
     }
   }
 
@@ -148,96 +124,178 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF888BF4),
+        backgroundColor: Colors.blue, // LinkedIn-style color
         title: Text(
           "Edit Profile",
-          style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width * 0.05),
+          style: TextStyle(
+            fontSize: MediaQuery.of(context).size.width * 0.05,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                  child: GestureDetector(
-                    onTap: _selectImage,
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: NetworkImage(
-                        myUser.profilePhotoUrl ??
-                            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: GestureDetector(
+                  onTap: _selectImage,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: CachedNetworkImageProvider(_myUser.profilePhotoUrl ?? ''),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _validateName,
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _validateEmail,
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _linkController,
+                decoration: InputDecoration(
+                  labelText: 'LinkdIn',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _bioController,
+                decoration: InputDecoration(
+                  labelText: 'Bio',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _validateBio,
+                maxLines: 3,
+              ),
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () => _selectDate(context),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _selectedDate != null ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(_selectedDate!)}' : 'Select Date of Birth',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    ),
+                      Icon(Icons.calendar_today),
+                    ],
                   ),
                 ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    border: OutlineInputBorder(),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: !_hideEmail,
+                        onChanged: (value) {
+                          setState(() {
+                            _hideEmail = !_hideEmail;
+                          });
+                        },
+                      ),
+                      Text(_hideEmail ? 'Show Email' : 'Hide Email', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.03)),
+                    ],
                   ),
-                  validator: _validateName,
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: !_hidePhone,
+                        onChanged: (value) {
+                          setState(() {
+                            _hidePhone = !_hidePhone;
+                          });
+                        },
+                      ),
+                      Text(_hidePhone ? 'Show Phone' : 'Hide Phone', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.03)),
+                    ],
                   ),
-                  validator: _validateEmail,
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _bioController,
-                  decoration: InputDecoration(
-                    labelText: 'Bio',
-                    border: OutlineInputBorder(),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: !_hideLinkedIn,
+                        onChanged: (value) {
+                          setState(() {
+                            _hideLinkedIn = !_hideLinkedIn;
+                          });
+                        },
+                      ),
+                      Text(_hideLinkedIn ? 'Show LinkedIn' : 'Hide LinkedIn', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.03)),
+                    ],
                   ),
-                  validator: _validateBio,
-                  maxLines: 3,
-                ),
-                SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () => _selectDate(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          myUser.dateOfbirth.toString() == null
-                              ? 'Date of Birth: ${DateFormat('yyyy-MM-dd').format(_selectedDate!)}'
-                              : 'Select Date of Birth',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Icon(Icons.calendar_today),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                MyButton(
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {
-                      _updateUserProfile();
+                ],
+              ),
+              SizedBox(height: 20),
+              MyButton1(onTap: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    final currentUserPhoneNumber = FirebaseAuth.instance.currentUser!.phoneNumber;
+                    final usersCollection = FirebaseFirestore.instance.collection('users');
+
+                    QuerySnapshot querySnapshot =
+                        await usersCollection.where('phoneNumber', isEqualTo: currentUserPhoneNumber).get();
+
+                    if (querySnapshot.size == 1) {
+                      String documentId = querySnapshot.docs[0].id;
+
+                      await usersCollection.doc(documentId).update({
+                        'name': _nameController.text,
+                        'email': _emailController.text,
+                        'dateOfBirth': _selectedDate,
+                        'bio': _bioController.text,
+                        'LinkedIn': _linkController.text,
+                        'showEmail': _hideEmail,
+                        'showPhone': _hidePhone,
+                        'showLinkedin': _hideLinkedIn,
+                      });
+
+                      if (_image != null) {
+                        String profileImageUrl = await _uploadProfileImage(currentUserPhoneNumber!, _image!);
+                        await usersCollection.doc(documentId).update({'profilePhotoUrl': profileImageUrl});
+                      }
+
+                      final userFetchController = Provider.of<UserFetchController>(context, listen: false);
+                      userFetchController.fetchUserData();
+
+                      Navigator.pop(context);
+                    } else {
+                      print('User document not found for phone number: $currentUserPhoneNumber');
                     }
-                  },
-                  text: 'Save Changes',
-                  color: Color(0xFF888BF4),
-                ),
-              ],
-            ),
+                  } catch (e) {
+                    print('Error updating user profile: $e');
+                  }
+                }
+              }, text: 'Save Changes', color: Colors.blue)
+
+
+            ],
           ),
         ),
       ),

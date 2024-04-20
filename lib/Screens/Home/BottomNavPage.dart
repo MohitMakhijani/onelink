@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     HomeTab(),
     CommunityList(),
-    RecentChatsPage(),
+    AddPostScreen(uid: FirebaseAuth.instance.currentUser!.uid,),
     JobTab(),
     EventTab(),
   ];
@@ -81,17 +82,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: CircleAvatar(
                     child: IconButton(
-                      icon:  FaIcon(FontAwesomeIcons.camera,size: MediaQuery.of(context).size.width*0.04),
+                      icon:  FaIcon(Bootstrap.chat_dots,size: MediaQuery.of(context).size.width*0.04),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return AddPostScreen(
-                                uid: myUser.userId!,
-                                username: myUser.name!,
-                                profImage: myUser.profilePhotoUrl!,
-                              );
+                              return  RecentChatsPage();
                             },
                           ),
                         );
@@ -164,8 +161,8 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: FaIcon(FontAwesomeIcons.peopleGroup),
             label: 'Communiy',
           ), const BottomNavigationBarItem(
-            icon: FaIcon(Bootstrap.chat_dots),
-            label: 'Chats',
+            icon: FaIcon(Bootstrap.camera),
+            label: 'Post',
           ),
           const BottomNavigationBarItem(
             icon: FaIcon(FontAwesome.joget_brand),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:onelink/Widgets/editDes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class CommunityChatScreen extends StatefulWidget {
 class _CommunityChatScreenState extends State<CommunityChatScreen> {
   late ScrollController _scrollController;
   StreamController<QuerySnapshot>? _streamController;
+  List<String> _communityMembers = []; // List to store community members
 
   @override
   void initState() {
@@ -41,7 +43,8 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _streamController = StreamController<QuerySnapshot>();
-    _fetchMessages(); // Initial fetch of messages
+    _fetchMessages();
+    _fetchCommunityMembers(); // Initial fetch of messages
   }
 
   @override
@@ -52,11 +55,27 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
     super.dispose();
   }
 
-  void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
+  void _fetchCommunityMembers() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('communities')
+          .doc(widget.communityId)
+          .collection('members')
+          .get();
 
+      setState(() {
+        _communityMembers =
+            querySnapshot.docs.map((doc) => doc['name'].toString()).toList();
+      });
+    } catch (e) {
+      print('Error fetching community members: $e');
     }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {}
   }
 
   void _fetchMessages() {
@@ -68,17 +87,21 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
         .snapshots()
         .listen((snapshot) {
       if (_streamController != null && !_streamController!.isClosed) {
-        _streamController!.add(snapshot); // Add the snapshot to the stream controller
+        _streamController!
+            .add(snapshot); // Add the snapshot to the stream controller
       } else {
-        _streamController = StreamController<QuerySnapshot>(); // Create a new stream controller
-        _streamController!.add(snapshot); // Add the snapshot to the new stream controller
+        _streamController =
+            StreamController<QuerySnapshot>(); // Create a new stream controller
+        _streamController!
+            .add(snapshot); // Add the snapshot to the new stream controller
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final userFetchController = Provider.of<UserFetchController>(context, listen: false);
+    final userFetchController =
+        Provider.of<UserFetchController>(context, listen: false);
     final picker = ImagePicker();
 
     return Scaffold(
@@ -89,12 +112,14 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
           children: [
             CircleAvatar(
               radius: MediaQuery.of(context).size.width * 0.06,
-              backgroundImage: const NetworkImage('https://www.ingeniux.com/Images/Blog/Blog%20Images/Blog%20Front/web-cms-student-portal-main.jpg'),
+              backgroundImage: const NetworkImage(
+                  'https://www.ingeniux.com/Images/Blog/Blog%20Images/Blog%20Front/web-cms-student-portal-main.jpg'),
             ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             Text(
               widget.communityName,
-              style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width * 0.05),
+              style: GoogleFonts.aladin(
+                  fontSize: MediaQuery.of(context).size.width * 0.05),
             ),
           ],
         ),
@@ -104,7 +129,8 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _streamController!.stream,
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -127,13 +153,17 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
                   controller: _scrollController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    Map<String, dynamic> data = snapshot.data!.docs[index]
+                        .data() as Map<String, dynamic>;
 
                     // Check if the message sender is the current user
-                    bool isCurrentUser = data['senderId'] == FirebaseAuth.instance.currentUser!.phoneNumber;
+                    bool isCurrentUser = data['senderId'] ==
+                        FirebaseAuth.instance.currentUser!.phoneNumber;
 
                     return Row(
-                      mainAxisAlignment: (isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start),
+                      mainAxisAlignment: (isCurrentUser
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start),
                       children: [
                         BubbleMessage(
                           isCurrentUser: isCurrentUser,
@@ -149,7 +179,8 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
               },
             ),
           ),
-          _buildMessageComposer(context, picker), // Pass context and image picker
+          _buildMessageComposer(
+              context, picker), // Pass context and image picker
         ],
       ),
     );
@@ -162,8 +193,10 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
       final pickedFile = await picker.getImage(source: source);
       if (pickedFile != null) {
         File imageFile = File(pickedFile.path);
-        final userFetchController = Provider.of<UserFetchController>(context, listen: false);
-        String? senderName = userFetchController.myUser.name; // Get the sender's name
+        final userFetchController =
+            Provider.of<UserFetchController>(context, listen: false);
+        String? senderName =
+            userFetchController.myUser.name; // Get the sender's name
         _sendMessage('', senderName!, imageFile: imageFile);
       }
     }
@@ -184,17 +217,14 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
               await _getImage(ImageSource.gallery);
             },
           ),
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: const InputDecoration.collapsed(hintText: 'Send a message...'),
-            ),
-          ),
+      Expanded(child: TextField(controller: _messageController,decoration: InputDecoration.collapsed(hintText: 'Send a message...'),)),
           IconButton(
             icon: const Icon(Icons.send),
             onPressed: () {
-              final userFetchController = Provider.of<UserFetchController>(context, listen: false);
-              String? senderName = userFetchController.myUser.name; // Get the sender's name
+              final userFetchController =
+                  Provider.of<UserFetchController>(context, listen: false);
+              String? senderName =
+                  userFetchController.myUser.name; // Get the sender's name
               _sendMessage(_messageController.text.trim(), senderName!);
               _messageController.clear();
             },
@@ -204,19 +234,25 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
     );
   }
 
-  void _sendMessage(String messageText, String senderName, {File? imageFile}) async {
+  void _sendMessage(String messageText, String senderName,
+      {File? imageFile}) async {
     if (messageText.isEmpty && imageFile == null) {
       return; // Return if both message text and image are empty
     }
 
-    String? imageUrl; // Placeholder for image URL, if needed (for Firebase Storage upload)
+    String?
+        imageUrl; // Placeholder for image URL, if needed (for Firebase Storage upload)
 
     // Check if an image file is provided
     if (imageFile != null) {
       imageUrl = await _uploadImageToFirebase(imageFile);
     }
 
-    FirebaseFirestore.instance.collection('communities').doc(widget.communityId).collection('messages').add({
+    FirebaseFirestore.instance
+        .collection('communities')
+        .doc(widget.communityId)
+        .collection('messages')
+        .add({
       'sender': senderName, // Set the sender's name
       'text': messageText,
       'imageUrl': imageUrl, // Include the image URL in the message data
@@ -229,7 +265,8 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
     try {
       // Generate a unique filename for the image
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName.jpg');
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('images/$fileName.jpg');
 
       // Upload the image to Firebase Storage
       UploadTask uploadTask = storageReference.putFile(imageFile);
@@ -291,6 +328,7 @@ class BubbleMessage extends StatelessWidget {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return SlideTransition(
@@ -300,15 +338,16 @@ class BubbleMessage extends StatelessWidget {
       ).animate(
         CurvedAnimation(
           parent: ModalRoute.of(context)!.animation!,
-
           curve: Curves.easeIn,
         ),
       ),
-      child: GestureDetector( onTap: () {
-        if (imageUrl != null) {
-          _openImageFullScreen(context, imageUrl!); // Open image in full-screen view
-        }
-      } ,
+      child: GestureDetector(
+        onTap: () {
+          if (imageUrl != null) {
+            _openImageFullScreen(
+                context, imageUrl!); // Open image in full-screen view
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(6.0),
           child: Container(
@@ -322,22 +361,33 @@ class BubbleMessage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Show sender's name only for received messages
-                if (!isCurrentUser) Text(sender, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
+                if (!isCurrentUser)
+                  Text(sender,
+                      style: GoogleFonts.poppins(
+                          fontSize: 14, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
-                // Display image from URL or downloaded image
-
-                imageUrl != null && (imageUrl!.startsWith('http') || imageUrl!.startsWith('file://'))
-                    ? imageUrl!.startsWith('http')
-                    ? Container(width: MediaQuery.of(context).size.width * 0.5, child: Image.network(imageUrl!))
-                    : Container(width: MediaQuery.of(context).size.width * 0.5, child: Image.file(File(imageUrl!.replaceAll('file://', ''))))
-                    : const SizedBox(),
+                // Display image from URL directly
+                if (imageUrl != null)
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Image.network(imageUrl!),
+                  ),
                 // Display text if not empty
-                if (text.isNotEmpty) Text(text, style: GoogleFonts.poppins(fontSize: 16)),
+                if (text.isNotEmpty)
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.5,
+                    ),
+                    child: LinkText(description: text, IsShowingDes: true,),
+                  ),
                 const SizedBox(height: 4),
                 // Display timestamp
                 Text(
                   DateFormat.yMd().add_jm().format(timestamp.toDate()),
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 10, color: Colors.black54),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10,
+                      color: Colors.black54),
                 ),
               ],
             ),

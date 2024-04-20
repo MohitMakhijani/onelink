@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:onelink/Screens/chats/chat_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+import '../SearchTab/getx.dart';
+import 'getx_chatsearch.dart'; // Import the SearchTabController
 
 class RecentChatsPage extends StatefulWidget {
   const RecentChatsPage({Key? key}) : super(key: key);
@@ -14,45 +17,27 @@ class RecentChatsPage extends StatefulWidget {
 
 class _RecentChatsPageState extends State<RecentChatsPage> {
   late String currentUserUid;
-  late TextEditingController searchController;
+  final SearchChat searchController = Get.put(SearchChat()); // Instantiate the SearchTabController
+  bool showSearchResults = false; // Track whether to show search results or not
 
   @override
   void initState() {
     super.initState();
     currentUserUid = FirebaseAuth.instance.currentUser!.uid;
-    searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(actions: [
-        IconButton(onPressed: () => setState(() {
-
-        }), icon: FaIcon(Icons.search))
-      ],
-        title: TextField(
-          controller: searchController,
-          decoration: InputDecoration(
-            hintText: 'Search chats...',
-            border: InputBorder.none,
-            suffixIcon: IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () {
-                searchController.clear();
-                setState(() {}); // Clear search results
-              },
-            ),
-          ),
-        ),
+      appBar: AppBar(
+        title: SearchBar(searchController.ChatSearch, () {
+          searchController.ChatSearch(searchController.searchController.text);
+          setState(() {
+            showSearchResults = true; // Show search results when search button is pressed
+          });
+        }),
       ),
-      body:StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('chatRooms')
             .where('users', arrayContains: currentUserUid)
@@ -63,7 +48,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: Colors.deepPurple));
           }
 
           List<DocumentSnapshot> chatRooms = snapshot.data!.docs;
@@ -71,75 +56,103 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
             return Center(child: Text('No recent chats'));
           }
 
-          // Filter chat rooms where the other user is also a member
           List<DocumentSnapshot> filteredChatRooms = chatRooms
               .where((room) => (room['users'] as List).contains(currentUserUid))
               .toList();
-
-          if (searchController.text.isNotEmpty) {
-            // Create a temporary list to hold the filtered rooms
-            List<DocumentSnapshot> tempFilteredChatRooms = [];
-
-            // Use async/await to wait for the get method inside forEach
-            Future.forEach(filteredChatRooms, (room) async {
-              String otherUserName = '';
-              await Future.forEach(room['users'] as List, (uid) async {
-                if (uid == currentUserUid) {
-                  DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-                  if (userData.exists) {
-                    otherUserName = userData['name'] ?? '';
-                  }
-                }
-              });
-              if (otherUserName.toLowerCase().contains(searchController.text.toLowerCase())) {
-                tempFilteredChatRooms.add(room); // Add the room to filtered list
-              }
-            }).then((_) {
-              setState(() {
-                filteredChatRooms = tempFilteredChatRooms; // Assign the filtered list to main list
-              });
-            });
-          }
 
           if (filteredChatRooms.isEmpty) {
             return Center(child: Text('No recent chats with this user'));
           }
 
-          return ListView.builder(
-            itemCount: filteredChatRooms.length,
-            itemBuilder: (context, index) {
-              DocumentSnapshot room = filteredChatRooms[index];
+          return Column(
+            children: [
+              if (showSearchResults && searchController.searchResults.isNotEmpty)
+                Card(
+                  margin: EdgeInsets.all(16),
+                  child: Column(
+                    children: searchController.searchResults.map((doc) {
+                      // Assuming 'name' is the Tyskey for the user's name in the Firestore document
+                      String userName = doc['name'] ?? 'Unknown';
+                      String UserProfile = doc['profilePhotoUrl'] ?? 'Unknown';
 
-              // Find the other user's UID in the chat room
-              String otherUserUid = (room['users'] as List)
-                  .firstWhere((uid) => uid != currentUserUid);
-
-              return UserTile(
-                uid: otherUserUid,
-                onTap: () {
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(otherUserUid)
-                      .get()
-                      .then((userData) {
-                    if (userData.exists) {
-                      String userName = userData['name'] ?? 'Unknown';
-                      String profilePicture = userData['profilePhotoUrl'] ?? '';
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(
-                            chatRoomId: room.id,
-                            UserName: userName,
-                            ProfilePicture: profilePicture,
+                      return Card(
+                        color: Colors.grey[200],
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey[200],
+                                backgroundImage: CachedNetworkImageProvider(UserProfile ?? ''),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      userName ?? '',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Tap to chat',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.chevron_right),
+                            ],
                           ),
                         ),
                       );
-                    }
-                  });
-                },
-              );
-            },
+                    }).toList(),
+                  ),
+                ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredChatRooms.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot room = filteredChatRooms[index];
+                    String otherUserUid = (room['users'] as List).firstWhere((uid) => uid != currentUserUid);
+
+                    return UserTile(
+                      uid: otherUserUid,
+                      onTap: () {
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(otherUserUid)
+                            .get()
+                            .then((userData) {
+                          if (userData.exists) {
+                            String userName = userData['name'] ?? 'Unknown';
+                            String profilePicture = userData['profilePhotoUrl'] ?? '';
+                            String UID = userData['uuid'] ?? '';
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                  chatRoomId: room.id,
+                                  UserName: userName,
+                                  ProfilePicture: profilePicture,
+                                  UId: UID,
+                                ),
+                              ),
+                            );
+                          }
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -157,8 +170,7 @@ class UserTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream:
-      FirebaseFirestore.instance.collection('users').doc(uid).snapshots(),
+      stream: FirebaseFirestore.instance.collection('users').doc(uid).snapshots(),
       builder: (context, userSnapshot) {
         if (userSnapshot.hasError) {
           return Text('Error: ${userSnapshot.error}');
@@ -173,17 +185,80 @@ class UserTile extends StatelessWidget {
           return SizedBox.shrink(); // Handle null or invalid data
         }
 
-        return ListTile(
-          onTap: onTap,
-          leading: CircleAvatar(
-            radius: 25,
-            backgroundImage:
-            CachedNetworkImageProvider(userData['profilePhotoUrl'] ?? ''),
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: InkWell(
+            onTap: onTap,
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: CachedNetworkImageProvider(userData['profilePhotoUrl'] ?? ''),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userData['name'] ?? '',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Tap to chat',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.chevron_right),
+                  ],
+                ),
+              ),
+            ),
           ),
-          title: Text(userData['name'] ?? ''),
-          subtitle: Text('Tap to chat'),
         );
       },
+    );
+  }
+}
+
+typedef ChatSearchCallback = void Function(String query);
+
+class SearchBar extends StatelessWidget {
+  final ChatSearchCallback onSearchChanged;
+  final VoidCallback onSearchPressed;
+
+  const SearchBar(this.onSearchChanged, this.onSearchPressed);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            onChanged: onSearchChanged,
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: onSearchPressed,
+        ),
+      ],
     );
   }
 }

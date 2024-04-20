@@ -34,6 +34,7 @@ class UserFetchController extends ChangeNotifier {
         print('User data updated: ${_myUser.phoneNumber}');
         print('User data updated: ${_myUser.dateOfbirth}');
         debugPrint(_myUser.name);
+        debugPrint(_myUser.LinkedIn);
         _isDataFetched = true;
         // Set data fetched flag to true
         notifyListeners(); // Notify listeners about the change

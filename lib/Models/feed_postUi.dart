@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onelink/Screens/profile/profilePage.dart';
+import 'package:onelink/Widgets/editDes.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:share/share.dart';
 import '../Screens/commentScreen/commentdart.dart';
@@ -43,6 +44,27 @@ class PostCard extends StatelessWidget {
     final postController = Get.put(PostController());
     TextEditingController descriptionController =
     TextEditingController(text: description);
+
+
+    void _openImageFullScreen(BuildContext context, String imageUrl) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Container(
+              width: double.infinity,
+
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.contain, // Adjust image size to fit the dialog
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('posts')
@@ -123,9 +145,9 @@ class PostCard extends StatelessWidget {
                           ],
                           onChanged: (String? newValue) {
                             if (newValue == 'Delete') {
-                              // Your delete logic
+                         FireStoreMethods().deletePost(postId);
                             } else if (newValue == 'Report') {
-                              // Your report logic
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => ReportPostScreen(uid: uid, postId: postId),));
                             } else if (newValue == 'Edit') {
                               postController.toggleEditing(postId, true);
                             }
@@ -139,14 +161,17 @@ class PostCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: LayoutBuilder(
                     builder: (BuildContext context, BoxConstraints constraints) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: constraints
-                            .maxWidth, // Set height equal to the image's width
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: CachedNetworkImageProvider(image),
-                            fit: BoxFit.cover,
+                      return GestureDetector(
+                        onLongPress: () => _openImageFullScreen(context,image),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: constraints
+                              .maxWidth*1.2, // Set height equal to the image's width
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: CachedNetworkImageProvider(image),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       );
@@ -200,6 +225,7 @@ class PostCard extends StatelessWidget {
                                       .instance.currentUser!.phoneNumber
                                       .toString(),
                                   postLikes,
+                                  uid
                                 );
 
                                 postController.setLiking(false);
@@ -216,6 +242,7 @@ class PostCard extends StatelessWidget {
                                         builder: (context) => CommentsScreen(
                                           postId: postId,
                                           image: image,
+                                          TargetUserId: uid,
                                         ),
                                       ),
                                     );
@@ -293,19 +320,8 @@ class PostCard extends StatelessWidget {
                           )
                         ],
                       )
-                          : Text(
-                        description,
-                        style: GoogleFonts.roboto(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: Colors.blue,
-                        ),
-                        maxLines: postController
-                            .isShowingDescription(postId)
-                            ? 50
-                            : 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                          : LinkText(description: description, IsShowingDes: postController
+                                .isShowingDescription(postId),),
                       if (description.length > 50)
                         TextButton(
                           onPressed: () {
@@ -318,8 +334,8 @@ class PostCard extends StatelessWidget {
                                 ? 'Show less'
                                 : 'Show more',
                             style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

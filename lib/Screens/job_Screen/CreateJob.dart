@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onelink/Widgets/Success%20Widget.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:onelink/components/myTextField.dart';
 import 'package:uuid/uuid.dart';
 import 'package:validators/validators.dart' as validator;
-
 
 class JobPostingPage extends StatefulWidget {
   @override
@@ -25,12 +25,12 @@ class _JobPostingPageState extends State<JobPostingPage> {
   final TextEditingController _salaryController = TextEditingController();
   final TextEditingController _experienceController = TextEditingController();
   final TextEditingController _companyNameController = TextEditingController();
-  final TextEditingController _skillsRequiredController = TextEditingController();
+  final TextEditingController _skillsRequiredController =
+      TextEditingController();
   final TextEditingController _aboutJobController = TextEditingController();
   final TextEditingController _aboutCompanyController = TextEditingController();
   final TextEditingController _eligibilityController = TextEditingController();
   final TextEditingController _openingsController = TextEditingController();
-  File? _image;
   final uuid = Uuid();
 
   @override
@@ -207,20 +207,7 @@ class _JobPostingPageState extends State<JobPostingPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20.0),
-              GestureDetector(
-                onTap: _selectImage,
-                child: Container(
-                  height: 150.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: _image == null
-                      ? Center(child: Text('Select an Image'))
-                      : Image.file(_image!, fit: BoxFit.cover),
-                ),
-              ),
+
               SizedBox(height: 20.0),
               MyButton(
                 onTap: () {
@@ -236,34 +223,10 @@ class _JobPostingPageState extends State<JobPostingPage> {
     );
   }
 
-  void _selectImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
-    }
-  }
-
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       try {
-        if (_image == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Please select an image for the job posting'),
-            ),
-          );
-          return;
-        }
 
-        final imageRef = FirebaseStorage.instance
-            .ref()
-            .child('job_images/${DateTime.now().toIso8601String()}');
-        final UploadTask uploadTask = imageRef.putFile(_image!);
-        final TaskSnapshot downloadUrl = await uploadTask;
-        final String imageUrl = await downloadUrl.ref.getDownloadURL();
         final Userid = FirebaseAuth.instance.currentUser!.phoneNumber;
 
         final jobData = {
@@ -283,7 +246,7 @@ class _JobPostingPageState extends State<JobPostingPage> {
           'aboutCompany': _aboutCompanyController.text,
           'eligibility': _eligibilityController.text,
           'openings': int.parse(_openingsController.text),
-          'imageUrl': imageUrl,
+
         };
 
         await FirebaseFirestore.instance.collection('jobs').add(jobData);
@@ -299,15 +262,19 @@ class _JobPostingPageState extends State<JobPostingPage> {
         _aboutCompanyController.clear();
         _eligibilityController.clear();
         _openingsController.clear();
-        setState(() {
-          _image = null;
-        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Job posted successfully'),
           ),
         );
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SuccessWidget(
+                  text1: 'Your Job is Posted',
+                  text2: 'It will apporved by admin shortly'),
+            ));
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,14 +13,10 @@ import '../../utils/utils.dart';
 
 class AddPostScreen extends StatefulWidget {
   final String uid;
-  final String username;
-  final String profImage;
 
   const AddPostScreen({
     Key? key,
     required this.uid,
-    required this.username,
-    required this.profImage,
   }) : super(key: key);
 
   @override
@@ -25,71 +24,161 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
   Uint8List? _file;
   bool isLoading = false;
   final TextEditingController _descriptionController = TextEditingController();
+  late String userProfile = '';
+  late String userName = '';
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _selectImage(context);
+    _initializeCamera();
+    setUp();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {});
+  }
+
+  Future<void> _initializeCamera() async {
+    final cameras = await availableCameras();
+    final frontCamera = cameras.firstWhere((camera) => camera.lensDirection == CameraLensDirection.front);
+    _controller = CameraController(frontCamera, ResolutionPreset.medium);
+    _initializeControllerFuture = _controller.initialize();
+  }
+
+  Future<void> setUp() async {
+    final usersnapshot = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
+    setState(() {
+      userName = usersnapshot['name'];
+      userProfile = usersnapshot['profilePhotoUrl'];
     });
   }
 
-  _selectImage(BuildContext parentContext) async {
-    final pickedFile = await showDialog<Uint8List?>(
-      context: parentContext,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text('Create a Post'),
-          children: <Widget>[
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Text('Take a photo'),
-              onPressed: () async {
-                Navigator.pop(context, await _pickImage(ImageSource.camera));
-              },
-            ),
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Text('Choose from Gallery'),
-              onPressed: () async {
-                Navigator.pop(context, await _pickImage(ImageSource.gallery));
-              },
-            ),
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context, null);
-              },
-            ),
-          ],
-        );
-      },
-    );
-
-    if (pickedFile != null) {
-      setState(() {
-        _file = pickedFile;
-      });
-    } else {
-      // Go back to the previous screen if image selection is canceled
-      Navigator.pop(context);
-    }
+  @override
+  void dispose() {
+    _controller.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
-  Future<Uint8List?> _pickImage(ImageSource source) async {
+  Future<void> _selectImage(ImageSource source) async {
     final picker = ImagePicker();
     final pickedFile = await picker.getImage(source: source);
     if (pickedFile != null) {
-      return await pickedFile.readAsBytes();
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _file = bytes;
+      });
     }
-    return null;
   }
 
-  void postImage() async {
+  Widget _buildCameraPreview() {
+    return FutureBuilder<void>(
+      future: _initializeControllerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return CameraPreview(_controller);
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Widget _buildAddImagePlaceholder() {
+    return Stack(
+      children: [
+        _buildCameraPreview(),
+        GestureDetector(
+          onTap: () => _selectImage(ImageSource.gallery), // Open gallery directly
+          child: Container(
+            color: Colors.black.withOpacity(0.3),
+            child: Center(
+              child: Text(
+                'Tap to add an image',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 20,
+          right: 20,
+          child: IconButton(
+            onPressed: () {
+              // Add logic to flip camera here
+            },
+            icon: Icon(Icons.flip_camera_ios),
+            color: Colors.white,
+            iconSize: 30,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePreview() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            if (_file != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: Image.memory(
+                  _file!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaptionInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(userProfile),
+            ),
+          ),
+          SizedBox(
+            width: 300,
+            child: TextField(
+              enableSuggestions: true,
+              maxLength: 800,
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                hintText: "Write a caption...",
+                border: InputBorder.none,
+              ),
+              maxLines: 8,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _postImage() async {
     if (_file == null || _descriptionController.text.isEmpty) {
       showSnackBar(context, 'Please select an image and enter a description.');
       return;
@@ -104,17 +193,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
         _descriptionController.text,
         _file!,
         widget.uid,
-        widget.username,
-        widget.profImage,
+        userName,
+        userProfile,
       );
-      if (res == "success") {
+      if (res == 'success') {
         setState(() {
           isLoading = false;
         });
         if (context.mounted) {
           showSnackBar(context, 'Posted!');
         }
-        clearImage();
+        _clearImage();
       } else {
         if (context.mounted) {
           showSnackBar(context, res);
@@ -128,7 +217,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
   }
 
-  void clearImage() {
+  void _clearImage() {
     setState(() {
       _file = null;
       _descriptionController.clear();
@@ -137,105 +226,52 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text('Post to'),
-        centerTitle: false,
-        actions: <Widget>[
-          TextButton(
-            onPressed: postImage,
-            child: const Text(
-              "Post",
-              style: TextStyle(
-                color: Colors.blueAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text(
+            'Post to',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: <Widget>[
-              isLoading ? const LinearProgressIndicator() : const SizedBox(),
-              const Divider(),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(widget.profImage),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    child: TextField(
-                      controller: _descriptionController,
-                      decoration: const InputDecoration(
-                        hintText: "Write a caption...",
-                        border: InputBorder.none,
-                      ),
-                      maxLines: 8,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 150.0,
-                    width: 150.0,
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        _file != null
-                            ? ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.memory(
-                            _file!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                        )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(),
-            ],
-          ),
-          if (_file == null)
-            GestureDetector(
-              onTap: () => _selectImage(context),
-              child: Container(
-                color: Colors.black.withOpacity(0.3),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.camera_alt, size: 40, color: Colors.white),
-                      SizedBox(height: 10),
-                      Text(
-                        'Tap to add an image',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ],
-                  ),
+          centerTitle: false,
+          actions: <Widget>[
+            TextButton(
+              onPressed: _postImage,
+              child: const Text(
+                "Post",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
                 ),
               ),
             ),
-        ],
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Column(
+                children: <Widget>[
+                  if (isLoading) const LinearProgressIndicator(),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  _buildImagePreview(),
+                  _buildCaptionInput(),
+                  const Divider(),
+                ],
+              ),
+              if (_file == null) _buildAddImagePlaceholder(),
+            ],
+          ),
+        ),
       ),
     );
   }

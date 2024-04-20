@@ -65,11 +65,11 @@ class _OTPScreenState extends State<OTPScreen> {
                   Text(
                     "Enter The OTP sent to ",
                     style:
-                        GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w400),
+                        GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.04, fontWeight: FontWeight.w400),
                   ),Text(
                     "+91${widget.phone} ",
                     style:
-                        GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold),
+                        GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.05, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -83,7 +83,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                         border: Border.all(width: 1))),
-                androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
+                androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
                 length: 6,
                 controller: _pinPutController,
               ),
@@ -95,13 +95,16 @@ class _OTPScreenState extends State<OTPScreen> {
                   Text(
                     "Didn't you recived the OTP?   ",
                     style:
-                    GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400,color: Colors.grey),
+                    GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.035, fontWeight: FontWeight.w400,color: Colors.grey),
                   ),
-                  Text(
+                  TextButton(
+                    onPressed: () {  _resendOTP();},
+                    child: Text(
                     "Resend OTP",
                     style:
-                    GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color:Color(0xFF888BF4) ),
+                    GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.04, fontWeight: FontWeight.bold, color:Color(0xFF888BF4) ),
                   ),
+                  )
                 ],
               ),
             ),
@@ -195,4 +198,46 @@ class _OTPScreenState extends State<OTPScreen> {
       return false;
     }
   }
+  void _resendOTP() async {
+    try {
+      // Send OTP to the user's phone number again
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: "+91${widget.phone}",
+        verificationCompleted: (PhoneAuthCredential credential) {
+          // Auto-retrieve verification code if needed
+          FirebaseAuth.instance.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print("Failed to resend OTP: $e");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to resend OTP. Please try again.")),
+          );
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          // Show snackbar indicating OTP has been resent
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("OTP has been resent.")),
+          );
+          // Create a new instance of OTPScreen with the new verification ID
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OTPScreen(phone: widget.phone, verificationId: verificationId),
+            ),
+          );
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          // Handle code auto-retrieval timeout if needed
+        },
+        timeout: Duration(seconds: 60), // Timeout duration
+      );
+    } catch (e) {
+      print("Error resending OTP: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to resend OTP. Please try again.")),
+      );
+    }
+  }
+
+
 }

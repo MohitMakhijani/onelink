@@ -33,13 +33,16 @@ class SearchPage extends StatelessWidget {
               ),
               child: TextField(
                 controller: _controller.searchController,
+                onChanged: (value) {
+                  _controller.performSearch(value.toLowerCase());
+                },
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   suffixIcon: IconButton(
                     icon: Icon(Icons.search),
                     onPressed: () {
                       _controller
-                          .performSearch(_controller.searchController.text);
+                          .performSearch(_controller.searchController.text.toLowerCase());
                     },
                   ),
                 ),
@@ -69,14 +72,12 @@ class SearchPage extends StatelessWidget {
                               return ProfileScreen(uid: _controller.searchResults[index]['uuid']);
                             },));
                           },
-
                           title: Row(
                             children: [
                               CircleAvatar(
                                 radius: 25,
                                 backgroundImage: CachedNetworkImageProvider(
-                                  _controller.searchResults[index]
-                                  ['profilePhotoUrl'],
+                                  _controller.searchResults[index]['profilePhotoUrl'],
                                 ),
                               ),
                               SizedBox(width: 10),
@@ -110,7 +111,6 @@ class SearchPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          // Handle tap on search result item onTap
                         ),
                       );
                     },

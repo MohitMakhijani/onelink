@@ -6,6 +6,7 @@ class UserModel {
   final String email;
   final String profilePhotoUrl;
   final String bio;
+  final String LinkedIn ;
   final DateTime dateOfBirth;
   final int postCount;
   final String phoneNumber;
@@ -14,6 +15,8 @@ class UserModel {
   UserModel(  {
     required this.bio,
     required this.userId,
+    required this.LinkedIn,
+
     required this.name,
     required this.email,
     required this.profilePhotoUrl,
@@ -35,7 +38,7 @@ class UserModel {
       postCount: data['postCount'] ?? 0,
       phoneNumber: data['phoneNumber'] ?? '',
       uuid: data['uuid'] ?? '',
-      bio: data['bio'] ?? '', // Check if 'bio' exists in Firestore data
+      bio: data['bio'] ?? '', LinkedIn: data['LinkedIn'], // Check if 'bio' exists in Firestore data
     );
   }
 
@@ -43,6 +46,7 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
+      'LinkedIn': LinkedIn,
       'email': email,
       'profilePhotoUrl': profilePhotoUrl,
       'dateOfBirth': dateOfBirth,

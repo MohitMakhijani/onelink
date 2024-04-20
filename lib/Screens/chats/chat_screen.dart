@@ -8,15 +8,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:onelink/Screens/profile/profilePage.dart';
+import 'package:onelink/Widgets/editDes.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatRoomId;
   final String UserName;
   final String ProfilePicture;
+  final String UId;
 
 
-  const ChatScreen({Key? key, required this.chatRoomId, required this.UserName, required this.ProfilePicture}) : super(key: key);
+  const ChatScreen({Key? key, required this.chatRoomId, required this.UserName, required this.ProfilePicture, required this.UId}) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -151,14 +154,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(widget.ProfilePicture),
-            ),
-            SizedBox(width: 8),
-            Text(widget.UserName),
-          ],
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(uid: widget.UId),));
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(widget.ProfilePicture),
+              ),
+              SizedBox(width: 8),
+              Text(widget.UserName),
+            ],
+          ),
         ),
         backgroundColor: Color(0xFF888BF4),
       ),
@@ -315,10 +323,7 @@ class BubbleMessage extends StatelessWidget {
                 ),
               ),
             if (text.isNotEmpty)
-              Text(
-                text,
-                style: TextStyle(fontSize: 16),
-              ),
+              LinkText(description: text, IsShowingDes: true),
             const SizedBox(height: 4),
             Text(
               formattedTime,

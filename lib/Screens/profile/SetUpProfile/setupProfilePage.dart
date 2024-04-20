@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onelink/Get/fetchdata.dart';
 import 'package:onelink/Screens/Home/BottomNavPage.dart';
@@ -20,10 +21,9 @@ class SetUpProfile extends StatefulWidget {
 class _SetUpProfileState extends State<SetUpProfile> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
+
 
   Uint8List? _file;
-  DateTime? _selectedDate;
   Uuid uuid = Uuid();
 
   Future<Uint8List?> _selectImage(BuildContext parentContext) async {
@@ -45,21 +45,6 @@ class _SetUpProfileState extends State<SetUpProfile> {
         Provider.of<UserFetchController>(context, listen: false);
     userFetchController.fetchUserData();
   }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
-  }
-
   String? _validateInput(String? value, {String? fieldName}) {
     if (value == null || value.isEmpty) {
       return 'This field is required';
@@ -67,13 +52,6 @@ class _SetUpProfileState extends State<SetUpProfile> {
     if (fieldName == 'Email') {
       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
         return 'Please enter a valid email address';
-      }
-    }
-    if (fieldName == 'Date of Birth') {
-      if (_selectedDate == null) {
-        return 'Please select Date of Birth';
-      } else if (_selectedDate!.year < 1960 || _selectedDate!.year > 2018) {
-        return 'Date of Birth should be between 1960 and 2018';
       }
     }
     return null;
@@ -161,59 +139,26 @@ class _SetUpProfileState extends State<SetUpProfile> {
                 keyboardtype: TextInputType.emailAddress,
                 validator: (value) => _validateInput(value, fieldName: 'Email'),
               ),
-              MyTextField(
-                controller: _bioController,
-                hint: "Bio",
-                obscure: false,
-                selection: true,
-                preIcon: Icons.info,
-                keyboardtype: TextInputType.multiline,
-                validator: (value) => null, // You can add validation if needed
-              ),
-
               SizedBox(height: 15),
               // Date of Birth Picker
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _selectedDate != null
-                            ? 'Date of Birth: ${_selectedDate!.toString().split(' ')[0]}'
-                            : 'Select Date of Birth',
-                      ),
-                      Icon(Icons.calendar_today),
-                    ],
-                  ),
-                ),
-              ),
               SizedBox(height: 15),
               MyButton(
                 onTap: () {
                   String? nameError = _validateInput(_nameController.text, fieldName: 'Name');
                   String? emailError = _validateInput(_emailController.text, fieldName: 'Email');
-                  if (nameError == null && emailError == null && _selectedDate != null) {
+                  if (nameError == null && emailError == null){
                     FireStoreMethods().createUser(
                       userId: FirebaseAuth.instance.currentUser!.uid,
-                      name: _nameController.text.trim(),
+                      name: _nameController.text.toLowerCase(),
                       email: _emailController.text.trim(),
                       profilePhotoUrl: '', // Don't pass anything here
-                      dateOfBirth: _selectedDate!,
+                      dateOfBirth: DateTime.now(),
                       postCount: 0,
                       context: context,
                       imageBytes: _file,
                       phoneNumber: "${FirebaseAuth.instance.currentUser!.phoneNumber}",
-                      bio: _bioController.text.trim(),
+                      bio: '',
+                      LinkedIn: '',
                     );
                     Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {

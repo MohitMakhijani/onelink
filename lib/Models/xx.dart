@@ -6,17 +6,16 @@ class UserModel1 {
   String? profilePhotoUrl;
   String? phoneNumber;
   String? dateOfbirth;
+  String? LinkedIn;
+  bool showEmail = true;
+  bool showPhone = true;
+  bool showLinkedin = true;
   int? postCount;
-  // List<String>? following;
-  // List<String>? followers;
 
   UserModel1();
 
   UserModel1.fromJson(Map<String, dynamic> json) {
     userId = json['uuid'];
-    bio = json['bio'];
-    // followers = List<String>.from(json['followers'] ?? []);
-    // following = List<String>.from(json['following'] ?? []);
     name = json['name'];
     email = json['email'];
     profilePhotoUrl = json['profilePhotoUrl'];
@@ -24,5 +23,9 @@ class UserModel1 {
     phoneNumber = json['phoneNumber'];
     dateOfbirth = json['dateOfbirth'];
     bio = json['bio'];
+    LinkedIn = json['LinkedIn'];
+    showEmail = json['showEmail'] ?? true;
+    showPhone = json['showPhone'] ?? true;
+    showLinkedin = json['showLinkedin'] ?? true;
   }
 }

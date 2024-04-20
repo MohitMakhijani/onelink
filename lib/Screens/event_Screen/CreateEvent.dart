@@ -2,16 +2,17 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:onelink/components/myTextfield.dart';
+import 'package:intl/intl.dart';
+import 'package:onelink/Models/eventModel.dart';
 import 'package:uuid/uuid.dart';
-import '../../Models/eventModel.dart';
+
+import '../../Widgets/Success Widget.dart';
 
 class CreateEventPage extends StatefulWidget {
   @override
@@ -25,8 +26,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
   File? _image;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  String _selectedEventType = '';
+  String _selectedEventType = 'Physical Event';
+  Uuid uuid = Uuid();
+  final UserID = FirebaseAuth.instance.currentUser!.phoneNumber;
 
+  // Function to select date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -42,6 +46,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
+  // Function to select time
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -55,9 +60,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
-  Uuid uuid = Uuid();
-  final UserID = FirebaseAuth.instance.currentUser!.phoneNumber;
-
+  // Function to upload event
   void _uploadEvent() async {
     if (_selectedDate == null ||
         _selectedTime == null ||
@@ -86,7 +89,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       location: _locationController.text.trim(),
       time: DateFormat('HH:mm').format(eventDateTime),
       description: _descriptionController.text.trim(),
-      imageUrl: '',
+      imageUrl: '', // Placeholder for imageUrl
       eventDate: eventDateTime,
       EventType: _selectedEventType,
       EventStatus: 'Pending',
@@ -113,6 +116,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       _descriptionController.clear();
       setState(() {
         _image = null;
+        _selectedEventType = ''; // Clear selected event type
       });
 
       // Show success message
@@ -120,6 +124,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
         SnackBar(content: Text('Event uploaded successfully')),
       );
       Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SuccessWidget(
+                text1: 'Your Job is Posted',
+                text2: 'It will apporved by admin shortly'),
+          ));// Close create event page
     } catch (e) {
       print('Error uploading event: $e');
       // Handle error if any occurred during upload
@@ -129,6 +140,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
+  // Validator for event name
   String? _validateName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter an event name';
@@ -136,6 +148,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return null;
   }
 
+  // Validator for event location
   String? _validateLocation(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter the event location';
@@ -245,41 +258,62 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 keyboardtype: TextInputType.text,
               ),
               SizedBox(height: 16),
-              CupertinoSegmentedControl<String>(
-                children: {
-                  'Physical Event': Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Physical Event'),
+              Container(
+                height: 200,
+                width: double.infinity,
+                decoration: _image != null
+                    ? BoxDecoration(
+                  image: DecorationImage(
+                    image: FileImage(_image!),
+                    fit: BoxFit.cover,
                   ),
-                  'Virtual Event': Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Virtual Event'),
-                  ),
-                },
-                onValueChanged: (value) {
-                  setState(() {
-                    _selectedEventType = value ?? '';
-                  });
-                },
-                groupValue: _selectedEventType.isEmpty ? null : _selectedEventType,
-                borderColor: Colors.blue, // Customize border color
-                selectedColor: Colors.blue, // Customize selected segment color
-                unselectedColor: Colors.white, // Customize unselected segment color
+                )
+                    : BoxDecoration(),
+                child: _image == null
+                    ? Center(
+                  child: Text('No image selected'),
+                )
+                    : null,
               ),
               SizedBox(height: 16),
-              MyButton(
-                onTap: () async {
-                  final imagePicker = ImagePicker();
-                  final pickedImage =
-                  await imagePicker.getImage(source: ImageSource.gallery);
-                  if (pickedImage != null) {
-                    setState(() {
-                      _image = File(pickedImage.path);
-                    });
-                  }
-                },
-                text: 'Select Image',
-                color: Colors.blue[300],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Color(0xFF888BF4))),
+                    onPressed: () async {
+                      final imagePicker = ImagePicker();
+                      final pickedImage = await imagePicker.getImage(source: ImageSource.gallery);
+                      if (pickedImage != null) {
+                        setState(() {
+                          _image = File(pickedImage.path);
+                        });
+                      }
+                    },
+                    child: Text(
+                      'Select Image',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  DropdownButton<String>(
+                    value: _selectedEventType.isEmpty ? null : _selectedEventType,
+                    items: [
+                      DropdownMenuItem(
+                        child: Text('Physical Event'),
+                        value: 'Physical Event',
+                      ),
+                      DropdownMenuItem(
+                        child: Text('Virtual Event'),
+                        value: 'Virtual Event',
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedEventType = value!;
+                      });
+                    },
+                  ),
+                ],
               ),
               SizedBox(height: 16),
               MyButton(

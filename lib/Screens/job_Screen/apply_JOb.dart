@@ -116,6 +116,49 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                 // Other TextFormFields...
 
                 MyTextField(
+                  controller: _nameController,
+                  hint: 'Name',
+                  keyboardtype: TextInputType.url,
+                  preIcon: Icons.drive_file_rename_outline,
+                  obscure: false,
+                  selection: false,
+                ),
+                SizedBox(height: 10),       MyTextField(
+                  controller: _emailController,
+                  hint: 'Email',
+                  keyboardtype: TextInputType.url,
+                  preIcon: Icons.email,
+                  obscure: false,
+                  selection: false,
+                ),
+                SizedBox(height: 10),
+                MyTextField(
+                  controller: _phoneController,
+                  hint: 'Phone Numner',
+                  keyboardtype: TextInputType.url,
+                  preIcon: Icons.phone,
+                  obscure: false,
+                  selection: false,
+
+                ),
+                SizedBox(height: 10),       MyTextField(
+                  controller: _descriptionController,
+                  hint: 'About Candidate',
+                  keyboardtype: TextInputType.url,
+                  preIcon: Icons.abc_outlined,
+                  obscure: false,
+                  selection: false,
+
+                ), SizedBox(height: 10),       MyTextField(
+                  controller: _experienceController,
+                  hint: 'Experience',
+                  keyboardtype: TextInputType.datetime,
+                  preIcon: Icons.abc_outlined,
+                  obscure: false,
+                  selection: false,
+
+                ),
+                SizedBox(height: 10),       MyTextField(
                   controller: _resumeController,
                   hint: 'Resume Link',
                   keyboardtype: TextInputType.url,

@@ -12,8 +12,9 @@ import 'package:provider/provider.dart';
 class CommentsScreen extends StatefulWidget {
   final String postId;
   final String image;
+  final String TargetUserId;
 
-  const CommentsScreen({Key? key, required this.postId, required this.image}) : super(key: key);
+  const CommentsScreen({Key? key, required this.postId, required this.image, required this.TargetUserId}) : super(key: key);
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -30,6 +31,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         uid,
         name,
         profilePic,
+        widget.TargetUserId
       );
 
       if (res != 'success') {

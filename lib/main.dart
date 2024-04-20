@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onelink/Screens/Home/BottomNavPage.dart';
@@ -8,13 +9,18 @@ import 'package:onelink/Screens/ONboardingScreens/Onboarding.dart';
 import 'package:provider/provider.dart';
 import 'Get/fetchdata.dart';
 import 'Get/themeprovider.dart';
+import 'components/Notifications.dart';
 
 
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  @pragma('vm:entry-point')
+  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    await Firebase.initializeApp();
+  }
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await Firebase.initializeApp(
     options: FirebaseOptions(
       storageBucket: "onelink-81367.appspot.com",
@@ -44,28 +50,27 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   var isLoggedIn = false;
   var auth = FirebaseAuth.instance;
-  late FirebaseMessaging _firebaseMessaging;
+  NotificationServices notificationServices = NotificationServices();
+
 
   @override
   void initState() {
     super.initState();
-    _firebaseMessaging = FirebaseMessaging.instance;  // Initialize FirebaseMessaging instance
-
-    // Handle incoming messages when the app is in the foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("FCM Message received: ${message.notification?.title}");
-      // Handle the message here, e.g., show a notification dialog
-    });
-
-    // Handle notification taps
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("FCM Message tapped: ${message.notification?.title}");
-      // Handle notification tap, e.g., navigate to a specific screen
-    });
+    notificationServices.requestNotificationPermission();
+    notificationServices.foregroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefresh();
+    notificationServices.getDeviceToken().then((value) {
+      if (kDebugMode) {
+        print('device token');
+        print(value);
+      }
 
     UserFetchController();
     checkIfLoggedIn();
-  }
+      });
+        }
 
   void checkIfLoggedIn() {
     auth.authStateChanges().listen((User? user) {

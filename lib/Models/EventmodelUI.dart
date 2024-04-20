@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:onelink/Screens/event_Screen/Join%20Event.dart';
 import 'package:onelink/components/myButton.dart';
 
@@ -33,6 +35,7 @@ class EventUICard extends StatefulWidget {
 }
 
 class _EventUICardState extends State<EventUICard> {
+
   @override
   Widget build(BuildContext context) {
     // Check if the EventStatus is 'Accepted'
@@ -97,7 +100,7 @@ class _EventUICardState extends State<EventUICard> {
                   Icon(Icons.calendar_today, color: Colors.green),
                   SizedBox(width: 4.0),
                   Text(
-                    '${widget.eventDate} ${widget.eventTime}',
+                    '${widget.eventDate}',
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.green,

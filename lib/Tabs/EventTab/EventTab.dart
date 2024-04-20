@@ -16,108 +16,104 @@ class EventTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: ExpandableFab(children: [
-        ActionButton(
-          icon: const Icon(
-            Icons.create,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                transitionDuration:
-                    Duration(milliseconds: 500), // Adjust duration as needed
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    CreateEventPage(),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  var begin = Offset(0.0, 1.0);
-                  var end = Offset.zero;
-                  var curve = Curves.ease;
-
-                  var tween = Tween(begin: begin, end: end).chain(
-                    CurveTween(curve: curve),
-                  );
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-              ),
-            );
-          },
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF888BF4),
+        elevation: 4,
+        onPressed: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 500),
+              pageBuilder: (BuildContext context, Animation<double> animation,
+                  Animation<double> secondaryAnimation) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: Offset(1.0, 0.0), // Slide from right to left
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: CreateEventPage(),
+                );
+              },
+            ),
+          );
+        },
+        child: Icon(
+          Icons.add,
+          size: 30,
         ),
-        ActionButton(
-          icon: const Icon(
-            Icons.view_agenda,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                transitionDuration:
-                    Duration(milliseconds: 500), // Adjust duration as needed
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    MyParticipatedEventsPage(),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  var begin = Offset(0.0, 1.0);
-                  var end = Offset.zero;
-                  var curve = Curves.ease;
-
-                  var tween = Tween(begin: begin, end: end).chain(
-                    CurveTween(curve: curve),
-                  );
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-              ),
-            );
-          },
-        ),
-        ActionButton(
-          icon: const Icon(
-            Icons.join_full_sharp,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                transitionDuration:
-                    Duration(milliseconds: 500), // Adjust duration as needed
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    My_events(),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  var begin = Offset(0.0, 1.0);
-                  var end = Offset.zero;
-                  var curve = Curves.ease;
-
-                  var tween = Tween(begin: begin, end: end).chain(
-                    CurveTween(curve: curve),
-                  );
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ], distance: 120),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: Duration(milliseconds: 250),
+                        pageBuilder: (BuildContext context, Animation<double> animation,
+                            Animation<double> secondaryAnimation) {
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: Offset(1.0, 0.0), // Slide from right to left
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: MyParticipatedEventsPage(),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    height: MediaQuery.of(context).size.width * 0.13,
+                    child: Center(
+                        child: Text(
+                          'Participated Events',
+                          style: GoogleFonts.poppins(
+                              fontSize:  MediaQuery.of(context).size.width * 0.03, fontWeight: FontWeight.w500),
+                        )),
+                    decoration: BoxDecoration(
+                        color: Color(0xFF888BF4),
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
+                GestureDetector(onTap: () =>     Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: Duration(milliseconds: 200),
+                    pageBuilder: (BuildContext context, Animation<double> animation,
+                        Animation<double> secondaryAnimation) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(1.0, 0.0), // Slide from right to left
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: My_events(),
+                      );
+                    },
+                  ),
+                ) ,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    height: MediaQuery.of(context).size.width * 0.13,
+                    child: Center(
+                        child: Text(
+                          'Created Events',
+                          style: GoogleFonts.poppins(
+                              fontSize:  MediaQuery.of(context).size.width * 0.03, fontWeight: FontWeight.w500),
+                        )),
+                    decoration: BoxDecoration(
+                        color: Color(0xFF888BF4),
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
+              ],
+            ),
             Divider(),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
