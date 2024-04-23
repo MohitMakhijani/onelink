@@ -17,7 +17,7 @@ class PostedJobsPage extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('jobs')
-            .where('UserId', isEqualTo: FirebaseAuth.instance.currentUser!.phoneNumber.toString())
+            .where('UserId', isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
