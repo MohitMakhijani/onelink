@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/other/Settings%20Page/Settings.dart';
 import 'package:provider/provider.dart';
 import '../../Auth/SignUp.dart';
 import '../../FetchDataProvider/fetchData.dart';
@@ -214,9 +216,9 @@ class CustomDrawer extends StatelessWidget {
                       ],
                     ),
                     onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      //   return SettingsPage();
-                      // },));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return Settings1(Image: myUser.profilePicture!, email: myUser.email!, name: myUser.name!);
+                      },));
                     },
                   ),
                   SizedBox(

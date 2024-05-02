@@ -13,7 +13,7 @@ import '../../UI-Models/feed_postUi.dart';
 import '../../Widgets/TextLinkWidget.dart';
 import '../../components/FolowButton.dart';
 import '../../components/myButton.dart';
-import '../../other/Settings.dart';
+import '../../other/Settings Page/Settings.dart';
 import '../../utils/colors.dart';
 import '../../utils/utils.dart';
 import '../chats/chat_screen.dart';

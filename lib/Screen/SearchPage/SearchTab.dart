@@ -84,7 +84,7 @@ appBar: AppBar(title: Text('Search',style: TextStyle(fontSize: 22.sp,fontFamily:
                                     ),
 
                                   ),
-                                  Text(_controller.searchResults[index]['NavodhyaId']??"N-***** ", style: GoogleFonts.inter(fontWeight: FontWeight.w500,color:Colors.grey)),
+                                  // Text(_controller.searchResults[index]['NavodhyaId']??"N-***** ", style: GoogleFonts.inter(fontWeight: FontWeight.w500,color:Colors.grey)),
                                 ],
                               ),
                             ),

@@ -1,20 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:insta_assets_picker/insta_assets_picker.dart';
+import 'package:location/location.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import '../../Services/FireStoreMethod.dart';
-import '../../utils/colors.dart';
 import '../../utils/utils.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -124,33 +121,113 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   Widget _buildCaptionInput() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(userProfile),
-            ),
-          ),
-          SizedBox(
-            height: 100.h,
-            width: 300,
-            child: TextField(
-              enableSuggestions: true,
-              maxLength: 800,
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                hintText: "Write a caption...",
-                border: InputBorder.none,
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(userProfile),
               ),
-              maxLines: 8,
             ),
+            Container(
+              width: 320.w,
+              height: 100.h,
+              child: TextField(
+                enableSuggestions: true,
+                maxLength: 800,
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  hintText: "Write a caption...",
+                  border: InputBorder.none,
+                ),
+                maxLines: 8,
+              ),
+            ),
+          ],
+        ),
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(OctIcons.location),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Text(
+                        'Add Location',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'InterRegular'),
+                      ),
+                    ],
+                  ),
+                  Text('India'),
+                  SizedBox(
+                    height: 10.h,
+                  )
+                ],
+              ),
+              SizedBox(height: 8.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(OctIcons.people),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Text(
+                        'Tag People',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'InterRegular'),
+                      ),
+                    ],
+                  ),
+                  Text('Ts bridge'),
+                  SizedBox(
+                    height: 10.h,
+                  )
+                ],
+              ),
+              SizedBox(height: 8.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(OctIcons.eye),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Text(
+                        'Audience',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'InterRegular'),
+                      ),
+                    ],
+                  ),
+                  Text('Everyone'),
+                  SizedBox(
+                    height: 10.h,
+                  )
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 
@@ -284,7 +361,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
             children: [
               Column(
                 children: <Widget>[
-
                   if (isLoading) const LinearProgressIndicator(),
                   const Divider(),
                   _buildImagePreview(),
@@ -302,7 +378,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
               if (_file == null)
                 Positioned(
                   bottom:
-                  0, // This positions the container at the bottom of the stack
+                      0, // This positions the container at the bottom of the stack
                   left: 0, // Optional: Aligns the container to the left
                   right: 0, // Optional: Centers the container horizontally
                   child: Row(
@@ -312,13 +388,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         onPressed: () async {
                           // Open the WeChat asset picker
                           final List<AssetEntity>? result =
-                          await AssetPicker.pickAssets(
+                              await AssetPicker.pickAssets(
                             context,
                             permissionRequestOption: PermissionRequestOption(
                                 androidPermission: AndroidPermission(
                                     type: RequestType.all,
                                     mediaLocation:
-                                    true)), // Limit the selection to one asset// Specify the type of assets to pick
+                                        true)), // Limit the selection to one asset// Specify the type of assets to pick
                           );
 
                           if (result != null && result.isNotEmpty) {
@@ -340,12 +416,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: _captureImage,
-                        child: FaIcon(
-                          Icons.camera,
-                          size: 40.r,
-                        ),
-                      ),
+                          onTap: _captureImage,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.black,
+                            radius: 28.r,
+                            child: CircleAvatar(
+                              radius: 27.r,
+                              backgroundColor: Colors.white,
+                              child: CircleAvatar(
+                                radius: 25.r,
+                                backgroundColor: Colors.black,
+                              ),
+                            ),
+                          )),
                       Container(
                         width: 50.w,
                         height: 50.w,
@@ -358,11 +441,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               color: Colors.black,
                               size: 35.r,
                             )),
-                      )
+                      ),
                     ],
                   ),
                 ),
-
             ],
           ),
         ),

@@ -12,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:onelink/Screen/profile/ChatSettingPage.dart';
 import 'package:path_provider/path_provider.dart';
 import '../profile/profilePage.dart';
 
@@ -21,8 +22,13 @@ class ChatScreen extends StatefulWidget {
   final String ProfilePicture;
   final String UId;
 
-
-  const ChatScreen({Key? key, required this.chatRoomId, required this.UserName, required this.ProfilePicture, required this.UId}) : super(key: key);
+  const ChatScreen(
+      {Key? key,
+      required this.chatRoomId,
+      required this.UserName,
+      required this.ProfilePicture,
+      required this.UId})
+      : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -53,16 +59,18 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       // Implement any logic you need when scrolling reaches the bottom
     }
   }
 
   void _updateRecentMessage(String message, String senderUid) {
-    FirebaseFirestore.instance.collection('chatRooms').doc(widget.chatRoomId).update({
-      'recentMessage': message
-    });
+    FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(widget.chatRoomId)
+        .update({'recentMessage': message});
   }
 
   void _fetchMessages() {
@@ -74,10 +82,13 @@ class _ChatScreenState extends State<ChatScreen> {
         .snapshots()
         .listen((snapshot) {
       if (_streamController != null && !_streamController!.isClosed) {
-        _streamController!.add(snapshot); // Add the snapshot to the stream controller
+        _streamController!
+            .add(snapshot); // Add the snapshot to the stream controller
       } else {
-        _streamController = StreamController<QuerySnapshot>(); // Create a new stream controller
-        _streamController!.add(snapshot); // Add the snapshot to the new stream controller
+        _streamController =
+            StreamController<QuerySnapshot>(); // Create a new stream controller
+        _streamController!
+            .add(snapshot); // Add the snapshot to the new stream controller
       }
     });
   }
@@ -89,14 +100,6 @@ class _ChatScreenState extends State<ChatScreen> {
         .get();
 
     List<String> users = List.from(roomSnapshot['users']);
-
-    // Find the target user's UID
-    // String targetUserUid = users.firstWhere((uid) => uid != FirebaseAuth.instance.currentUser!.uid);
-
-    // DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(targetUserUid)
-    //     .get();
   }
 
   void _sendMessage(String messageText, File? imageFile) async {
@@ -110,9 +113,14 @@ class _ChatScreenState extends State<ChatScreen> {
       imageUrl = await _uploadImageToFirebase(imageFile);
     }
 
-    _updateRecentMessage(messageText.trim(), FirebaseAuth.instance.currentUser!.uid);
+    _updateRecentMessage(
+        messageText.trim(), FirebaseAuth.instance.currentUser!.uid);
 
-    FirebaseFirestore.instance.collection('chatRooms').doc(widget.chatRoomId).collection('messages').add({
+    FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(widget.chatRoomId)
+        .collection('messages')
+        .add({
       'message': messageText,
       'senderUid': FirebaseAuth.instance.currentUser!.uid,
       'timestamp': Timestamp.now(),
@@ -125,7 +133,8 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<String?> _uploadImageToFirebase(File imageFile) async {
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName.jpg');
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('images/$fileName.jpg');
       UploadTask uploadTask = storageReference.putFile(imageFile);
       TaskSnapshot taskSnapshot = await uploadTask;
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -159,33 +168,55 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(uid: widget.UId),));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatSettingsPage(
+                    UId: widget.UId,
+                    UserName: widget.UserName,
+                    ProfilePicture: widget.ProfilePicture,
+                  ),
+                ));
           },
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(widget.ProfilePicture),
+                backgroundImage:
+                    CachedNetworkImageProvider(widget.ProfilePicture),
               ),
               SizedBox(width: 8.w),
-              Text(widget.UserName,style: GoogleFonts.inter(fontSize: 20.sp,fontWeight: FontWeight.w700,color: Colors.black),),
+              Text(
+                widget.UserName,
+                style: GoogleFonts.inter(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black),
+              ),
             ],
           ),
         ),
-actions: [
-  IconButton(onPressed: () {
-
-  }, icon: FaIcon(Icons.videocam_outlined,size: 30,)) ,
-  IconButton(onPressed: () {
-
-  }, icon: FaIcon(Icons.local_phone_outlined,size: 30,))
-],
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: FaIcon(
+                Icons.videocam_outlined,
+                size: 30,
+              )),
+          IconButton(
+              onPressed: () {},
+              icon: FaIcon(
+                Icons.local_phone_outlined,
+                size: 30,
+              ))
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _streamController!.stream,
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
@@ -205,13 +236,17 @@ actions: [
                   controller: _scrollController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    Map<String, dynamic> data = snapshot.data!.docs[index]
+                        .data() as Map<String, dynamic>;
 
                     // Check if the message sender is the current user
-                    bool isCurrentUser = data['senderUid'] == FirebaseAuth.instance.currentUser!.uid;
+                    bool isCurrentUser = data['senderUid'] ==
+                        FirebaseAuth.instance.currentUser!.uid;
 
                     return Row(
-                      mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      mainAxisAlignment: isCurrentUser
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
                       children: [
                         BubbleMessage(
                           isCurrentUser: isCurrentUser,
@@ -241,7 +276,8 @@ actions: [
       final pickedFile = await picker.getImage(source: source);
       if (pickedFile != null) {
         File imageFile = File(pickedFile.path);
-        _sendMessage('', imageFile); // Send empty message and the selected image
+        _sendMessage(
+            '', imageFile); // Send empty message and the selected image
       }
     }
 
@@ -255,11 +291,11 @@ actions: [
               await _getImage(ImageSource.camera);
             },
           ),
-
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: InputDecoration.collapsed(hintText: 'Type your message here'),
+              decoration:
+                  InputDecoration.collapsed(hintText: 'Type your message here'),
             ),
           ),
           Row(
@@ -269,10 +305,12 @@ actions: [
                 onPressed: () async {
                   await _getImage(ImageSource.gallery);
                 },
-              ), IconButton(
+              ),
+              IconButton(
                 icon: Icon(Icons.send),
                 onPressed: () {
-                  _sendMessage(_messageController.text.trim(), null); // Send only text message
+                  _sendMessage(_messageController.text.trim(),
+                      null); // Send only text message
                 },
               ),
             ],
@@ -318,7 +356,9 @@ class BubbleMessage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (imageUrl != null && imageUrl!.isNotEmpty) // Check if imageUrl is not null and not empty
+            if (imageUrl != null &&
+                imageUrl!
+                    .isNotEmpty) // Check if imageUrl is not null and not empty
               GestureDetector(
                 onTap: () {
                   if (imageUrl != null && Uri.parse(imageUrl!).isAbsolute) {
@@ -333,11 +373,20 @@ class BubbleMessage extends StatelessWidget {
                 ),
               ),
             if (text.isNotEmpty)
-            Text(text,style: TextStyle(color:  isCurrentUser==true?  Colors.white:Colors.black,fontSize: 15.sp),),
+              Text(
+                text,
+                style: TextStyle(
+                    color: isCurrentUser == true ? Colors.white : Colors.black,
+                    fontSize: 15.sp),
+              ),
             const SizedBox(height: 4),
             Text(
               formattedTime,
-              style:  TextStyle(fontWeight: FontWeight.w600, fontSize: 10.sp, color:  isCurrentUser==true?  Colors.white:Colors.black,),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 10.sp,
+                color: isCurrentUser == true ? Colors.white : Colors.black,
+              ),
             ),
           ],
         ),
@@ -358,5 +407,3 @@ class BubbleMessage extends StatelessWidget {
     );
   }
 }
-
-

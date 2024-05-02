@@ -115,7 +115,7 @@ class _PostCardState extends State<PostCard> {
                   Navigator.pop(context);
                   postController.toggleEditing(widget.postId, true);
                 },
-              ),
+              ),  if(widget.uid!=FirebaseAuth.instance.currentUser!.uid)
               ListTile(
                 leading: Icon(Icons.report,color: Colors.red,),
                 title: Text('Report'),
