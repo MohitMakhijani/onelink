@@ -1,19 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onelink/Screens/Home/BottomNavPage.dart';
-import 'package:onelink/Screens/ONboardingScreens/Onboarding.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'Get/fetchdata.dart';
-import 'Get/themeprovider.dart';
+import 'FetchDataProvider/fetchData.dart';
+import 'Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
+import 'Screen/ONboardingScreens/Onboarding.dart';
 import 'components/Notifications.dart';
+import 'firebase_options.dart';
 
 
-
-void main() async {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   @pragma('vm:entry-point')
@@ -21,22 +21,32 @@ void main() async {
     await Firebase.initializeApp();
   }
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      storageBucket: "onelink-81367.appspot.com",
-      apiKey: "AIzaSyBhF1pSbNIZcHZPahbru6e4wo-CbnReWnw",
-      appId: "1:406735724106:android:4f89ba67a0bdae98a050b3",
-      messagingSenderId: "406735724106",
-      projectId: "onelink-81367",
-    ),
-  );
+ /* try {
+ 
+
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyCINRuerToLYoumEM7PBN-79oJNQs4twAk",
+        appId: "1:586710635386:web:aea467e0fe846eb0453cc3",
+        messagingSenderId: "586710635386",
+        projectId: "gmrtest-5241f",
+      ),
+    );
+  } on FirebaseException catch (e) {
+    if (e.code == 'duplicate-app') {
+      await Firebase.initializeApp();
+    }
+  }*/
+ await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserFetchController()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child:  MyApp(),
+      child: MyApp(),
     ),
   );
 }
@@ -47,12 +57,12 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+
 class _MyAppState extends State<MyApp> {
+
   var isLoggedIn = false;
   var auth = FirebaseAuth.instance;
   NotificationServices notificationServices = NotificationServices();
-
-
   @override
   void initState() {
     super.initState();
@@ -67,10 +77,10 @@ class _MyAppState extends State<MyApp> {
         print(value);
       }
 
-    UserFetchController();
-    checkIfLoggedIn();
-      });
-        }
+      UserFetchController();
+      checkIfLoggedIn();
+    });
+  }
 
   void checkIfLoggedIn() {
     auth.authStateChanges().listen((User? user) {
@@ -81,13 +91,30 @@ class _MyAppState extends State<MyApp> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: Provider.of<ThemeProvider>(context).themeData,
-      debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? HomeScreen() : Onboarding(),
-    );
+  //FirebaseAuth auth = FirebaseAuth.instance;
+  double width=MediaQuery.sizeOf(context).width;
+  double height=MediaQuery.sizeOf(context).height;
+  print(width);
+  print(height);
+  // Get the current user
+  //User? user = auth.currentUser;
+
+  return ScreenUtilInit(designSize: Size(width,height), 
+minTextAdapt: true,
+splitScreenMode: true,
+builder: (context, child) => MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: child,
+
+  
+),
+
+    child:  isLoggedIn ? HomeScreen() : Onboarding(),
+  );
+    
   }
 }
+
+

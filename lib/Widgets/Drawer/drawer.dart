@@ -1,76 +1,72 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:onelink/Auth/SignUp.dart';
-import 'package:onelink/Screens/event_Screen/CreateEvent.dart';
-import 'package:onelink/Screens/job_Screen/CreateJob.dart';
-import 'package:onelink/Tabs/EventTab/EventTab.dart';
-import 'package:onelink/Tabs/JobPage/jobTAb.dart';
-import 'package:onelink/others/Terms%20&%20Conditons.dart';
-import 'package:onelink/others/settings.dart';
 import 'package:provider/provider.dart';
-import 'package:onelink/Screens/profile/profilePage.dart';
-import 'package:onelink/others/AccountSettingPage.dart';
-import 'package:onelink/others/FAQ.dart';
-import 'package:share/share.dart';
-import '../../Get/fetchdata.dart';
-import '../../constants/constants.dart';
+import '../../Auth/SignUp.dart';
+import '../../FetchDataProvider/fetchData.dart';
+import '../../Screen/event_Screen/CreateEvent.dart';
+import '../../Screen/profile/profilePage.dart';
+import '../../other/InvitePage.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-
-      width: 250,
+      width: 270.w,
       child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF888BF4), Colors.white30],
-          ),
-        ),
+        decoration: BoxDecoration(color: Colors.white),
         child: Consumer<UserFetchController>(
           builder: (context, userFetchController, _) {
             if (userFetchController.isDataFetched) {
               var myUser = userFetchController.myUser;
               return ListView(
-                padding: EdgeInsets.zero,
                 children: [
                   DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(myUser.profilePhotoUrl!),
-                          radius: MediaQuery.of(context).size.width * 0.085,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          myUser.name!,
-                          style: GoogleFonts.aladin(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
+                    padding: EdgeInsets.zero, // Remove default padding
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0), // Adjust padding as needed
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 8.0), // Add padding to the CircleAvatar
+                            child: CircleAvatar(
+                              backgroundImage: myUser.profilePicture != null
+                                  ? CachedNetworkImageProvider(
+                                      myUser.profilePicture!)
+                                  : AssetImage('Assets/images/Avatar.png')
+                                      as ImageProvider<Object>,
+                              radius: 26.r,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          myUser.email!,
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.027,
-                            color: Colors.black54,
+                          Text(
+                            myUser.name!,
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                              height:
+                                  3), // Add some space between the name and email
+                          Text(
+                            myUser.email!,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11.sp,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   ListTile(
@@ -80,39 +76,23 @@ class CustomDrawer extends StatelessWidget {
                         SizedBox(width: 15),
                         Text(
                           'Account',
-                          style: GoogleFonts.aladin(
-                            fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
                       print(myUser.phoneNumber);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return ProfileScreen(uid: myUser.userId.toString());
-                      },));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ProfileScreen(uid: myUser.userId.toString());
+                        },
+                      ));
                     },
                   ),
-                  Divider(),
-                  ListTile(
-                    title: Row(
-                      children: [
-                        FaIcon(FontAwesome.joget_brand),
-                        SizedBox(width: 15),
-                        Text(
-                          'Create Job',
-                          style: GoogleFonts.aladin(
-                            fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return JobPostingPage();
-                      },));
-                    },
-                  ),  Divider(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   ListTile(
                     title: Row(
                       children: [
@@ -120,37 +100,65 @@ class CustomDrawer extends StatelessWidget {
                         SizedBox(width: 15),
                         Text(
                           'Create Event',
-                          style: GoogleFonts.aladin(
-                            fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return CreateEventPage();
-                      },));
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return CreateEventPage();
+                        },
+                      ));
                     },
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.peopleGroup),
+                        FaIcon(Bootstrap.people),
                         SizedBox(width: 15),
                         Text(
                           'Invite Friends',
-                          style: GoogleFonts.aladin(
-                              fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
-                      Share.share('Check out this cool app!');
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(
+                              milliseconds: 500), // Adjust duration as needed
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const InvitePage(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            var begin = Offset(0.0, 1.0);
+                            var end = Offset.zero;
+                            var curve = Curves.ease;
+
+                            var tween = Tween(begin: begin, end: end).chain(
+                              CurveTween(curve: curve),
+                            );
+
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
                     },
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   ListTile(
                     title: Row(
                       children: [
@@ -158,78 +166,99 @@ class CustomDrawer extends StatelessWidget {
                         SizedBox(width: 15),
                         Text(
                           'FAQs',
-                          style: GoogleFonts.aladin(
-                              fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return FAQ_Page();
-                      },));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      //   return FAQ_Page();
+                      // },));
                     },
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.question),
+                        FaIcon(Clarity.help_outline_badged),
                         SizedBox(width: 15),
                         Text(
                           'Help',
-                          style: GoogleFonts.aladin(
-                              fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return TermsAndConditionsPage();
-                      },));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      //   return TermsAndConditionsPage();
+                      // },));
                     },
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.gear),
+                        FaIcon(Clarity.settings_line),
                         SizedBox(width: 15),
                         Text(
                           'Settings',
-                          style: GoogleFonts.aladin(
-                              fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return SettingsPage();
-                      },));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      //   return SettingsPage();
+                      // },));
                     },
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.signOutAlt),
+                        FaIcon(PixelArtIcons.logout),
                         SizedBox(width: 15),
                         Text(
-                          'Log Out',
-                          style: GoogleFonts.aladin(
-                              fontSize: MediaQuery.of(context).size.width * 0.05
-                          ),
+                          'Log out',
+                          style: GoogleFonts.inter(
+                              fontSize: 18.sp, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     onTap: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                        return SignUpPage();
-                      },));
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                        builder: (context) {
+                          return SignUpPage();
+                        },
+                      ));
                     },
                   ),
+                  Divider(),
+                  SizedBox(
+                    height: 22.h,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: FaIcon(
+                            Bootstrap.sun,
+                            color: Colors.red,
+                            size: 30,
+                          )),
+                    ),
+                  )
                 ],
               );
             } else {

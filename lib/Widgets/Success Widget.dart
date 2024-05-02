@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:onelink/Screens/profile/SetUpProfile/setupProfilePage.dart';
-import '../components/myButton.dart';
 
 class SuccessWidget extends StatefulWidget {
   final String text1;

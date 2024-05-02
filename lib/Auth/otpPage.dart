@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:onelink/Auth/OTP%20SUCESS.dart';
-import 'package:onelink/Screens/Home/BottomNavPage.dart';
-import 'package:onelink/Screens/profile/SetUpProfile/setupProfilePage.dart';
+
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
-
-import '../Get/fetchdata.dart';
+import 'package:velocity_x/velocity_x.dart';
+import '../FetchDataProvider/fetchData.dart';
+import '../Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
+import '../Services/FireStoreMethod.dart';
 import '../components/myButton.dart';
+import 'OTP SUCESS.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;
@@ -30,46 +33,51 @@ class _OTPScreenState extends State<OTPScreen> {
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height / 2.2, // Adjusted height
-              width: MediaQuery.of(context).size.width, // Adjusted height
-
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              child: Center(
-                child: Image.asset(
-                 "Assets/images/verification2.png",
-                  fit: BoxFit.fill, // Maintain aspect ratio while covering the container
-                ),
+            SizedBox(
+              height: 16.h,
+            ),
+            Center(
+              child: Image.asset(
+                //height:200.h,
+                "Assets/images/verification2.png",
+                fit: BoxFit
+                    .fill, // Maintain aspect ratio while covering the container
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
                 child: Text(
-                  "OTP Verification",
-                  style:
-                      GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.bold),
+                  "OTP Verificaton",
+                  style: TextStyle(
+                      fontFamily: 'InterRegular',
+                      color: Colors.black,
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.w700),
                 ),
               ),
-            ),  Padding(
-              padding: const EdgeInsets.only(left: 28.0,top: 15),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 28.0, top: 15),
               child: Row(
                 children: [
                   Text(
                     "Enter The OTP sent to ",
-                    style:
-                        GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.04, fontWeight: FontWeight.w400),
-                  ),Text(
+                    style: TextStyle(
+                        fontFamily: 'InterRegular',
+                        color: Color.fromARGB(255, 65, 65, 65),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700),
+                  ),
+                  Text(
                     "+91${widget.phone} ",
-                    style:
-                        GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.05, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontFamily: 'InterRegular',
+                        color: Color.fromARGB(255, 65, 65, 65),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
@@ -83,7 +91,8 @@ class _OTPScreenState extends State<OTPScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                         border: Border.all(width: 1))),
-                androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
+                androidSmsAutofillMethod:
+                    AndroidSmsAutofillMethod.smsRetrieverApi,
                 length: 6,
                 controller: _pinPutController,
               ),
@@ -94,30 +103,36 @@ class _OTPScreenState extends State<OTPScreen> {
                 children: [
                   Text(
                     "Didn't you recived the OTP?   ",
-                    style:
-                    GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.035, fontWeight: FontWeight.w400,color: Colors.grey),
+                    style: TextStyle(
+                        fontFamily: 'InterRegular',
+                        color: Color.fromARGB(255, 65, 65, 65),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700),
                   ),
                   TextButton(
-                    onPressed: () {  _resendOTP();},
+                    onPressed: () {
+                      _resendOTP();
+                    },
                     child: Text(
-                    "Resend OTP",
-                    style:
-                    GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*0.04, fontWeight: FontWeight.bold, color:Color(0xFF888BF4) ),
-                  ),
+                      "Resend OTP",
+                      style: TextStyle(
+                          fontFamily: 'InterRegular',
+                          color: Color.fromARGB(255, 244, 66, 66),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w700),
+                    ),
                   )
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: _verifyOTP,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: MyButton(
-                      onTap: () => _verifyOTP(),
-                      text: "Verify",
-                      color:Color(0xFF888BF4)),
+            ElevatedButton(
+              onPressed: _verifyOTP,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: MyButton(
+                  onTap: () => _verifyOTP(),
+                  text: "Verify",
+                  color: Color.fromARGB(255, 244, 66, 66),
                 ),
               ),
             ),
@@ -148,17 +163,36 @@ class _OTPScreenState extends State<OTPScreen> {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         String? phoneNumber = user.phoneNumber;
+        print(phoneNumber);
         if (phoneNumber != null) {
           bool isPhoneNumberRegistered =
               await isPhoneNumberAlreadyRegistered(phoneNumber);
           if (isPhoneNumberRegistered) {
             // Phone number is registered, navigate to home page
-            // Provider.of<UserFetchController>(context, listen: false).fetchUserData();
+            Provider.of<UserFetchController>(context, listen: false)
+                .fetchUserData();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           } else {
+            FireStoreMethods().createUser(
+                userId: FirebaseAuth.instance.currentUser!.uid,
+                name: '',
+                dateOfBirth: '',
+                gender: '',
+                email: '',
+                phoneNumber: '${FirebaseAuth.instance.currentUser!.phoneNumber}',
+                occupation: '',
+                state: '',
+                district: '',
+                profilePicture: '',
+                bio: '',
+                achievements: '',
+                instagramLink: '',
+                linkedinLink: '',
+                IsVerified: false,
+                context: context);
             // Phone number is not registered, navigate to setup profile page
             Navigator.pushReplacement(
               context,
@@ -198,6 +232,7 @@ class _OTPScreenState extends State<OTPScreen> {
       return false;
     }
   }
+
   void _resendOTP() async {
     try {
       // Send OTP to the user's phone number again
@@ -222,7 +257,8 @@ class _OTPScreenState extends State<OTPScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => OTPScreen(phone: widget.phone, verificationId: verificationId),
+              builder: (context) => OTPScreen(
+                  phone: widget.phone, verificationId: verificationId),
             ),
           );
         },
@@ -238,6 +274,4 @@ class _OTPScreenState extends State<OTPScreen> {
       );
     }
   }
-
-
 }
