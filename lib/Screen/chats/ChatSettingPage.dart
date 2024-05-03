@@ -1,24 +1,46 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/components/MyToast.dart';
+
+import '../../Services/FireStoreMethod.dart';
+import 'check_block_Controller.dart';
 
 class ChatSettingsPage extends StatefulWidget {
   final String UserName;
   final String ProfilePicture;
   final String UId;
-  const ChatSettingsPage({super.key, required this.UserName, required this.ProfilePicture, required this.UId});
+  const ChatSettingsPage(
+      {super.key,
+      required this.UserName,
+      required this.ProfilePicture,
+      required this.UId});
 
   @override
   State<ChatSettingsPage> createState() => _ChatSettingsPageState();
 }
 
 class _ChatSettingsPageState extends State<ChatSettingsPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    final CheckBlockController _checkBlockController =
+        Get.put(CheckBlockController());
+    _checkBlockController.checkBlockUser(widget.UId);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final CheckBlockController _checkBlockController =
+        Get.put(CheckBlockController());
     return Scaffold(
       appBar: AppBar(),
       body: Column(
@@ -32,8 +54,8 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
               children: [
                 Center(
                   child: CircleAvatar(
-                    backgroundImage: CachedNetworkImageProvider(widget.ProfilePicture),
-
+                    backgroundImage:
+                        CachedNetworkImageProvider(widget.ProfilePicture),
                     radius: 56.r,
                   ),
                 ),
@@ -64,7 +86,10 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                                     color: Colors.white,
                                     size: 30,
                                   ))),
-                          Text('Audio',style: TextStyle(color: Colors.grey[400]),)
+                          Text(
+                            'Audio',
+                            style: TextStyle(color: Colors.grey[400]),
+                          )
                         ],
                       ),
                       Column(
@@ -79,7 +104,10 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                                     color: Colors.white,
                                     size: 30,
                                   ))),
-                          Text('Video',style: TextStyle(color: Colors.grey),)
+                          Text(
+                            'Video',
+                            style: TextStyle(color: Colors.grey),
+                          )
                         ],
                       ),
                       Column(
@@ -93,7 +121,11 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                                     FontAwesomeIcons.bell,
                                     color: Colors.white,
                                     size: 30,
-                                  ))),      Text('Audio',style: TextStyle(color: Colors.grey),)
+                                  ))),
+                          Text(
+                            'Audio',
+                            style: TextStyle(color: Colors.grey),
+                          )
                         ],
                       ),
                     ],
@@ -103,7 +135,7 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
             ),
           ),
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 12.0),
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -113,7 +145,7 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                       fontSize: 17.sp, fontWeight: FontWeight.w500),
                 ),
                 Padding(
-                  padding:  EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: CircleAvatar(
                       backgroundColor: Colors.grey[200],
                       child: IconButton(
@@ -124,8 +156,8 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
               ],
             ),
           ),
-             Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 12.0),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -135,7 +167,7 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                       fontSize: 17.sp, fontWeight: FontWeight.w500),
                 ),
                 Padding(
-                  padding:  EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: CircleAvatar(
                       backgroundColor: Colors.grey[200],
                       child: IconButton(
@@ -146,31 +178,78 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
               ],
             ),
           ),
-           Text("Privacy", style: GoogleFonts.inter(
-               fontWeight: FontWeight.w700, fontSize: 14.sp,color: Colors.grey[500])),
-           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 12.0),
+          Text("Privacy",
+              style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.sp,
+                  color: Colors.grey[500])),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Block',
-                  style: GoogleFonts.inter(
-                      fontSize: 17.sp, fontWeight: FontWeight.w500),
+                Obx(
+                  () => _checkBlockController.isBlocked.value
+                      ? Text(
+                          'Unblock',
+                          style: GoogleFonts.inter(
+                              fontSize: 17.sp, fontWeight: FontWeight.w500),
+                        )
+                      : Text(
+                          'Block',
+                          style: GoogleFonts.inter(
+                              fontSize: 17.sp, fontWeight: FontWeight.w500),
+                        ),
                 ),
                 Padding(
-                  padding:  EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: CircleAvatar(
                       backgroundColor: Colors.grey[200],
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: FaIcon(Icons.block,color: Colors.red,),
+                      child: Obx(
+                        () => IconButton(
+                          onPressed: () async {
+                            var currentUserUid =
+                                FirebaseAuth.instance.currentUser!.uid;
+                            var userDoc = FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(currentUserUid);
+                            var userInfo = await userDoc.get();
+
+                            // Check if the user's UID is not in the "block" array
+                            List<dynamic> blockedUsers = userInfo[
+                                    'blockUsers'] ??
+                                []; // If 'block' doesn't exist yet, default to an empty list
+                            if (!blockedUsers.contains(widget.UId)) {
+                              // User is not already blocked, proceed with blocking
+                              await FireStoreMethods().blockUser(widget.UId);
+                              ToastUtil.showToastMessage(
+                                  'User Blocked Successfully');
+                            } else {
+                              // User is already blocked, proceed with unblocking
+                              await FireStoreMethods().unblockUser(widget.UId);
+                              ToastUtil.showToastMessage(
+                                  'User Unblocked Successfully');
+                              print('User is already blocked.');
+                              // Optionally, you can show a message to the user indicating that the user is already blocked.
+                            }
+                          },
+                          icon: _checkBlockController.isBlocked.value
+                              ? FaIcon(
+                                  Icons.block,
+                                  color: Colors.black,
+                                )
+                              : FaIcon(
+                                  Icons.block,
+                                  color: Colors.red,
+                                ),
+                        ),
                       )),
                 )
               ],
             ),
-          ), Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 12.0),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -180,12 +259,15 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                       fontSize: 17.sp, fontWeight: FontWeight.w500),
                 ),
                 Padding(
-                  padding:  EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: CircleAvatar(
                       backgroundColor: Colors.grey[200],
                       child: IconButton(
                         onPressed: () {},
-                        icon: FaIcon(AntDesign.notification_fill,color: Colors.red,),
+                        icon: FaIcon(
+                          AntDesign.notification_fill,
+                          color: Colors.red,
+                        ),
                       )),
                 )
               ],

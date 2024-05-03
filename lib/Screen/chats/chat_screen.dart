@@ -8,13 +8,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:onelink/Screen/profile/ChatSettingPage.dart';
+import 'package:onelink/Screen/chats/ChatSettingPage.dart';
+import 'package:onelink/Screen/chats/check_block_Controller.dart';
 import 'package:path_provider/path_provider.dart';
-import '../profile/profilePage.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatRoomId;
@@ -24,10 +25,10 @@ class ChatScreen extends StatefulWidget {
 
   const ChatScreen(
       {Key? key,
-      required this.chatRoomId,
-      required this.UserName,
-      required this.ProfilePicture,
-      required this.UId})
+        required this.chatRoomId,
+        required this.UserName,
+        required this.ProfilePicture,
+        required this.UId})
       : super(key: key);
 
   @override
@@ -38,6 +39,8 @@ class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController _messageController;
   late ScrollController _scrollController;
   late StreamController<QuerySnapshot>? _streamController;
+  late TextEditingController _searchController;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -46,6 +49,11 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _streamController = StreamController<QuerySnapshot>();
+    _searchController = TextEditingController();
+    final CheckBlockController _checkBlockController =
+    Get.put(CheckBlockController());
+
+    _checkBlockController.checkBlockUser(widget.UId);
     _fetchTargetUserInfo(); // Fetch the target user's info
   }
 
@@ -55,12 +63,13 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _streamController?.close();
+    _searchController.dispose();
     super.dispose();
   }
 
   void _scrollListener() {
     if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       // Implement any logic you need when scrolling reaches the bottom
     }
@@ -134,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference storageReference =
-          FirebaseStorage.instance.ref().child('images/$fileName.jpg');
+      FirebaseStorage.instance.ref().child('images/$fileName.jpg');
       UploadTask uploadTask = storageReference.putFile(imageFile);
       TaskSnapshot taskSnapshot = await uploadTask;
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -162,6 +171,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final CheckBlockController _checkBlockController =
+    Get.put(CheckBlockController());
+
     _fetchMessages(); // Initial fetch of messages
 
     return Scaffold(
@@ -182,7 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               CircleAvatar(
                 backgroundImage:
-                    CachedNetworkImageProvider(widget.ProfilePicture),
+                CachedNetworkImageProvider(widget.ProfilePicture),
               ),
               SizedBox(width: 8.w),
               Text(
@@ -210,63 +222,104 @@ class _ChatScreenState extends State<ChatScreen> {
               ))
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _streamController!.stream,
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+      body: Obx(() {
+        if (_checkBlockController.isBlocked.value) {
+          return Center(
+            child: Text("This User is currently Blocked"),
+          );
+        } else {
+          return Column(
+            children: [
+              TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search in chat...',
+                  prefixIcon: Icon(Icons.search),
+                ),
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _buildQuery().snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
 
-                WidgetsBinding.instance!.addPostFrameCallback((_) {
-                  _scrollController.animateTo(
-                    _scrollController.position.maxScrollExtent,
-                    duration: Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                  );
-                });
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                      );
+                    });
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> data = snapshot.data!.docs[index]
-                        .data() as Map<String, dynamic>;
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> data =
+                        snapshot.data!.docs[index].data()
+                        as Map<String, dynamic>;
 
-                    // Check if the message sender is the current user
-                    bool isCurrentUser = data['senderUid'] ==
-                        FirebaseAuth.instance.currentUser!.uid;
+                        // Check if the message sender is the current user
+                        bool isCurrentUser = data['senderUid'] ==
+                            FirebaseAuth.instance.currentUser!.uid;
 
-                    return Row(
-                      mainAxisAlignment: isCurrentUser
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
-                      children: [
-                        BubbleMessage(
-                          isCurrentUser: isCurrentUser,
-                          sender: isCurrentUser ? 'You' : '',
-                          targetUserName: isCurrentUser ? '' : widget.UserName,
-                          text: data['message'],
-                          imageUrl: data['imageUrl'],
-                          timestamp: data['timestamp'],
-                        ),
-                      ],
+                        return Row(
+                          mainAxisAlignment: isCurrentUser
+                              ? MainAxisAlignment.end
+                              : MainAxisAlignment.start,
+                          children: [
+                            BubbleMessage(
+                              isCurrentUser: isCurrentUser,
+                              sender: isCurrentUser ? 'You' : '',
+                              targetUserName: isCurrentUser
+                                  ? ''
+                                  : widget.UserName,
+                              text: data['message'],
+                              imageUrl: data['imageUrl'],
+                              timestamp: data['timestamp'],
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
-          ),
-          _buildMessageComposer(), // Pass context and image picker
-        ],
-      ),
+                ),
+              ),
+              Visibility(
+                child: _buildMessageComposer(),
+                visible: !_checkBlockController.isBlocked.value,
+              )
+            ],
+          );
+        }
+      }),
     );
+  }
+
+  Query _buildQuery() {
+    // Build Firestore query based on _searchQuery
+    Query query = FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(widget.chatRoomId)
+        .collection('messages')
+        .orderBy('timestamp');
+
+    if (_searchQuery.isNotEmpty) {
+      query = query.where('message', isEqualTo: _searchQuery);
+    }
+
+    return query;
   }
 
   Widget _buildMessageComposer() {
@@ -295,7 +348,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: TextField(
               controller: _messageController,
               decoration:
-                  InputDecoration.collapsed(hintText: 'Type your message here'),
+              InputDecoration.collapsed(hintText: 'Type your message here'),
             ),
           ),
           Row(

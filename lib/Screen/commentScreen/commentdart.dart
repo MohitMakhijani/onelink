@@ -54,24 +54,21 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF888BF4),
-        title:  Text('Comments',style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.05),),
+      backgroundColor: Colors.white,
+        title:  Text('Comments',style: GoogleFonts.inter(fontSize: MediaQuery.of(context).size.width*0.05),),
         centerTitle: false,
       ),
       body: Column(
         children: [
           Container(width: MediaQuery.of(context).size.width * 1.1,
             height: MediaQuery.of(context).size.width * 0.7,
-            color: Colors.grey[400],
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Container(
 
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(widget.image),
-                    fit: BoxFit.cover,
-                  ),
+            child: Container(
+
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(widget.image),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

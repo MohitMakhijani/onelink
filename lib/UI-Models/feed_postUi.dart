@@ -62,6 +62,7 @@ class _PostCardState extends State<PostCard> {
     descriptionController.dispose();
     super.dispose();
   }
+
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -77,23 +78,22 @@ class _PostCardState extends State<PostCard> {
                   title: Text('Save'),
                   onTap: () async {
                     Navigator.pop(context);
-
                   },
                 ),
               ),
-              ListTile(
-                leading: Icon(Bootstrap.person),
-                title: Text('follow'),
-                onTap: () async {
-                  FireStoreMethods().followUser(
-                    FirebaseAuth
-                        .instance.currentUser!.uid,
-                    widget.uid,
-                  );
-                  Navigator.pop(context);
-                  // await FireStoreMethods().unfollowUser(currentUserUid, targetUserUid)
-                },
-              ),
+              if (widget.uid != FirebaseAuth.instance.currentUser!.uid)
+                ListTile(
+                  leading: Icon(Bootstrap.person),
+                  title: Text('follow'),
+                  onTap: () async {
+                    FireStoreMethods().followUser(
+                      FirebaseAuth.instance.currentUser!.uid,
+                      widget.uid,
+                    );
+                    Navigator.pop(context);
+                    // await FireStoreMethods().unfollowUser(currentUserUid, targetUserUid)
+                  },
+                ),
               ListTile(
                 leading: Icon(Icons.delete),
                 title: Text('Add to Favorites'),
@@ -115,41 +115,50 @@ class _PostCardState extends State<PostCard> {
                   Navigator.pop(context);
                   postController.toggleEditing(widget.postId, true);
                 },
-              ),  if(widget.uid!=FirebaseAuth.instance.currentUser!.uid)
-              ListTile(
-                leading: Icon(Icons.report,color: Colors.red,),
-                title: Text('Report'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReportPostScreen(
-                        uid: widget.uid,
-                        postId: widget.postId,
+              ),
+              if (widget.uid != FirebaseAuth.instance.currentUser!.uid)
+                ListTile(
+                  leading: Icon(
+                    Icons.report,
+                    color: Colors.red,
+                  ),
+                  title: Text('Report'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReportPostScreen(
+                          uid: widget.uid,
+                          postId: widget.postId,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-
-              if(widget.uid==FirebaseAuth.instance.currentUser!.uid)
-              ListTile(
-                leading: Icon(Icons.delete,color: Colors.red,),
-                title: Text('Delete'),
-                onTap: () async {
-
-                  await FirebaseFirestore.instance.collection('posts').doc(widget.postId).delete();
-ToastUtil.showToastMessage('Post deleted successfully');
-                  Navigator.pop(context);
-                },
-              ),
+                    );
+                  },
+                ),
+              if (widget.uid == FirebaseAuth.instance.currentUser!.uid)
+                ListTile(
+                  leading: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                  title: Text('Delete'),
+                  onTap: () async {
+                    await FirebaseFirestore.instance
+                        .collection('posts')
+                        .doc(widget.postId)
+                        .delete();
+                    ToastUtil.showToastMessage('Post deleted successfully');
+                    Navigator.pop(context);
+                  },
+                ),
             ],
           ),
         );
       },
     );
   }
+
   void _openImageFullScreen(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
@@ -281,7 +290,9 @@ ToastUtil.showToastMessage('Post deleted successfully');
                                           isLiked
                                               ? Icons.favorite
                                               : Icons.favorite_border,
-                                          color: isLiked ? Colors.red : Colors.black,
+                                          color: isLiked
+                                              ? Colors.red
+                                              : Colors.black,
                                           size: 30,
                                         ),
                                         Padding(
@@ -409,7 +420,13 @@ ToastUtil.showToastMessage('Post deleted successfully');
                             )
                           : Row(
                               children: [
-                                Text(widget.username,style: GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 16.sp)),SizedBox(width: 8.w,),
+                                Text(widget.username,
+                                    style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                                SizedBox(
+                                  width: 8.w,
+                                ),
                                 LinkText(
                                   description: widget.description,
                                   IsShowingDes: postController
@@ -438,7 +455,9 @@ ToastUtil.showToastMessage('Post deleted successfully');
                     ],
                   ),
                 ),
-               SizedBox(height: 5.h,)
+                SizedBox(
+                  height: 5.h,
+                )
               ],
             );
           },

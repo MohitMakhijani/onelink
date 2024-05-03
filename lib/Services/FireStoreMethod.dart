@@ -245,6 +245,42 @@ class FireStoreMethods {
     }
   }
 
+  Future<void> blockUser(String uid) async {
+    final currentUser = FirebaseAuth.instance.currentUser!.uid;
+    var userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser);
+print(currentUser);
+    // Check if the 'blockUser' field exists
+    var userData = await userDoc.get();
+    if (!userData.exists || userData.data()!['blockUsers'] == null) {
+      // If 'blockUser' field doesn't exist or is null, create a new array with the given UID
+      await userDoc.set({
+        'blockUsers': [uid],
+      }, SetOptions(merge: true)); // Merge the new data with existing data
+    } else {
+      // If 'blockUser' field exists, add the UID to the array
+      await userDoc.update({
+        'blockUsers': FieldValue.arrayUnion([uid]),
+      });
+    }
+  }
+
+  Future<void> unblockUser(String uid) async {
+    final currentUser = FirebaseAuth.instance.currentUser!.uid;
+    var userDoc = FirebaseFirestore.instance.collection('users').doc(currentUser);
+
+    // Check if the 'blockUser' field exists
+    var userData = await userDoc.get();
+    if (userData.exists && userData.data()!['blockUsers'] != null) {
+      // If 'blockUser' field exists and is not null, remove the UID from the array
+      await userDoc.update({
+        'blockUsers': FieldValue.arrayRemove([uid]),
+      });
+    }
+  }
+
+
+
+
   Future<void> createUser({
     required String userId,
     required String name,
@@ -305,22 +341,22 @@ class FireStoreMethods {
       }
 
       var user = UserModel(
-          IsVerified: false,
-          userId: userId,
-          name: name,
-          dateOfBirth: dateOfBirth,
-          gender: gender,
-          email: email,
-          phoneNumber: phoneNumber,
-          occupation: occupation,
-          state: state,
-          district: district,
-          profilePicture: profilePicture,
-          bio: bio,
-          achievements: achievements,
-          instagramLink: instagramLink,
-          linkedinLink: linkedinLink,
-         );
+        IsVerified: false,
+        userId: userId,
+        name: name,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        email: email,
+        phoneNumber: phoneNumber,
+        occupation: occupation,
+        state: state,
+        district: district,
+        profilePicture: profilePicture,
+        bio: bio,
+        achievements: achievements,
+        instagramLink: instagramLink,
+        linkedinLink: linkedinLink,
+      );
 
       await FirebaseFirestore.instance
           .collection('users')
@@ -486,7 +522,7 @@ class FireStoreMethods {
     String entryClass,
     String entryYear,
     String house,
-      String NavodhyaId,
+    String NavodhyaId,
   ) async {
     try {
       final CurrentUserId = FirebaseAuth.instance.currentUser!.uid;
@@ -506,7 +542,6 @@ class FireStoreMethods {
       });
 
       print('User data updated successfully');
-
     } catch (e) {
       print('Error updating user data: $e');
       throw e; // Propagate the error for handling at a higher level if needed
