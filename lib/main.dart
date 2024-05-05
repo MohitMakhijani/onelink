@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:onelink/Screen/spalshscreen.dart';
 import 'package:provider/provider.dart';
 import 'FetchDataProvider/fetchData.dart';
 import 'Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
@@ -111,7 +112,7 @@ builder: (context, child) => MaterialApp(
   
 ),
 
-    child:  isLoggedIn ? HomeScreen() : Onboarding(),
+    child:  isLoggedIn ? HomeScreen() : spalshscreen(),
   );
     
   }
