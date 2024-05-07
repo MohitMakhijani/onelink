@@ -11,17 +11,19 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:onelink/components/MyToast.dart';
 
 import '../../Services/FireStoreMethod.dart';
+import 'ChatMediaPage.dart';
 import 'check_block_Controller.dart';
 
 class ChatSettingsPage extends StatefulWidget {
   final String UserName;
   final String ProfilePicture;
+  final String chatroomId;
   final String UId;
   const ChatSettingsPage(
       {super.key,
       required this.UserName,
       required this.ProfilePicture,
-      required this.UId});
+      required this.UId, required this.chatroomId});
 
   @override
   State<ChatSettingsPage> createState() => _ChatSettingsPageState();
@@ -47,7 +49,7 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: 250.h,
+            height: 230.h,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +58,7 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                   child: CircleAvatar(
                     backgroundImage:
                         CachedNetworkImageProvider(widget.ProfilePicture),
-                    radius: 56.r,
+                    radius: 45.r,
                   ),
                 ),
                 Center(
@@ -78,13 +80,13 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                         children: [
                           CircleAvatar(
                               backgroundColor: Colors.grey[400],
-                              radius: 25.r,
+                              radius: 20.r,
                               child: IconButton(
                                   onPressed: () {},
                                   icon: FaIcon(
                                     Icons.call,
                                     color: Colors.white,
-                                    size: 30,
+                                    size: 25,
                                   ))),
                           Text(
                             'Audio',
@@ -96,13 +98,13 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                         children: [
                           CircleAvatar(
                               backgroundColor: Colors.grey[400],
-                              radius: 25.r,
+                              radius: 20.r,
                               child: IconButton(
                                   onPressed: () {},
                                   icon: FaIcon(
                                     Icons.videocam,
                                     color: Colors.white,
-                                    size: 30,
+                                    size: 25,
                                   ))),
                           Text(
                             'Video',
@@ -114,13 +116,13 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                         children: [
                           CircleAvatar(
                               backgroundColor: Colors.grey[400],
-                              radius: 25.r,
+                              radius: 20.r,
                               child: IconButton(
                                   onPressed: () {},
                                   icon: FaIcon(
                                     FontAwesomeIcons.bell,
                                     color: Colors.white,
-                                    size: 30,
+                                    size: 25,
                                   ))),
                           Text(
                             'Audio',
@@ -149,30 +151,10 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                   child: CircleAvatar(
                       backgroundColor: Colors.grey[200],
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return ChatMediaPage(chatRoomId: widget.chatroomId,);
+                        },));},
                         icon: FaIcon(Iconsax.gallery_add_bold),
-                      )),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Search in Conversation',
-                  style: GoogleFonts.inter(
-                      fontSize: 17.sp, fontWeight: FontWeight.w500),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                      backgroundColor: Colors.grey[200],
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: FaIcon(Icons.search),
                       )),
                 )
               ],

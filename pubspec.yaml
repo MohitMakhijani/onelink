@@ -90,7 +90,6 @@ dependencies:
   csc_picker: ^0.2.7
   wechat_assets_picker: ^9.0.3
   image_crop: ^0.4.1
-  location: ^6.0.1
 
 
 

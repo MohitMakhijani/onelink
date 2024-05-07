@@ -23,13 +23,13 @@ class ChatScreen extends StatefulWidget {
   final String ProfilePicture;
   final String UId;
 
-  const ChatScreen(
-      {Key? key,
-        required this.chatRoomId,
-        required this.UserName,
-        required this.ProfilePicture,
-        required this.UId})
-      : super(key: key);
+  const ChatScreen({
+    Key? key,
+    required this.chatRoomId,
+    required this.UserName,
+    required this.ProfilePicture,
+    required this.UId,
+  }) : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -39,8 +39,6 @@ class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController _messageController;
   late ScrollController _scrollController;
   late StreamController<QuerySnapshot>? _streamController;
-  late TextEditingController _searchController;
-  String _searchQuery = '';
 
   @override
   void initState() {
@@ -48,8 +46,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController = TextEditingController();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _streamController = StreamController<QuerySnapshot>();
-    _searchController = TextEditingController();
     final CheckBlockController _checkBlockController =
     Get.put(CheckBlockController());
 
@@ -63,7 +59,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _streamController?.close();
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -181,14 +176,15 @@ class _ChatScreenState extends State<ChatScreen> {
         title: GestureDetector(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatSettingsPage(
-                    UId: widget.UId,
-                    UserName: widget.UserName,
-                    ProfilePicture: widget.ProfilePicture,
-                  ),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatSettingsPage(
+                  UId: widget.UId,
+                  UserName: widget.UserName,
+                  ProfilePicture: widget.ProfilePicture, chatroomId: widget.chatRoomId,
+                ),
+              ),
+            );
           },
           child: Row(
             children: [
@@ -200,26 +196,29 @@ class _ChatScreenState extends State<ChatScreen> {
               Text(
                 widget.UserName,
                 style: GoogleFonts.inter(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black),
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: FaIcon(
-                Icons.videocam_outlined,
-                size: 30,
-              )),
+            onPressed: () {},
+            icon: FaIcon(
+              Icons.videocam_outlined,
+              size: 30,
+            ),
+          ),
           IconButton(
-              onPressed: () {},
-              icon: FaIcon(
-                Icons.local_phone_outlined,
-                size: 30,
-              ))
+            onPressed: () {},
+            icon: FaIcon(
+              Icons.local_phone_outlined,
+              size: 30,
+            ),
+          )
         ],
       ),
       body: Obx(() {
@@ -230,21 +229,14 @@ class _ChatScreenState extends State<ChatScreen> {
         } else {
           return Column(
             children: [
-              TextField(
-                controller: _searchController,
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search in chat...',
-                  prefixIcon: Icon(Icons.search),
-                ),
-              ),
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _buildQuery().snapshots(),
+                  stream: FirebaseFirestore.instance
+                      .collection('chatRooms')
+                      .doc(widget.chatRoomId)
+                      .collection('messages')
+                      .orderBy('timestamp')
+                      .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -307,21 +299,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Query _buildQuery() {
-    // Build Firestore query based on _searchQuery
-    Query query = FirebaseFirestore.instance
-        .collection('chatRooms')
-        .doc(widget.chatRoomId)
-        .collection('messages')
-        .orderBy('timestamp');
-
-    if (_searchQuery.isNotEmpty) {
-      query = query.where('message', isEqualTo: _searchQuery);
-    }
-
-    return query;
-  }
-
   Widget _buildMessageComposer() {
     final picker = ImagePicker();
 
@@ -373,7 +350,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
-
 class BubbleMessage extends StatelessWidget {
   final bool isCurrentUser;
   final String sender;
@@ -404,7 +380,7 @@ class BubbleMessage extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 2),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(7)),
-          color: isCurrentUser ? Colors.red : Colors.grey[200],
+          color: isCurrentUser ? Colors.grey[200] : Colors.grey[200],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,11 +402,15 @@ class BubbleMessage extends StatelessWidget {
                 ),
               ),
             if (text.isNotEmpty)
-              Text(
-                text,
-                style: TextStyle(
-                    color: isCurrentUser == true ? Colors.white : Colors.black,
-                    fontSize: 15.sp),
+              Container(
+                constraints: BoxConstraints(maxWidth: 250.w), // Adjust width as needed
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: isCurrentUser == true ? Colors.black : Colors.black,
+                    fontSize: 15.sp,
+                  ),
+                ),
               ),
             const SizedBox(height: 4),
             Text(
@@ -438,7 +418,7 @@ class BubbleMessage extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 10.sp,
-                color: isCurrentUser == true ? Colors.white : Colors.black,
+                color: isCurrentUser == true ? Colors.black : Colors.black,
               ),
             ),
           ],

@@ -226,6 +226,7 @@ class FireStoreMethods {
           .doc(currentUserUid)
           .set({
         'showEmail': true,
+        'showInstagram': true,
         'showPhone': true,
         'showLinkedin': true,
         'followers': [], // Initialize with an empty array
@@ -236,6 +237,7 @@ class FireStoreMethods {
           .collection('users')
           .doc(currentUserUid)
           .set({
+        'blockUsers':[],
         'following': [], // Initialize with an empty array
       }, SetOptions(merge: true)); // Merge with existing document if it exists
 

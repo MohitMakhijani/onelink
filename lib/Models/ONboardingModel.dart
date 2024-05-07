@@ -8,12 +8,12 @@ class UnbordingContent {
 
 List<UnbordingContent> contents = [
   UnbordingContent(
-      title: "Welcome to JNV Diaries Your\n Hub For Seamless Connections. We\n are glad you’re here",
+      title: "Welcome to StartUp Podero Your\n Hub For Seamless Connections. We\n are glad you’re here",
       image: 'Assets/images/onboard1.svg',
      
   ),
   UnbordingContent(
-      title: ' simplify your great ideas on JNV Diaries',
+      title: ' simplify your great ideas on StartUp Podero',
       image: 'Assets/images/onboard2.svg',
      
   ),

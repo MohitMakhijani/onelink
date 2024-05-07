@@ -8,16 +8,12 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:onelink/Tabs/CommunityTab/CommunityList.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-
 import '../../FetchDataProvider/fetchData.dart';
-import '../../Tabs/Add Post/adddPost.dart';
 import '../../Tabs/ChatTab/chatPage.dart';
 import '../../Tabs/EventTab/EventTab.dart';
 import '../../Tabs/FeedPaGE/FeedPage.dart';
 import '../../Tabs/JobTab/JobTab.dart';
 import '../../Widgets/Drawer/drawer.dart';
-
-import '../../create community.dart';
 import '../Add Post/adddPost.dart';
 import '../Notifications/Notificationsd.dart';
 import '../SearchPage/SearchTab.dart';
@@ -75,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }),
         title: Text(
-          "Start-Up Podero",
+          "StartUp Podero",
           style:
               GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w700),
         ),

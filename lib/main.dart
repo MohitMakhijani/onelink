@@ -33,7 +33,7 @@ void main() async{
       ),
     );
   } on FirebaseException catch (e) {
-    if (e.code == 'duplicate-app') {
+    if (e.code == 'duplicate-ap0000p') {
       await Firebase.initializeApp();
     }
   }*/
@@ -111,7 +111,7 @@ builder: (context, child) => MaterialApp(
   
 ),
 
-    child:  isLoggedIn ? HomeScreen() : Onboarding(),
+    child:  isLoggedIn ? Onboarding() : Onboarding(),
   );
     
   }

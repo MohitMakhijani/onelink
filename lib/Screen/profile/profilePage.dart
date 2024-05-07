@@ -85,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => Settings1(
-                      Image: userData['profilePicture'],
+                      image: userData['profilePicture'],
                       email: userData['email'],
                       name: userData['name'],
                     ),
@@ -96,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
         ],
         title: Text(
-          "J.N.V",
+          "StartUp Podero",
           style: GoogleFonts.inter(color: Colors.black),
         ),
         centerTitle: true,
@@ -175,32 +175,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style: TextStyle(fontSize: 16, color: Colors.black),
                           maxLines: 15,
                         ),
-                        SizedBox(height: 8.h),
                         if (userData['showEmail'] == true)
-                          Text(
-                            "Email: ${userData['email'] ?? ''}",
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Email: ${userData['email'] ?? ''}",
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                            ),
                           ),
-                        SizedBox(height: 10.h),
-                        if (userData['showLinkedin'] == true)
-                          LinkText1(
-                            description:
-                                "${userData['linkedinLink'] ?? 'LinkedIn :'}",
-                            IsShowingDes: true,
+
+                        if (userData['showLinkedin'] == false)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: LinkText1(
+                              description:
+                                  "${userData['linkedinLink'] ?? 'LinkedIn :'}",
+                              IsShowingDes: true,
+                            ),
                           ),
-                        SizedBox(height: 10.h),
-                        if (userData['showPhone'] == true)
-                          LinkText1(
-                            description:
-                                "${userData['phoneNumber'] ?? 'phoneNumber :'}",
-                            IsShowingDes: true,
+                        if (userData['showPhone'] == false)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: LinkText1(
+                              description:
+                                  "${userData['phoneNumber'] ?? 'phoneNumber :'}",
+                              IsShowingDes: true,
+                            ),
                           ),
-                        SizedBox(height: 10.h),
-                        if (userData['instagramLink'] == true)
-                          LinkText1(
-                            description:
-                                "${userData['phoneNumber'] ?? 'phoneNumber :'}",
-                            IsShowingDes: true,
+                        if (userData['showInstagram'] == false)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: LinkText1(
+                              description:
+                                  "${userData['instagramLink'] ?? 'instagramLink :'}",
+                              IsShowingDes: true,
+                            ),
                           ),
                         SizedBox(height: 10.h),
                         Padding(
@@ -292,8 +301,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 builder: (context) {
                                   return Scaffold(
                                     appBar: AppBar(
-                                      title: Text('Posts'),
-                                      backgroundColor: Color(0xFF888BF4),
+                                      title: Text('Posts',style: GoogleFonts.inter(fontSize: 17.sp),),
+
                                     ),
                                     body: PostCard(
                                       username: snap['username'],

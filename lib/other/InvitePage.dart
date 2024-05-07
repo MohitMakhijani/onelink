@@ -32,7 +32,7 @@ class _InvitePageState extends State<InvitePage> {
       body: Column(
         children: [
           SvgPicture.asset(
-height:380.h,
+height:340.h,
             'Assets/images/invite.svg',
 
             fit: BoxFit.contain,

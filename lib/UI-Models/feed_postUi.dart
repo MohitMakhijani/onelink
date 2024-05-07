@@ -71,15 +71,12 @@ class _PostCardState extends State<PostCard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  leading: Icon(Bootstrap.save),
-                  title: Text('Save'),
-                  onTap: () async {
-                    Navigator.pop(context);
-                  },
-                ),
+              ListTile(
+                leading: Icon(Bootstrap.save),
+                title: Text('Save'),
+                onTap: () async {
+                  Navigator.pop(context);
+                },
               ),
               if (widget.uid != FirebaseAuth.instance.currentUser!.uid)
                 ListTile(
@@ -94,20 +91,8 @@ class _PostCardState extends State<PostCard> {
                     // await FireStoreMethods().unfollowUser(currentUserUid, targetUserUid)
                   },
                 ),
-              ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Add to Favorites'),
-                onTap: () async {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.hide_image_outlined),
-                title: Text('Hide'),
-                onTap: () async {
-                  Navigator.pop(context);
-                },
-              ),
+
+              if (widget.uid == FirebaseAuth.instance.currentUser!.uid)
               ListTile(
                 leading: Icon(Icons.edit),
                 title: Text('Edit'),

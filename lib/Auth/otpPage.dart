@@ -106,7 +106,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     style: TextStyle(
                         fontFamily: 'InterRegular',
                         color: Color.fromARGB(255, 65, 65, 65),
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700),
                   ),
                   TextButton(
@@ -118,7 +118,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       style: TextStyle(
                           fontFamily: 'InterRegular',
                           color: Color.fromARGB(255, 244, 66, 66),
-                          fontSize: 16.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w700),
                     ),
                   )

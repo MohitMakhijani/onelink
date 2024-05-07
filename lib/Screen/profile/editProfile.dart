@@ -38,6 +38,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   bool _hideEmail = false;
   bool _hidePhone = false;
+  bool _hideinstagram = false;
   bool _hideLinkedIn = false;
 
   @override
@@ -65,6 +66,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _myUser.profilePicture != null ? File(_myUser.profilePicture!) : null;
     _hideEmail = _myUser.showEmail;
     _hidePhone = _myUser.showPhone;
+    _hideinstagram = _myUser.showInstagram;
     _hideLinkedIn = _myUser.showLinkedin;
   }
 
@@ -167,12 +169,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                       ),
                       Positioned(
-                        left: 135,
+                        left: MediaQuery.of(context).size.width/3.2,
                         top: 25,
                         child: GestureDetector(
                           onTap: _selectImage,
                           child: CircleAvatar(
-                            radius: 70,
+                            radius: MediaQuery.of(context).size.width/5,
                             backgroundColor: Colors.grey[200],
                             backgroundImage: _myUser.profilePicture != ''
                                 ? CachedNetworkImageProvider(
@@ -186,55 +188,63 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 ),
               ),
-              Center(child: Text('Change Profile Imagae',style: TextStyle(fontWeight: FontWeight.w700),),),
+              Center(
+                child: Text(
+                  'Change Profile Imagae',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
               SizedBox(height: 20.h),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                child: Column(
-                  children: [
-                    MyTextField(
-                      controller: _nameController,
-                      hint: 'name',
-                      keyboardtype: TextInputType.name,
-                      obscure: false,
-                      selection: true,
-                    ),
-                   MyTextField(
-                  controller: _emailController,
-                  hint: 'email',
-                  keyboardtype: TextInputType.name,
-                  obscure: false,
-                  selection: true,
-                ),       MyTextField(
-                  controller: _bioController,
-                  hint: 'bio',
-                  keyboardtype: TextInputType.name,
-                  obscure: false,
-                  selection: true,
-                ), MyTextField(
-                  controller: _achievements,
-                  hint: 'Achievements',
-                  keyboardtype: TextInputType.name,
-                  obscure: false,
-                  selection: true,
-                ),  MyTextField(
-                  controller: _linkController,
-                  hint: 'LinkedIn',
-                  keyboardtype: TextInputType.name,
-                  obscure: false,
-                  selection: true,
-                ),       MyTextField(
-                  controller: _instagramcontroller,
-                  hint: 'Instagram',
-                  keyboardtype: TextInputType.name,
-                  obscure: false,
-                  selection: true,
-                ),
+                child: Column(children: [
+                  MyTextField(
+                    controller: _nameController,
+                    hint: 'name',
+                    keyboardtype: TextInputType.name,
+                    obscure: false,
+                    selection: true,
+                  ),
+                  MyTextField(
+                    controller: _emailController,
+                    hint: 'email',
+                    keyboardtype: TextInputType.name,
+                    obscure: false,
+                    selection: true,
+                  ),
+                  MyTextField(
+                    controller: _bioController,
+                    hint: 'bio',
+                    keyboardtype: TextInputType.name,
+                    obscure: false,
+                    selection: true,
+                  ),
+                  MyTextField(
+                    controller: _achievements,
+                    hint: 'Achievements',
+                    keyboardtype: TextInputType.name,
+                    obscure: false,
+                    selection: true,
+                  ),
+                  MyTextField(
+                    controller: _linkController,
+                    hint: 'LinkedIn',
+                    keyboardtype: TextInputType.name,
+                    obscure: false,
+                    selection: true,
+                  ),
+                  MyTextField(
+                    controller: _instagramcontroller,
+                    hint: 'Instagram',
+                    keyboardtype: TextInputType.name,
+                    obscure: false,
+                    selection: true,
+                  ),
                 ]),
               ),
               SizedBox(height: 15.h),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -284,11 +294,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   MediaQuery.of(context).size.width * 0.03)),
                     ],
                   ),
+
+                ],
+              ),    Row(
+                children: [
+                  Checkbox(
+                    value: !_hideinstagram,
+                    onChanged: (value) {
+                      setState(() {
+                        _hideinstagram = !_hideinstagram;
+                      });
+                    },
+                  ),
+                  Text(_hideLinkedIn ? 'Show instagram' : 'Hide instagram',
+                      style: TextStyle(
+                          fontSize:
+                          MediaQuery.of(context).size.width * 0.03)),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Padding(
-                padding:  EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: MyButton(
                     onTap: () async {
                       if (_formKey.currentState!.validate()) {
@@ -312,14 +338,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               'linkedinLink': _linkController.text,
                               'showEmail': _hideEmail,
                               'showPhone': _hidePhone,
+                              'showInstagram': _hideinstagram,
                               'instagramLink': _instagramcontroller.text,
                               'showLinkedin': _hideLinkedIn,
                               'achievements': _achievements.text,
                             });
 
                             if (_image != null) {
-                              String profileImageUrl = await _uploadProfileImage(
-                                  currentUserrUid, _image!);
+                              String profileImageUrl =
+                                  await _uploadProfileImage(
+                                      currentUserrUid, _image!);
                               await usersCollection
                                   .doc(documentId)
                                   .update({'profilePicture': profileImageUrl});

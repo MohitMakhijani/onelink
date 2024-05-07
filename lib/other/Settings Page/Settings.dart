@@ -1,13 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../components/SettingsTile.dart';
 class Settings1 extends StatelessWidget {
-  final String Image;
+  final String image;
   final String email;
   final String name;
-  Settings1({required this.Image,required this.email, required this.name});
+
+  const Settings1({
+    Key? key,
+    required this.image,
+    required this.email,
+    required this.name,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,84 +32,50 @@ class Settings1 extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-
                   CircleAvatar(
                     radius: 50.r,
-                    backgroundImage:Image!=''? CachedNetworkImageProvider(Image):AssetImage('Assets/images/Avatar.png')as ImageProvider<Object>,
+                    backgroundImage: image.isNotEmpty
+                        ? CachedNetworkImageProvider(image)
+                        : AssetImage('Assets/images/Avatar.png') as ImageProvider<Object>,
                   ),
-                  SizedBox(width: 15.w,),
+                  SizedBox(width: 15.w),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(name,
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700, fontSize: 22.sp)),
-                      Text(email,
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w400, fontSize: 14.sp)),
+                      Text(
+                        name,
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 22.sp,
+                        ),
+                      ),
+                      Text(
+                        email,
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14.sp,
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
             Divider(),
-            Text("Account",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),  Text("Security",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),  Text("Messaging",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),  Text("Privacy",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),  Text("Notifications",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),  Text("Language",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-           Divider(),
-            SizedBox(
-              height: 15.h,
-            ),  Text("About Us",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),Text("Privacy Policy",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),Text("Support",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),
+            SettingsItem(title: 'Account',),
+            SettingsItem(title: 'Security'),
+            SettingsItem(title: 'Messaging'),
+            SettingsItem(title: 'Privacy'),
+            SettingsItem(title: 'Notifications'),
+            SettingsItem(title: 'Language'),
             Divider(),
-            SizedBox(
-              height: 15.h,
-            ),Text("Language",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
-            SizedBox(
-              height: 15.h,
-            ),Text("Dark Mode",
-                style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700, fontSize: 18.sp)),
+            SettingsItem(title: 'About Us'),
+            SettingsItem(title: 'Privacy Policy'),
+            SettingsItem(title: 'Support'),
+            Divider(),
+            SettingsItem(title: 'Language'),
+            SettingsItem(title: 'Dark Mode'),
+            SizedBox(height: 15.h),
           ],
         ),
       ),

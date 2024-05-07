@@ -18,7 +18,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: 270.w,
+      width: 250.w,
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
         child: Consumer<UserFetchController>(
@@ -75,7 +75,7 @@ class CustomDrawer extends StatelessWidget {
                     title: Row(
                       children: [
                         FaIcon(FontAwesomeIcons.user),
-                        SizedBox(width: 15),
+                        SizedBox(width: 15.w),
                         Text(
                           'Account',
                           style: GoogleFonts.inter(
@@ -217,7 +217,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return Settings1(Image: myUser.profilePicture!, email: myUser.email!, name: myUser.name!);
+                        return Settings1(image: myUser.profilePicture!, email: myUser.email!, name: myUser.name!);
                       },));
                     },
                   ),

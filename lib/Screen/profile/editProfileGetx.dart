@@ -5,8 +5,13 @@ class ProfileController extends GetxController {
   RxBool hideEmail = false.obs; // RxBool for email checkbox
   RxBool hideLinkedin = false.obs; // RxBool for email checkbox
   RxBool hidePhone = false.obs; // RxBool for email checkbox
+  RxBool hideinstagram = false.obs; // RxBool for email checkbox
   void toggleEmailVisibility() {
     hideEmail.value = !hideEmail.value;
+// Toggle checkbox value
+  }
+  void toggleInstaVisibility() {
+    hideinstagram.value = !hideinstagram.value;
 // Toggle checkbox value
   }
 

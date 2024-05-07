@@ -120,7 +120,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              radius: 20.r,
+              radius: 19.r,
               backgroundImage: const NetworkImage(
                   'https://www.ingeniux.com/Images/Blog/Blog%20Images/Blog%20Front/web-cms-student-portal-main.jpg'),
             ),
@@ -128,7 +128,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
             Text(
               widget.communityName,
               style: GoogleFonts.inter(
-                  fontSize: 16.sp,fontWeight: FontWeight.w700),
+                  fontSize: 12.sp,fontWeight: FontWeight.w700),
             ),
           ],
         ),
@@ -374,7 +374,7 @@ class BubbleMessage extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 2),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(7)),
-              color: isCurrentUser ? Colors.red : Colors.grey[200],
+              color: isCurrentUser ? Colors.grey[200] : Colors.grey[200],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,8 +393,16 @@ class BubbleMessage extends StatelessWidget {
                   ),
                 // Display text if not empty
                 if (text.isNotEmpty)
-                  Text(text,style: TextStyle(color:  isCurrentUser==true?  Colors.white:Colors.black,fontSize: 15.sp),),
-                const SizedBox(height: 4),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 250.w), // Adjust width as needed
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        color: isCurrentUser == true ? Colors.black : Colors.black,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                  ),   SizedBox(height: 4),
                 Text(
                   formattedTime,
                   style:  TextStyle(fontWeight: FontWeight.w600, fontSize: 10.sp, color:  isCurrentUser==true?  Colors.white:Colors.black,),
