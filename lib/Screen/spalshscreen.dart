@@ -53,6 +53,7 @@ class _spalshscreenState extends State<spalshscreen> {
             mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset('Assets/images/logo2.png'),
+          
           LoadingAnimationWidget.staggeredDotsWave(
         color: Color.fromARGB(255, 244, 66, 66),
         size:50,

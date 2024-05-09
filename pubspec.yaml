@@ -92,6 +92,7 @@ dependencies:
   image_crop: ^0.4.1
   location: ^6.0.1
   loading_animation_widget: ^1.2.1
+  flutter_switch: ^0.3.2
 
 
 
