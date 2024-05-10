@@ -78,7 +78,7 @@ class MyButton1 extends StatelessWidget {
       onPressed: onTap,
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.25, // Adjust as needed
-        height: 50,
+        height: 40.h,
         child: Center(
           child: Text(
             text,

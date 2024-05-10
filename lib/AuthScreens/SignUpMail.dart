@@ -93,7 +93,7 @@ class _SignUpMailState extends State<SignUpMail>
             padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Column(
               children: [
-                SvgPicture.asset('Assets/images/Successmark.svg'),
+                SvgPicture.asset('Assets/images/onboard2.svg'),
                 // Image.asset('Assets/images/signup1.png'),
 
                 TabBar(

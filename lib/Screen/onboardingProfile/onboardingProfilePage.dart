@@ -27,12 +27,6 @@ class _SetUpProfileState extends State<SetUpProfile> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  String? _selectedGender;
-  String? _selectedOccupation; // Corrected variable name
-  final TextEditingController _mobileController = TextEditingController();
-  final TextEditingController _aadhaarController = TextEditingController();
-  final TextEditingController _maritalStatusController =
-      TextEditingController();
   // final TextEditingController _occupationController = TextEditingController(); // Defined _occupationController
 
   Uint8List? _file;
@@ -189,11 +183,7 @@ class _SetUpProfileState extends State<SetUpProfile> {
               SizedBox(height: 15),
               MyButton(
                 onTap: () async {
-                  String? nameError =
-                      _validateInput(_nameController.text, fieldName: 'Name');
-                  String? emailError =
-                      _validateInput(_emailController.text, fieldName: 'Email');
-                    if (_file != null) {
+
                       String downloadUrl =
                           await _uploadImageToFirebaseStorage();
                       DocumentReference userDocRef = FirebaseFirestore.instance
@@ -203,17 +193,10 @@ class _SetUpProfileState extends State<SetUpProfile> {
                         'userId': FirebaseAuth.instance.currentUser!.uid,
                         'name': _nameController.text.toLowerCase(),
                         'dateOfBirth': _dobController.text,
-                        'gender': _selectedGender!,
                         'email': _emailController.text.trim(),
                         'profilePicture': downloadUrl
                       });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Please upload a profile photo.'),
-                        ),
-                      );
-                    }
+
 
                     Navigator.pushReplacement(
                       context,

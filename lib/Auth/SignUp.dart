@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-
 import '../AuthScreens/SignUpMail.dart';
 import '../Screen/onboardingProfile/onboardingProfilePage.dart';
 import '../Services/AuthFunctions.dart';
@@ -85,7 +84,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: 51.h, bottom: 16.h,left: 14.w,right: 14.w),
+                        padding: EdgeInsets.only(
+                            top: 51.h, bottom: 16.h, left: 14.w, right: 14.w),
                         child: TextFiledUiMethod('Phone Number'),
                       ),
                       Column(
@@ -98,7 +98,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                 onTap: () async {
                                   final phone = _phoneController.text.trim();
                                   if (phone.isNotEmpty) {
-                                    await FirebaseAuth.instance.verifyPhoneNumber(
+                                    await FirebaseAuth.instance
+                                        .verifyPhoneNumber(
                                       phoneNumber: '+91$phone',
                                       verificationCompleted:
                                           (PhoneAuthCredential credential) {
@@ -119,13 +120,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                           PageRouteBuilder(
                                             transitionDuration: Duration(
                                                 milliseconds:
-                                                500), // Adjust duration as needed
+                                                    500), // Adjust duration as needed
                                             pageBuilder: (context, animation,
-                                                secondaryAnimation) =>
+                                                    secondaryAnimation) =>
                                                 OTPScreen(
-                                                  phone: phone,
-                                                  verificationId: verificationId,
-                                                ),
+                                              phone: phone,
+                                              verificationId: verificationId,
+                                            ),
                                             transitionsBuilder: (context,
                                                 animation,
                                                 secondaryAnimation,
@@ -135,13 +136,14 @@ class _SignUpPageState extends State<SignUpPage> {
                                               var curve = Curves.ease;
 
                                               var tween =
-                                              Tween(begin: begin, end: end)
-                                                  .chain(
+                                                  Tween(begin: begin, end: end)
+                                                      .chain(
                                                 CurveTween(curve: curve),
                                               );
 
                                               return SlideTransition(
-                                                position: animation.drive(tween),
+                                                position:
+                                                    animation.drive(tween),
                                                 child: child,
                                               );
                                             },
@@ -169,13 +171,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           SizedBox(
                             height: 14.h,
                           ),
-                          authbuttons("Login With Email", AntDesign.mail_fill ),
+                          authbuttons("Login With Email", AntDesign.mail_fill),
                           SizedBox(
                             height: 14.h,
                           ),
                           authbuttons(
-                              "Login With Google", AntDesign.google_outline ),
-                        
+                              "Login With Google", AntDesign.google_outline),
                         ],
                       )
                     ],
@@ -185,21 +186,31 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
             ),
             Padding(
-              padding:  EdgeInsets.symmetric(vertical: 20.h),
+              padding: EdgeInsets.symmetric(vertical: 20.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Don’t have an account?",
-                    style: TextStyle(fontWeight: FontWeight.w400,   fontFamily:
-                       'InterRegular',fontSize: 16.sp, color: const Color.fromARGB(255, 27, 28, 30),letterSpacing: 0.3.sp)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'InterRegular',
+                          fontSize: 16.sp,
+                          color: const Color.fromARGB(255, 27, 28, 30),
+                          letterSpacing: 0.3.sp)),
                   GestureDetector(
-                    onTap: (){
-                       Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => SignUpMail()));
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpMail()));
                     },
                     child: Text("Register",
-                        style: TextStyle(fontWeight: FontWeight.w400,   fontFamily:
-                         'InterRegular',fontSize: 16.sp, color: const Color.fromARGB(255, 244, 66, 66),letterSpacing: 0.3.sp)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'InterRegular',
+                            fontSize: 16.sp,
+                            color: const Color.fromARGB(255, 244, 66, 66),
+                            letterSpacing: 0.3.sp)),
                   ),
                 ],
               ),
@@ -212,43 +223,46 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget TextFiledUiMethod(String hint) {
     return Container(
-                        width: 358.w,
-                        height: 40.h,
-                        child: TextFormField(
-                          validator: (phone) {
-                            if (phone!.isEmpty)
-                              return "Please enter phone number";
-                            else if (!RegExp(
-                                    r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")
-                                .hasMatch(phone)) {
-                              return "Please Enter the valid phone number";
-                            }
-                          },
-                          obscureText: false,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10.w),
-                            hintText: hint,
-                            hintStyle: TextStyle(
-                                fontFamily: 'InterRegular',
-                                color: Color.fromARGB(255, 173, 179, 189),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w400),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color.fromARGB(255, 173, 179,
-                                    189), // Specify the border color here
-                                // width: 2.0, // Specify the border width here
-                              ),
-                              borderRadius: BorderRadius.circular(8.0.r),
-                            ),
-                          ),
-                          controller: _phoneController,
-                        ),
-                      );
+      width: 358.w,
+      height: 40.h,
+      child: TextFormField(
+        validator: (phone) {
+          if (phone!.isEmpty)
+            return "Please enter phone number";
+          else if (!RegExp(
+                  r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")
+              .hasMatch(phone)) {
+            return "Please Enter the valid phone number";
+          }
+        },
+        obscureText: false,
+        keyboardType: TextInputType.phone,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(10.w),
+          hintText: hint,
+          hintStyle: TextStyle(
+              fontFamily: 'InterRegular',
+              color: Color.fromARGB(255, 173, 179, 189),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w400),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Color.fromARGB(
+                  255, 173, 179, 189), // Specify the border color here
+              // width: 2.0, // Specify the border width here
+            ),
+            borderRadius: BorderRadius.circular(8.0.r),
+          ),
+        ),
+        controller: _phoneController,
+      ),
+    );
   }
 
-  Widget authbuttons(String s, AntDesignIconData icon,  ) {
+  Widget authbuttons(
+    String s,
+    AntDesignIconData icon,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 14.h),
       child: ElevatedButton(
@@ -256,11 +270,10 @@ class _SignUpPageState extends State<SignUpPage> {
           if (s == 'Login With Email') {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SignUpMail()));
-          } else if(s == 'Login With Google'){
-            AuthService.signInWithGoogle();
+          } else if (s == 'Login With Google') {
+          AuthService.signInWithGoogle(context);
             checkUserSignInStatus();
           }
-
         },
         child: SizedBox(
           width: 358.w,
@@ -270,19 +283,25 @@ class _SignUpPageState extends State<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width:(s=='Login With Google')? 10.w:0.w,
+                  width: (s == 'Login With Google') ? 10.w : 0.w,
                 ),
-                (s=='Login With Google')?
-                SvgPicture.asset('Assets/images/google.svg',
-                fit: BoxFit.fill,
-                )
-                :
-                Icon(
-                  icon ,
-                  color: s!='Login With Google'?Colors.white:Colors.black,
-                ),
+                (s == 'Login With Google')
+                    ? SvgPicture.asset(
+                        'Assets/images/google.svg',
+                        fit: BoxFit.fill,
+                      )
+                    : Icon(
+                        icon,
+                        color: s != 'Login With Google'
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                 SizedBox(
-                  width:s=='Login With Email'? 10.w:(s=='Login With ID')?10.w:10.w,
+                  width: s == 'Login With Email'
+                      ? 10.w
+                      : (s == 'Login With ID')
+                          ? 10.w
+                          : 10.w,
                 ),
                 Text(
                   s,
@@ -290,11 +309,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     fontSize: 16.sp,
                     fontFamily: 'InterRegular',
                     fontWeight: FontWeight.w400,
-                    color: s!='Login With Google'?Colors.white:Colors.black,
+                    color:
+                        s != 'Login With Google' ? Colors.white : Colors.black,
                   ),
                 ),
-                 SizedBox(
-                  width:(s=='Login With ID')?25.w:0.w,
+                SizedBox(
+                  width: (s == 'Login With ID') ? 25.w : 0.w,
                 ),
               ],
             ),
@@ -302,7 +322,11 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         style: ElevatedButton.styleFrom(
           // Use the determined color
-          backgroundColor:(s=='Login With ID')? Color.fromARGB(255,17, 85, 205):(s=='Login With Email')?Colors.black:Colors.white,
+          backgroundColor: (s == 'Login With ID')
+              ? Color.fromARGB(255, 17, 85, 205)
+              : (s == 'Login With Email')
+                  ? Colors.black
+                  : Colors.white,
           side: BorderSide(
             color: const Color.fromARGB(255, 173, 179, 189), // Border color
             // Border width

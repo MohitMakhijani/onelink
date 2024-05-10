@@ -252,7 +252,7 @@ class UserTile extends StatelessWidget {
                         style: GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 15.sp),
                       ),
                       SizedBox(height: 4.h),
-                      Text(
+                      Text(overflow: TextOverflow.ellipsis,
                       RecentChat,
                         style: TextStyle(color: Colors.grey),
                       ),

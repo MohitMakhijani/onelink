@@ -17,6 +17,7 @@ class UserModel1 {
   bool showEmail = false;
   bool showPhone = false;
   bool showLinkedin = false;
+  bool showInstagram = false;
 
   UserModel1();
 
@@ -28,13 +29,13 @@ class UserModel1 {
         email = json['email'],
         phoneNumber = json['phoneNumber'],
         occupation = json['occupation'],
-
+        showInstagram=json['showInstagram'],
         state = json['state'],
         district = json['district'],
         profilePicture = json['profilePicture'],
         bio = json['bio'],
         achievements = json['achievements'],
-        instagramLink = json['instagramLink'],
+        instagramLink = json['instagramLink']??false,
         linkedinLink = json['linkedinLink'],
         isVerified = json['isVerified'] ?? false,
         showEmail = json['showEmail'] ?? false,

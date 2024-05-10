@@ -16,12 +16,12 @@ class Onboarding extends StatelessWidget {
 
   TextSpan processText(String text) {
  List<TextSpan> spans = [];
- List<String> parts = text.split('JNV Diaries');
+ List<String> parts = text.split('StartUp Podero');
 
  for (int i = 0; i < parts.length; i++) {
     spans.add(TextSpan(text: parts[i], style: TextStyle(fontWeight: FontWeight.w400,   fontFamily: 'InterRegular',fontSize: 16.sp, color: const Color.fromARGB(255, 65, 65, 65),letterSpacing: 0.3.sp)));
     if (i < parts.length - 1) {
-      spans.add(TextSpan(text: 'JNV Diaries', style: TextStyle(fontWeight: FontWeight.w700,  fontFamily: 'InterRegular', fontSize: 16.sp, color:  const Color.fromARGB(255, 244, 66, 66),letterSpacing: 0.3.sp)));
+      spans.add(TextSpan(text: 'StartUp Podero', style: TextStyle(fontWeight: FontWeight.w700,  fontFamily: 'InterRegular', fontSize: 16.sp, color:  const Color.fromARGB(255, 244, 66, 66),letterSpacing: 0.3.sp)));
     }
  }
 
