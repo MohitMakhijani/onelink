@@ -1,57 +1,65 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:onelink/Models/ONboardingModel.dart';
 import 'package:onelink/Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
 import 'package:onelink/Screen/ONboardingScreens/Onboarding.dart';
-
-class SplashScreen extends StatefulWidget {
+import 'package:onelink/Widgets/dotWidget.dart';
+import 'package:onelink/main.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+class spalshscreen extends StatefulWidget {
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  _spalshscreenState createState() => _spalshscreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  bool isLoggedIn = false;
-  FirebaseAuth _auth = FirebaseAuth.instance;
-
+class _spalshscreenState extends State<spalshscreen> {
+    // Define a StreamController
+  StreamController<int> _controller = StreamController<int>();
+  
+  
   @override
   void initState() {
     super.initState();
-    checkIfLoggedIn();
+    // Start the continuous loop of changing ball colors
+    _startLoop();
   }
 
-  void checkIfLoggedIn() {
-    _auth.authStateChanges().listen((User? user) {
-      if (user != null && mounted) {
-        setState(() {
-          isLoggedIn = true;
-        });
-      }
-      navigateToNextScreen();
+  @override
+  void dispose() {
+    super.dispose();
+    // Dispose the StreamController to avoid memory leaks
+    _controller.close();
+  }
+
+  // Function to start the continuous loop of changing ball colors
+  void _startLoop() {
+    Timer.periodic(Duration(seconds: 3), (timer) {
+ 
+      Navigator.push(context, MaterialPageRoute(builder:
+       (Context)=>Onboarding()
+      ));
     });
   }
 
-  void navigateToNextScreen() {
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => isLoggedIn ? HomeScreen() : Onboarding(),
-        ),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('Assets/images/logo2.png'),
-            CircularProgressIndicator(), // Add a loading indicator
-          ],
-        ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('Assets/images/logo2.png'),
+          LoadingAnimationWidget.staggeredDotsWave(
+        color: Color.fromARGB(255, 244, 66, 66),
+        size:50,
       ),
+      
+        ],
+      )),
     );
   }
 }

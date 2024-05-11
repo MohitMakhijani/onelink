@@ -271,7 +271,7 @@ class _SignUpPageState extends State<SignUpPage> {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SignUpMail()));
           } else if (s == 'Login With Google') {
-            AuthService.signInWithGoogle(context);
+          AuthService.signInWithGoogle(context);
             checkUserSignInStatus();
           }
         },
@@ -350,7 +350,8 @@ class _SignUpPageState extends State<SignUpPage> {
       print('User is signed in: ${user.uid}');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SetUpProfile()),
+        MaterialPageRoute(builder: (context) => SetUpProfile()
+        ),
       );
     } else {
       // The user is not signed in

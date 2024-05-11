@@ -9,22 +9,20 @@ import 'package:provider/provider.dart';
 import 'FetchDataProvider/fetchData.dart';
 import 'Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
 import 'Screen/ONboardingScreens/Onboarding.dart';
-import 'Screen/spalshscreen.dart';
 import 'components/Notifications.dart';
 import 'firebase_options.dart';
 
-void main() async {
+
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   @pragma('vm:entry-point')
-  Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
   }
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  /* try {
-
+ /* try {
+ 
 
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -39,9 +37,9 @@ void main() async {
       await Firebase.initializeApp();
     }
   }*/
-  await Firebase.initializeApp(
+ await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+);
 
   runApp(
     MultiProvider(
@@ -52,7 +50,6 @@ void main() async {
     ),
   );
 }
-
 class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -60,7 +57,11 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+
 class _MyAppState extends State<MyApp> {
+
+  var isLoggedIn = false;
+  var auth = FirebaseAuth.instance;
   NotificationServices notificationServices = NotificationServices();
   @override
   void initState() {
@@ -75,28 +76,45 @@ class _MyAppState extends State<MyApp> {
         print('device token');
         print(value);
       }
+
+      UserFetchController();
+      checkIfLoggedIn();
     });
   }
 
+  void checkIfLoggedIn() {
+    auth.authStateChanges().listen((User? user) {
+      if (user != null && mounted) {
+        setState(() {
+          isLoggedIn = true;
+        });
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    //FirebaseAuth auth = FirebaseAuth.instance;
-    double width = MediaQuery.sizeOf(context).width;
-    double height = MediaQuery.sizeOf(context).height;
-    print(width);
-    print(height);
-    // Get the current user
-    //User? user = auth.currentUser;
+  //FirebaseAuth auth = FirebaseAuth.instance;
+  double width=MediaQuery.sizeOf(context).width;
+  double height=MediaQuery.sizeOf(context).height;
+  print(width);
+  print(height);
+  // Get the current user
+  //User? user = auth.currentUser;
 
-    return ScreenUtilInit(
-      designSize: Size(width, height),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: child,
-      ),
-      child: SplashScreen(),
-    );
+  return ScreenUtilInit(designSize: Size(width,height), 
+minTextAdapt: true,
+splitScreenMode: true,
+builder: (context, child) => MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: child,
+
+  
+),
+
+    child:  isLoggedIn ? HomeScreen() : Onboarding(),
+  );
+    
   }
 }
+
+
