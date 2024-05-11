@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../UI-Models/EventmodelUI.dart';
 
@@ -52,7 +53,10 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              color: Color.fromARGB(255, 244, 66, 66),
+              size:50,
+            ),);
           }
           List<QueryDocumentSnapshot> allEventDocs = snapshot.data!.docs;
           List<QueryDocumentSnapshot> participatedEventDocs = allEventDocs.where((doc) {

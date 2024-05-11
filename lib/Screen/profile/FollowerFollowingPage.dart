@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onelink/Screen/profile/profilePage.dart';
 
 class FollowFollowing extends StatelessWidget {
@@ -25,7 +26,10 @@ class FollowFollowing extends StatelessWidget {
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              color: Color.fromARGB(255, 244, 66, 66),
+              size:50,
+            ));
           }
 
           if (!snapshot.hasData || !snapshot.data!.exists) {

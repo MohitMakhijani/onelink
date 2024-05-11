@@ -153,51 +153,7 @@ class _SignUpMailState extends State<SignUpMail>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 5.h),
-                  child: Container(
-                    //  width: 370.w,
-                    //height: 40.h,
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color.fromARGB(255, 173, 179,
-                            189), // Specify the border color here
-                        // width: 2.0, // Specify the border width here
-                      ),
-                      borderRadius: BorderRadius.circular(8.0.r),
-                    ),
 
-                    child: DropdownButtonFormField<String>(
-                      value: _selectedGender,
-                      items: ['Male', 'Female', 'Others'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedGender = newValue;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Select Gender',
-                        hintStyle: TextStyle(
-                            fontFamily: 'InterRegular',
-                            color: Color.fromARGB(255, 173, 179, 189),
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w400),
-                        // prefixIcon: Icon(Icons.people),
-                      ),
-                      validator: (value) =>
-                          _validateInput(value, fieldName: 'Gender'),
-                    ),
-                  ),
-                ),
                 buildTextFormField(
                     'email', 'Email', Icons.mail, email_focus_signup),
 
@@ -366,7 +322,13 @@ class _SignUpMailState extends State<SignUpMail>
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       if (buttonText == "SignUp") {
-                        AuthService.Signup(email, password);
+                        AuthService.Signup(
+                            email,
+                            password,
+                            _nameController.text.toString(),
+                            _dobController.text.toString(),
+                            _mobileController.text.toString(),
+                            context);
                         ToastUtil.showToastMessage("Successful SignUp");
                         setState(() {
                           IsColor = !IsColor;

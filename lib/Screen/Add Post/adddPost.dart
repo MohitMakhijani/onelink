@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onelink/Services/FireStoreMethod.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -87,7 +88,7 @@ class AddPostScreen extends StatefulWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 25,
+        toolbarHeight: 30,
         leading: _file != null
             ? IconButton(
           icon: Icon(Icons.arrow_back),
@@ -117,7 +118,7 @@ class AddPostScreen extends StatefulWidget {
               }
             },
             icon: FaIcon(
-              _file == null ? EvaIcons.flash : Icons.arrow_right,size: 18,
+              _file == null ? EvaIcons.flash : Bootstrap.forward,size: 30,
               color: _file == null ? Colors.black : Colors.red,
             ),
           ),
@@ -176,7 +177,10 @@ class AddPostScreen extends StatefulWidget {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return CameraPreview(_controller);
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: Color.fromARGB(255, 244, 66, 66),
+                    size:50,
+                  ),);
                 }
               },
             ),

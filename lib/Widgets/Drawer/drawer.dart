@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/Services/AuthFunctions.dart';
 import 'package:onelink/other/Settings%20Page/Settings.dart';
 import 'package:provider/provider.dart';
 import '../../Auth/SignUp.dart';
@@ -237,6 +238,7 @@ class CustomDrawer extends StatelessWidget {
                       ],
                     ),
                     onTap: () {
+                      AuthService.logout();
                       Navigator.pushReplacement(context, MaterialPageRoute(
                         builder: (context) {
                           return SignUpPage();

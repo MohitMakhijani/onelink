@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../Screen/job_Screen/CreateJob.dart';
 import '../../Screen/job_Screen/appliedJob.dart';
@@ -118,7 +119,10 @@ class JobTab extends StatelessWidget {
                 FirebaseFirestore.instance.collection('jobs').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                      color: Color.fromARGB(255, 244, 66, 66),
+                      size:50,
+                    ));
                   }
                   if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../UI-Models/EventmodelUI.dart';// Import your EventPost widget or data model
 
@@ -53,7 +54,10 @@ class _EventsPageState extends State<My_events> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              color: Color.fromARGB(255, 244, 66, 66),
+              size:50,
+            ),);
           }
 
           List<QueryDocumentSnapshot> eventDocs = snapshot.data!.docs;

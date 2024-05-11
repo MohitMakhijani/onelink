@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:share/share.dart';
 
 import '../../Services/FireStoreMethod.dart';
@@ -102,7 +103,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        color: Color.fromARGB(255, 244, 66, 66),
+        size:50,
+      ))
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               children: [
@@ -277,7 +281,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                        color: Color.fromARGB(255, 244, 66, 66),
+                        size:50,
+                      ));
                     }
 
                     return GridView.builder(

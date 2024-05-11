@@ -69,12 +69,34 @@ class AuthService {
     return user != null;
   }
 
-  static Future Signup(String email, String password) async {
+  static Future Signup(String email, String password, String name, String DOB,
+   String phoneNo,BuildContext context) async {
     try {
+      print(email);
+      print(password);
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
+      );
+      await FireStoreMethods().createUser(
+        userId: credential.user!.uid,
+        name: name ?? '',
+        email: email ?? '',
+        gender: '', // Add logic to determine gender if available
+        profilePicture: '',
+        // Fill other fields with empty strings for now
+        dateOfBirth: DOB ??'',
+        phoneNumber: phoneNo??"",
+        occupation: '',
+        state: '',
+        district: '',
+        bio: '',
+        achievements: '',
+        instagramLink: '',
+        linkedinLink: '',
+        IsVerified: false,
+        context: context,
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -116,7 +138,7 @@ class AuthService {
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -126,7 +148,7 @@ class AuthService {
 
       // Once signed in, return the UserCredential
       final UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user == null) {
         throw FirebaseAuthException(
@@ -136,7 +158,7 @@ class AuthService {
       }
 
       // Extract user information from googleUser and create a UserModel instance
-     await FireStoreMethods().createUser(
+      await FireStoreMethods().createUser(
         userId: userCredential.user!.uid,
         name: googleUser.displayName ?? '',
         email: googleUser.email ?? '',
@@ -156,7 +178,8 @@ class AuthService {
         context: context,
       );
 
-      return userCredential;
+      // return await userCredential;
+      return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
       print('Error signing in with Google: $e');
       throw e; // Rethrow the error for higher-level error handling

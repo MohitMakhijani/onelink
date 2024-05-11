@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -141,8 +142,11 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return  Center(
+                    child:  LoadingAnimationWidget.staggeredDotsWave(
+                      color: Color.fromARGB(255, 244, 66, 66),
+                      size:50,
+                    )
                   );
                 }
                 if (snapshot.hasError) {
@@ -398,14 +402,14 @@ class BubbleMessage extends StatelessWidget {
                     child: Text(
                       text,
                       style: TextStyle(
-                        color: isCurrentUser == true ? Colors.black : Colors.black,
+                        color: Colors.black,
                         fontSize: 15.sp,
                       ),
                     ),
                   ),   SizedBox(height: 4),
                 Text(
                   formattedTime,
-                  style:  TextStyle(fontWeight: FontWeight.w600, fontSize: 10.sp, color:  isCurrentUser==true?  Colors.white:Colors.black,),
+                  style:  TextStyle(fontWeight: FontWeight.w600, fontSize: 10.sp, color:Colors.black,),
                 ),
               ],
             ),
