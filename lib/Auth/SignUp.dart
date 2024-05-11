@@ -350,7 +350,8 @@ class _SignUpPageState extends State<SignUpPage> {
       print('User is signed in: ${user.uid}');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SetUpProfile()),
+        MaterialPageRoute(builder: (context) => SetUpProfile()
+        ),
       );
     } else {
       // The user is not signed in

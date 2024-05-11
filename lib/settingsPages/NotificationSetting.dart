@@ -6,24 +6,24 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
-class privacySettings extends StatefulWidget {
-  const privacySettings({super.key});
+class NotificationSetting extends StatefulWidget {
+  const NotificationSetting({super.key});
 
   @override
-  State<privacySettings> createState() => _privacySettingsState();
+  State<NotificationSetting> createState() => _NotificationSettingState();
 }
 
-class _privacySettingsState extends State<privacySettings> {
-  bool receipts = false;
-  bool live = true;
-  bool archived = false;
+class _NotificationSettingState extends State<NotificationSetting> {
+  bool vibrate = false;
+  bool popup = true;
+  bool light = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Center(
           child: Text(
-            "Privacy Settings",
+            "Notification Settings",
             style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
@@ -37,23 +37,17 @@ class _privacySettingsState extends State<privacySettings> {
           SizedBox(
             height: 40.h,
           ),
-          SettingsMethod('Assets/images/lastseen.svg', "Last seen & online"),
-          DividerMethod(),
-        
-          SwitchButtonMethodWithOutSubtitle(
-              'Read receipts', 'receipts'),
-          SwitchButtonMethodWithOutSubtitle('Hide history and live',
-              'live'),
-          generalMethod('Who can follow me', 'For shared accounts'),
-          DividerMethod(),
+           SettingsMethod('Assets/images/musicnote.svg',
+         "Notification tone"),
+          //SettingsMethod('Assets/images/lastseen.svg', "Last seen & online"),
+         // DividerMethod(),
+        SwitchButtonMethodWithOutSubtitlewithImg(
+          'Vibration','vibrate','Assets/images/ph_vibrate.svg'),
+           SwitchButtonMethodWithOutSubtitlewithImg(
+          'Popup notification','popup','Assets/images/carbon_popup.svg'),
+           SwitchButtonMethodWithOutSubtitlewithImg(
+          'Light','light','Assets/images/lamp-on.svg'),
          
-          SettingsMethodWithSubtitle('Assets/images/block.svg', "Blocked","Two accounts"),
-          
-          
-          SettingsMethodWithSubtitle('Assets/images/message-2.svg', "Messages and story replies","Only people you follow"),
-           SettingsMethodWithSubtitle('Assets/images/message-2.svg', "Comments",
-           "Everyone"),
-
           
 
           
@@ -96,21 +90,21 @@ class _privacySettingsState extends State<privacySettings> {
             height: 20.0,
             toggleSize: 30.0,
             toggleColor: Colors.white,
-            value: (toe == 'receipts')
-                ? receipts
-                : (toe == 'live')
-                    ? live
-                    : archived,
+            value: (toe == 'vibrate')
+                ? vibrate
+                : (toe == 'popup')
+                    ? popup
+                    : light,
             //borderRadius: 30.0,
             //padding: 8.0,
             showOnOff: false,
             onToggle: (val) {
               setState(() {
-                (toe == 'receipts')
-                    ? (receipts = val)
-                    : (toe == 'live')
-                        ? live = val
-                        : archived = val;
+                (toe == 'vibrate')
+                    ? (vibrate = val)
+                    : (toe == 'popup')
+                        ? popup = val
+                        : light = val;
               });
             },
           ),
@@ -139,21 +133,72 @@ class _privacySettingsState extends State<privacySettings> {
             height: 20.0,
             toggleSize: 30.0,
             toggleColor: Colors.white,
-            value: (toe == 'receipts')
-                ? receipts
-                : (toe == 'live')
-                    ? live
-                    : archived,
+            value: (toe == 'vibrate')
+                ? vibrate
+                : (toe == 'popup')
+                    ? popup
+                    : light,
             //borderRadius: 30.0,
             //padding: 8.0,
             showOnOff: false,
             onToggle: (val) {
               setState(() {
-                (toe == 'receipts')
-                    ? (receipts = val)
-                    : (toe == 'live')
-                        ? live = val
-                        : archived = val;
+                (toe == 'vibrate')
+                    ? (vibrate = val)
+                    : (toe == 'popup')
+                        ? popup = val
+                        : light = val;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget SwitchButtonMethodWithOutSubtitlewithImg(String title, String toe,String Img) {
+    return Padding(
+      padding: EdgeInsets.only(left: 18.w, right: 18.w, top: 12.h,bottom: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(Img),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontFamily: 'InterRegular',
+                ),
+              ),
+            ],
+          ),
+          FlutterSwitch(
+            activeColor: Colors.red,
+            inactiveColor: Colors.grey,
+            width: 50.0,
+            height: 20.0,
+            toggleSize: 30.0,
+            toggleColor: Colors.white,
+            value: (toe == 'vibrate')
+                ? vibrate
+                : (toe == 'popup')
+                    ? popup
+                    : light,
+            //borderRadius: 30.0,
+            //padding: 8.0,
+            showOnOff: false,
+            onToggle: (val) {
+              setState(() {
+                (toe == 'vibrate')
+                    ? (vibrate = val)
+                    : (toe == 'popup')
+                        ? popup = val
+                        : light = val;
               });
             },
           ),

@@ -51,7 +51,84 @@ Widget SettingsMethod(String imgpath, String text) {
          ),
        );
   }
-  
+  Widget SettingsMethodWithSubtitlewithArrow(String imgpath, String text,String subtitle) {
+    return Padding(
+         padding:  EdgeInsets.symmetric(horizontal: 18.w,vertical: 8.h),
+         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+          Row(
+            children: [
+              SvgPicture.asset(imgpath),
+              SizedBox(
+                width: 10.w,
+              ),
+             
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [ 
+                   Text(text,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: 'InterRegular',
+              
+              ),),
+              Text(subtitle,
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontFamily: 'InterRegular',
+              
+              ),),
+
+                ],
+              )
+             
+            ],
+          ),
+         Icon(Icons.keyboard_arrow_right),
+          ],
+         ),
+       );
+  }
+  Widget SettingsMethodWithSubtitle(String imgpath, String text,String subtitle) {
+    return Padding(
+         padding:  EdgeInsets.symmetric(horizontal: 18.w,vertical: 8.h),
+         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+          Row(
+            children: [
+              SvgPicture.asset(imgpath),
+              SizedBox(
+                width: 10.w,
+              ),
+             
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [ 
+                   Text(text,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: 'InterRegular',
+              
+              ),),
+              Text(subtitle,
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontFamily: 'InterRegular',
+              
+              ),),
+
+                ],
+              )
+             
+            ],
+          ),
+          //(text!='Theme' && text!='Wallpaper')?Icon(Icons.keyboard_arrow_right):SizedBox(),
+          ],
+         ),
+       );
+  }
   Widget DividerMethod() {
     return Divider(
         height: 10,

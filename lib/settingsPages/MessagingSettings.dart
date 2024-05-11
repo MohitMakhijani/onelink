@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
@@ -17,9 +18,11 @@ class _messageSettingPageState extends State<messageSettingPage> {
   bool send = false;
   bool media = true;
   bool archived = false;
+  String presentColor='light';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor().AppColorMethod(presentColor),
       appBar: AppBar(
         title: Center(
           child: Text(
@@ -53,7 +56,22 @@ class _messageSettingPageState extends State<messageSettingPage> {
           SetMethod('Assets/images/chatbackup.svg','Chat backup'),
           SetMethod('Assets/images/history.svg','Chat history'),
           DividerMethod(),
-          SettingsMethod('Assets/images/sun.svg', "Theme"),
+          GestureDetector(
+            onTap: (){
+              setState(() {
+                print("///clicked///");
+                if(presentColor=='light'){
+                     AppColor().AppColorMethod('dark');
+                    presentColor='dark';
+                }
+                
+                else if(presentColor=='dark'){
+                     AppColor().AppColorMethod('light');
+                    presentColor='light';
+                }
+              });
+            },
+            child: SettingsMethod('Assets/images/sun.svg', "Theme")),
           SettingsMethod('Assets/images/gallery.svg', "Wallpaper"),
           
 
