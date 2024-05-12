@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:onelink/Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
 import 'package:onelink/Screen/onboardingProfile/onboardingProfilePage.dart';
 import '../Services/AuthFunctions.dart';
 import '../Services/FireStoreMethod.dart';
@@ -467,7 +468,7 @@ class _SignUpMailState extends State<SignUpMail>
       print('User is signed in: ${user.uid}');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SetUpProfile()),
+        MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } else {
       // The user is not signed in

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 
 import '../../components/SettingsTile.dart';
 class Settings1 extends StatelessWidget {
@@ -64,7 +65,9 @@ class Settings1 extends StatelessWidget {
             Divider(),
             SettingsItem(title: 'Account',),
             SettingsItem(title: 'Security'),
-            SettingsItem(title: 'Messaging'),
+            SettingsItem(title: 'Messaging', onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => messageSettingPage(),));
+            },),
             SettingsItem(title: 'Privacy'),
             SettingsItem(title: 'Notifications'),
             SettingsItem(title: 'Language'),
