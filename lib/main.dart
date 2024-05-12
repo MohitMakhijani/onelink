@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:onelink/Screen/spalshscreen.dart';
+import 'package:onelink/Tabs/FeedPaGE/FeedPage.dart';
+import 'package:onelink/settingsPages/AboutUs.dart';
 import 'package:onelink/settingsPages/AccountSettings.dart';
 import 'package:onelink/settingsPages/MessagingSettings.dart';
 import 'package:onelink/settingsPages/NotificationSetting.dart';
@@ -117,7 +119,7 @@ builder: (context, child) => MaterialApp(
   
 ),
 
-    child:  isLoggedIn ? HomeScreen() : messageSettingPage(),
+    child:  isLoggedIn ? HomeScreen() : spalshscreen(),
   );
     
   }

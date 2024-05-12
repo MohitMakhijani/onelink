@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 
 class privacySettings extends StatefulWidget {
   const privacySettings({super.key});
@@ -20,14 +21,18 @@ class _privacySettingsState extends State<privacySettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+        backgroundColor:AppTheme.light?Colors.white:Colors.black ,
         title: Center(
           child: Text(
             "Privacy Settings",
             style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
-                fontWeight: FontWeight.w500),
+                fontWeight: FontWeight.w500,
+                color: !AppTheme.light?Colors.white:Colors.black
+                ),
           ),
         ),
       ),
@@ -37,22 +42,23 @@ class _privacySettingsState extends State<privacySettings> {
           SizedBox(
             height: 40.h,
           ),
-          SettingsMethod('Assets/images/lastseen.svg', "Last seen & online"),
+          SettingsMethod('Assets/images/lastseen.svg',
+          "Last seen & online",AppTheme.light),
           DividerMethod(),
         
           SwitchButtonMethodWithOutSubtitle(
-              'Read receipts', 'receipts'),
+              'Read receipts', 'receipts',AppTheme.light),
           SwitchButtonMethodWithOutSubtitle('Hide history and live',
-              'live'),
-          generalMethod('Who can follow me', 'For shared accounts'),
+              'live',AppTheme.light),
+          generalMethod('Who can follow me', 'For shared accounts',AppTheme.light),
           DividerMethod(),
          
-          SettingsMethodWithSubtitle('Assets/images/block.svg', "Blocked","Two accounts"),
+          SettingsMethodWithSubtitle('Assets/images/block.svg', "Blocked","Two accounts",AppTheme.light),
           
           
-          SettingsMethodWithSubtitle('Assets/images/message-2.svg', "Messages and story replies","Only people you follow"),
+          SettingsMethodWithSubtitle('Assets/images/message-2.svg', "Messages and story replies","Only people you follow",AppTheme.light),
            SettingsMethodWithSubtitle('Assets/images/message-2.svg', "Comments",
-           "Everyone"),
+           "Everyone",AppTheme.light),
 
           
 
@@ -119,7 +125,7 @@ class _privacySettingsState extends State<privacySettings> {
     );
   }
   
-  Widget SwitchButtonMethodWithOutSubtitle(String title, String toe) {
+  Widget SwitchButtonMethodWithOutSubtitle(String title, String toe, bool light) {
     return Padding(
       padding: EdgeInsets.only(left: 50.w, right: 18.w, top: 12.h,bottom: 10.h),
       child: Row(
@@ -130,6 +136,7 @@ class _privacySettingsState extends State<privacySettings> {
             style: TextStyle(
               fontSize: 16.sp,
               fontFamily: 'InterRegular',
+              color: !AppTheme.light?Colors.white:Colors.black
             ),
           ),
           FlutterSwitch(

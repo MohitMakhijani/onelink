@@ -1,9 +1,12 @@
 
+// ignore_for_file: deprecated_member_use
+
   import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 
-Widget SettingsMethod(String imgpath, String text) {
+Widget SettingsMethod(String imgpath, String text, bool light) {
     return Padding(
          padding:  EdgeInsets.symmetric(horizontal: 18.w,vertical: 8.h),
          child: Row(
@@ -11,7 +14,8 @@ Widget SettingsMethod(String imgpath, String text) {
           children: [
           Row(
             children: [
-              SvgPicture.asset(imgpath),
+              SvgPicture.asset(imgpath,
+              color: !light?Colors.white:Colors.black,),
               SizedBox(
                 width: 10.w,
               ),
@@ -24,6 +28,7 @@ Widget SettingsMethod(String imgpath, String text) {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
+                color: light?Colors.black:Colors.white
               
               ),),
               Text((text=='Who can message')?'Everyone':
@@ -32,6 +37,7 @@ Widget SettingsMethod(String imgpath, String text) {
               style: TextStyle(
                 fontSize: 8.sp,
                 fontFamily: 'InterRegular',
+                color: light?Colors.black:Colors.white,
               
               ),),
 
@@ -41,17 +47,19 @@ Widget SettingsMethod(String imgpath, String text) {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
-              
+              color: light?Colors.black:Colors.white,
               ),),
              
             ],
           ),
-          (text!='Theme' && text!='Wallpaper')?Icon(Icons.keyboard_arrow_right):SizedBox(),
+          (text!='Theme' && text!='Wallpaper')?Icon(Icons.keyboard_arrow_right,
+          color: light?Colors.black:Colors.white,
+          ):SizedBox(),
           ],
          ),
        );
   }
-  Widget SettingsMethodWithSubtitlewithArrow(String imgpath, String text,String subtitle) {
+  Widget SettingsMethodWithSubtitlewithArrow(String imgpath, String text,String subtitle, bool light) {
     return Padding(
          padding:  EdgeInsets.symmetric(horizontal: 18.w,vertical: 8.h),
          child: Row(
@@ -59,7 +67,8 @@ Widget SettingsMethod(String imgpath, String text) {
           children: [
           Row(
             children: [
-              SvgPicture.asset(imgpath),
+              SvgPicture.asset(imgpath,
+              color: !AppTheme.light?Colors.white:Colors.black,),
               SizedBox(
                 width: 10.w,
               ),
@@ -71,13 +80,14 @@ Widget SettingsMethod(String imgpath, String text) {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
+                color: !AppTheme.light?Colors.white:Colors.black,
               
               ),),
               Text(subtitle,
               style: TextStyle(
                 fontSize: 8.sp,
                 fontFamily: 'InterRegular',
-              
+              color: !AppTheme.light?Colors.white:Colors.black,
               ),),
 
                 ],
@@ -85,12 +95,12 @@ Widget SettingsMethod(String imgpath, String text) {
              
             ],
           ),
-         Icon(Icons.keyboard_arrow_right),
+        // Icon(Icons.keyboard_arrow_right),
           ],
          ),
        );
   }
-  Widget SettingsMethodWithSubtitle(String imgpath, String text,String subtitle) {
+  Widget SettingsMethodWithSubtitle(String imgpath, String text,String subtitle, bool light) {
     return Padding(
          padding:  EdgeInsets.symmetric(horizontal: 18.w,vertical: 8.h),
          child: Row(
@@ -98,7 +108,9 @@ Widget SettingsMethod(String imgpath, String text) {
           children: [
           Row(
             children: [
-              SvgPicture.asset(imgpath),
+              SvgPicture.asset(imgpath,
+              color: !AppTheme.light?Colors.white:Colors.black,
+              ),
               SizedBox(
                 width: 10.w,
               ),
@@ -110,13 +122,14 @@ Widget SettingsMethod(String imgpath, String text) {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
+                color: !AppTheme.light?Colors.white:Colors.black
               
               ),),
               Text(subtitle,
               style: TextStyle(
                 fontSize: 8.sp,
                 fontFamily: 'InterRegular',
-              
+                color: !AppTheme.light?Colors.white:Colors.black
               ),),
 
                 ],
@@ -132,14 +145,14 @@ Widget SettingsMethod(String imgpath, String text) {
   Widget DividerMethod() {
     return Divider(
         height: 10,
-        color: const Color.fromARGB(255, 143, 149, 158),
-        thickness: 0.3,
+        color: AppTheme.light? Color.fromARGB(255, 143, 149, 158):Colors.white,
+        thickness: 0.7,
         indent : 15,
         endIndent : 15,       
      );
   }
   
-  Widget generalMethod(String title, String subtitle) {
+  Widget generalMethod(String title, String subtitle, bool light) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 50.w),
       child: Column(
@@ -151,6 +164,7 @@ Widget SettingsMethod(String imgpath, String text) {
             style: TextStyle(
               fontSize: 16.sp,
               fontFamily: 'InterRegular',
+               color: !light?Colors.white:Colors.black,
             ),
           ),
           Text(
@@ -158,6 +172,7 @@ Widget SettingsMethod(String imgpath, String text) {
             style: TextStyle(
               fontSize: 8.sp,
               fontFamily: 'InterRegular',
+               color: !light?Colors.white:Colors.black,
             ),
           ),
         ],
@@ -165,7 +180,7 @@ Widget SettingsMethod(String imgpath, String text) {
     );
   }
 
-Widget SetMethod(String imgpath, String text) {
+Widget SetMethod(String imgpath, String text, bool light) {
     return Padding(
          padding:  EdgeInsets.symmetric(horizontal: 18.w,vertical: 8.h),
          child: Row(
@@ -173,7 +188,9 @@ Widget SetMethod(String imgpath, String text) {
           children: [
           Row(
             children: [
-              SvgPicture.asset(imgpath),
+              SvgPicture.asset(imgpath,
+              color: !light?Colors.white:Colors.black,
+              ),
               SizedBox(
                 width: 10.w,
               ),
@@ -182,6 +199,7 @@ Widget SetMethod(String imgpath, String text) {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
+                color: !light?Colors.white:Colors.black,
               
               ),),
              

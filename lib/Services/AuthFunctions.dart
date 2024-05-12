@@ -102,10 +102,93 @@ class AuthService {
     }
   }
 
-  static Future<UserCredential> signInWithGoogle(BuildContext context) async {
-    try {
+
+// static Future<UserCredential> signInWithGoogle() async {
+//   // Trigger the authentication flow
+//   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+//   // Obtain the auth details from the request
+//   final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+//   // Create a new credential
+//   final credential = GoogleAuthProvider.credential(
+//     accessToken: googleAuth?.accessToken,
+//     idToken: googleAuth?.idToken,
+//   );
+
+//   // Once signed in, return the UserCredential
+//   return await FirebaseAuth.instance.signInWithCredential(credential);
+// }
+  // static Future<UserCredential> signInWithGoogle(BuildContext context) async {
+  //   try {
+  //     // Trigger the authentication flow
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     print('google user $googleUser');
+
+  //     if (googleUser == null) {
+  //       throw FirebaseAuthException(
+  //         code: 'google_signin_failed',
+  //         message: 'Google sign-in failed or was canceled.',
+  //       );
+  //     }
+
+  //     // Obtain the auth details from the request
+  //     final GoogleSignInAuthentication? googleAuth =
+  //     await googleUser?.authentication;
+
+  //     // Create a new credential
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth?.accessToken,
+  //       idToken: googleAuth?.idToken,
+  //     );
+
+  //     // Once signed in, return the UserCredential
+  //     final UserCredential userCredential =
+  //     await FirebaseAuth.instance.signInWithCredential(credential);
+
+  //     if (userCredential.user == null) {
+  //       throw FirebaseAuthException(
+  //         code: 'user_not_found',
+  //         message: 'User not found after Google sign-in.',
+  //       );
+  //     }
+
+  //     // Extract user information from googleUser and create a UserModel instance
+  //    await FireStoreMethods().createUser(
+  //       userId: userCredential.user!.uid,
+  //       name: googleUser!.displayName ?? '',
+  //       email: googleUser.email ?? '',
+  //       gender: '', // Add logic to determine gender if available
+  //       profilePicture: googleUser.photoUrl ?? '',
+  //       // Fill other fields with empty strings for now
+  //       dateOfBirth: '',
+  //       phoneNumber: '',
+  //       occupation: '',
+  //       state: '',
+  //       district: '',
+  //       bio: '',
+  //       achievements: '',
+  //       instagramLink: '',
+  //       linkedinLink: '',
+  //       IsVerified: false,
+  //       context: context,
+  //     );
+
+  //     return await FirebaseAuth.instance.signInWithCredential(credential);
+  //   } catch (e) {
+  //     print('Error signing in with Google: $e');
+  //     throw e; // Rethrow the error for higher-level error handling
+  //   }
+  // }
+    static Future<UserCredential> signInWithGoogle(BuildContext context) async {
+
+
+      
+    
       // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn()
+      ;
+      print("Google Auth$googleUser");
 
       if (googleUser == null) {
         throw FirebaseAuthException(
@@ -116,7 +199,7 @@ class AuthService {
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -126,7 +209,7 @@ class AuthService {
 
       // Once signed in, return the UserCredential
       final UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user == null) {
         throw FirebaseAuthException(
@@ -136,7 +219,7 @@ class AuthService {
       }
 
       // Extract user information from googleUser and create a UserModel instance
-     await FireStoreMethods().createUser(
+      await FireStoreMethods().createUser(
         userId: userCredential.user!.uid,
         name: googleUser.displayName ?? '',
         email: googleUser.email ?? '',
@@ -156,25 +239,12 @@ class AuthService {
         context: context,
       );
 
+      // return await userCredential;
       return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      print('Error signing in with Google: $e');
-      throw e; // Rethrow the error for higher-level error handling
-    }
+   
   }
 
-  static Future<UserCredential> signInWithFacebook() async {
-    // Trigger the sign-in flow
-    print("FaceBook Login Process");
-    final LoginResult loginResult = await FacebookAuth.instance.login();
-
-    // Create a credential from the access token
-    final OAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.credential(loginResult.accessToken!.token);
-
-    // Once signed in, return the UserCredential
-    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-  }
+  
 
   Future<void> signOut() async {
     try {

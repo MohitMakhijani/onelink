@@ -201,8 +201,8 @@ class _ApplyJobPageState extends State<ApplyJobPage> {
                   },
                   child: Text('Submit'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white,
+                     backgroundColor: Colors.blue,
                     elevation: 4,
                     padding: EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(

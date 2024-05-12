@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 
 class NotificationSetting extends StatefulWidget {
   const NotificationSetting({super.key});
@@ -16,18 +17,23 @@ class NotificationSetting extends StatefulWidget {
 class _NotificationSettingState extends State<NotificationSetting> {
   bool vibrate = false;
   bool popup = true;
-  bool light = false;
+  bool blub=true;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: !AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+        backgroundColor: !AppTheme.light?Colors.white:Colors.black,
         title: Center(
           child: Text(
             "Notification Settings",
             style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
-                fontWeight: FontWeight.w500),
+                fontWeight: FontWeight.w500,
+                color: AppTheme.light?Colors.white:Colors.black
+                ),
           ),
         ),
       ),
@@ -38,15 +44,15 @@ class _NotificationSettingState extends State<NotificationSetting> {
             height: 40.h,
           ),
            SettingsMethod('Assets/images/musicnote.svg',
-         "Notification tone"),
+         "Notification tone",AppTheme.light),
           //SettingsMethod('Assets/images/lastseen.svg', "Last seen & online"),
          // DividerMethod(),
         SwitchButtonMethodWithOutSubtitlewithImg(
-          'Vibration','vibrate','Assets/images/ph_vibrate.svg'),
+          'Vibration','vibrate','Assets/images/ph_vibrate.svg',AppTheme.light),
            SwitchButtonMethodWithOutSubtitlewithImg(
-          'Popup notification','popup','Assets/images/carbon_popup.svg'),
+          'Popup notification','popup','Assets/images/carbon_popup.svg',AppTheme.light),
            SwitchButtonMethodWithOutSubtitlewithImg(
-          'Light','light','Assets/images/lamp-on.svg'),
+          'Light','blub','Assets/images/lamp-on.svg',AppTheme.light),
          
           
 
@@ -94,7 +100,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                 ? vibrate
                 : (toe == 'popup')
                     ? popup
-                    : light,
+                    : blub,
             //borderRadius: 30.0,
             //padding: 8.0,
             showOnOff: false,
@@ -104,7 +110,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                     ? (vibrate = val)
                     : (toe == 'popup')
                         ? popup = val
-                        : light = val;
+                        : blub = val;
               });
             },
           ),
@@ -137,7 +143,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                 ? vibrate
                 : (toe == 'popup')
                     ? popup
-                    : light,
+                    : blub,
             //borderRadius: 30.0,
             //padding: 8.0,
             showOnOff: false,
@@ -147,7 +153,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                     ? (vibrate = val)
                     : (toe == 'popup')
                         ? popup = val
-                        : light = val;
+                        : blub = val;
               });
             },
           ),
@@ -156,7 +162,8 @@ class _NotificationSettingState extends State<NotificationSetting> {
     );
   }
 
-  Widget SwitchButtonMethodWithOutSubtitlewithImg(String title, String toe,String Img) {
+  Widget SwitchButtonMethodWithOutSubtitlewithImg(String title,
+   String toe,String Img, bool light) {
     return Padding(
       padding: EdgeInsets.only(left: 18.w, right: 18.w, top: 12.h,bottom: 10.h),
       child: Row(
@@ -164,7 +171,9 @@ class _NotificationSettingState extends State<NotificationSetting> {
         children: [
           Row(
             children: [
-              SvgPicture.asset(Img),
+              SvgPicture.asset(Img,
+              color:light? Colors.white:Colors.black,
+              ),
               SizedBox(
                 width: 10,
               ),
@@ -173,6 +182,8 @@ class _NotificationSettingState extends State<NotificationSetting> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontFamily: 'InterRegular',
+                  color: light?Colors.white:Colors.black
+
                 ),
               ),
             ],
@@ -188,7 +199,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                 ? vibrate
                 : (toe == 'popup')
                     ? popup
-                    : light,
+                    : blub,
             //borderRadius: 30.0,
             //padding: 8.0,
             showOnOff: false,
@@ -198,7 +209,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                     ? (vibrate = val)
                     : (toe == 'popup')
                         ? popup = val
-                        : light = val;
+                        : blub = val;
               });
             },
           ),

@@ -1,11 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:onelink/Theme.dart';
+import 'package:onelink/settingsPages/AccountSettings.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:onelink/settingsPages/NotificationSetting.dart';
+import 'package:onelink/settingsPages/privacySetting.dart';
+import 'package:onelink/settingsPages/securitySettings.dart';
+class AppTheme{
+static bool light=true;
+}
 
 class messageSettingPage extends StatefulWidget {
   const messageSettingPage({super.key});
@@ -18,18 +26,20 @@ class _messageSettingPageState extends State<messageSettingPage> {
   bool send = false;
   bool media = true;
   bool archived = false;
-  String presentColor='light';
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor().AppColorMethod(presentColor),
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+         backgroundColor: AppTheme.light?Colors.white:Colors.black,
         title: Center(
           child: Text(
             "Messaging Settings",
             style: TextStyle(
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
+                 color: !AppTheme.light?Colors.white:Colors.black,
                 fontWeight: FontWeight.w500),
           ),
         ),
@@ -40,39 +50,44 @@ class _messageSettingPageState extends State<messageSettingPage> {
           SizedBox(
             height: 40.h,
           ),
-          SettingsMethod('Assets/images/messages.svg', "Who can message"),
-          DividerMethod(),
+          SettingsMethod('Assets/images/messages.svg', "Who can message",AppTheme.light),
+          DividerMethod(
+            
+            
+          ),
           SwitchButtonMethod(
-              'Enter is send', 'Enter key will send your message', 'send'),
+              'Enter is send', 'Enter key will send your message', 'send',AppTheme.light),
           SwitchButtonMethod('Media downloads',
-              'Download newly received media automatically', 'media'),
-          generalMethod('Font size', 'Medium'),
+              'Download newly received media automatically', 'media',AppTheme.light),
+          generalMethod('Font size', 'Medium',AppTheme.light),
           DividerMethod(),
           SwitchButtonMethod(
               'Archived chats',
               'Archived chats will remain archived when you\n receive a new message',
-              'archived'),
+              'archived',AppTheme.light),
           DividerMethod(),
-          SetMethod('Assets/images/chatbackup.svg','Chat backup'),
-          SetMethod('Assets/images/history.svg','Chat history'),
+          SetMethod('Assets/images/chatbackup.svg','Chat backup',AppTheme.light),
+          SetMethod('Assets/images/history.svg','Chat history',AppTheme.light),
           DividerMethod(),
           GestureDetector(
             onTap: (){
               setState(() {
                 print("///clicked///");
-                if(presentColor=='light'){
-                     AppColor().AppColorMethod('dark');
-                    presentColor='dark';
-                }
-                
-                else if(presentColor=='dark'){
-                     AppColor().AppColorMethod('light');
-                    presentColor='light';
-                }
-              });
+                AppTheme.light=!AppTheme.light;
+                print(AppTheme.light);
+
+              },
+              );
             },
-            child: SettingsMethod('Assets/images/sun.svg', "Theme")),
-          SettingsMethod('Assets/images/gallery.svg', "Wallpaper"),
+            child: SettingsMethodWithSubtitlewithArrow('Assets/images/sun.svg', "Theme",(AppTheme.light)?"Light":"Dark",AppTheme.light)),
+          GestureDetector(
+            onTap: (){
+              Navigator.push(context,
+               MaterialPageRoute(builder: (context)=>securitySettingsPage()));
+              
+              
+              },
+            child: SettingsMethod('Assets/images/gallery.svg', "Wallpaper",AppTheme.light)),
           
 
           
@@ -85,7 +100,7 @@ class _messageSettingPageState extends State<messageSettingPage> {
   
 
 
-  Widget SwitchButtonMethod(String title, String subtitle, String toe) {
+  Widget SwitchButtonMethod(String title, String subtitle, String toe, bool light) {
     return Padding(
       padding: EdgeInsets.only(left: 50.w, right: 18.w, top: 12.h,bottom: 10.h),
       child: Row(
@@ -99,6 +114,7 @@ class _messageSettingPageState extends State<messageSettingPage> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontFamily: 'InterRegular',
+                  color: !light?Colors.white:Colors.black,
                 ),
               ),
               Text(
@@ -106,6 +122,7 @@ class _messageSettingPageState extends State<messageSettingPage> {
                 style: TextStyle(
                   fontSize: 8.sp,
                   fontFamily: 'InterRegular',
+                   color: !light?Colors.white:Colors.black,
                 ),
               ),
             ],

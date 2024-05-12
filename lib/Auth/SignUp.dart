@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
 
 import '../AuthScreens/SignUpMail.dart';
 import '../Screen/onboardingProfile/onboardingProfilePage.dart';
@@ -271,6 +272,8 @@ class _SignUpPageState extends State<SignUpPage> {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SignUpMail()));
           } else if (s == 'Login With Google') {
+            // Navigator.push(context, 
+            // MaterialPageRoute(builder: (context)=>HomeScreen()));
           AuthService.signInWithGoogle(context);
             checkUserSignInStatus();
           }
@@ -350,7 +353,7 @@ class _SignUpPageState extends State<SignUpPage> {
       print('User is signed in: ${user.uid}');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SetUpProfile()
+        MaterialPageRoute(builder: (context) => HomeScreen()
         ),
       );
     } else {
