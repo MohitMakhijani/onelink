@@ -22,8 +22,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   // Get the current user
   
-     Future.delayed(const Duration(seconds: 2), () {
-      if(widget.Action=='AuthtoHome'  || widget.Action=='AddElementToHome' || widget.Action=='EditElementToHome' ){
+     Future.delayed(const Duration(milliseconds: 800), () {
+      if(widget.Action=='AuthtoHome'  || widget.Action=='AddElementToHome'
+       || widget.Action=='EditElementToHome' || widget.Action=='Refresh' ){
 Navigator.push(context, 
       MaterialPageRoute(builder: (context)=> HomeScreen()));
       }
@@ -31,6 +32,10 @@ Navigator.push(context,
 Navigator.push(context, 
       MaterialPageRoute(builder: (context)=> SignUpPage()));
       }
+      else if(widget.Action=='SettingTheme'){
+        Navigator.pop(context);
+      }
+      
      
       
     });

@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:onelink/Theme.dart';
 import 'package:share/share.dart';
 
 import '../../Services/FireStoreMethod.dart';
@@ -77,6 +79,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor:  !AppTheme.light?Colors.white:Colors.black,
+        backgroundColor:AppTheme.light?Colors.white:Colors.black,
         actions: [
           if (FirebaseAuth.instance.currentUser!.uid == userData['userId'])
             IconButton(
@@ -97,12 +101,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         title: Text(
           "StartUp Podero",
-          style: GoogleFonts.inter(color: Colors.black),
+          style: GoogleFonts.inter(
+            ),
         ),
         centerTitle: true,
       ),
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        color: Color.fromARGB(255, 244, 66, 66),
+        size:50,
+      ))
           : ListView(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               children: [
@@ -123,7 +132,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Text(
                               "${userData['name'] ?? ''}",
                               style: GoogleFonts.inter(
-                                  fontSize: 17.sp, fontWeight: FontWeight.w600),
+                                  fontSize: 17.sp, fontWeight: FontWeight.w600,
+                                  color: !AppTheme.light?Colors.white:Colors.black),
                             ),
                           ],
                         ),
@@ -277,7 +287,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                        color: Color.fromARGB(255, 244, 66, 66),
+                        size:50,
+                      ));
                     }
 
                     return GridView.builder(
@@ -353,6 +366,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: !AppTheme.light?Colors.white:Colors.black
           ),
         ),
         SizedBox(height: 4),
@@ -360,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           label,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey,
+            color: !AppTheme.light?Colors.white:Colors.black,
           ),
         ),
       ],

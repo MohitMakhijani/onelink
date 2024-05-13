@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:onelink/Theme.dart';
 
 import '../../UI-Models/EventmodelUI.dart';// Import your EventPost widget or data model
 
@@ -39,10 +41,17 @@ class _EventsPageState extends State<My_events> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        foregroundColor: Colors.white,
+           foregroundColor: AppTheme.light?Colors.white:Colors.black,
         backgroundColor: Colors.red,
-        title: Text('Hosted Events',style: GoogleFonts.inter(color:Colors.white,fontSize: MediaQuery.of(context).size.width*0.06),),
+        // leading: IconButton(onPressed: (){
+
+        // }, icon: Icon(Icons)),
+        title: Text('Hosted Events',style:
+         GoogleFonts.inter(
+          color:AppTheme.light?Colors.white:Colors.black,
+          fontSize: MediaQuery.of(context).size.width*0.06),),
 
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -53,7 +62,10 @@ class _EventsPageState extends State<My_events> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              color: Color.fromARGB(255, 244, 66, 66),
+              size:50,
+            ),);
           }
 
           List<QueryDocumentSnapshot> eventDocs = snapshot.data!.docs;

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:onelink/LoadingScreen.dart';
 import 'package:onelink/Theme.dart';
 import 'package:onelink/settingsPages/AccountSettings.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
@@ -11,9 +12,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:onelink/settingsPages/NotificationSetting.dart';
 import 'package:onelink/settingsPages/privacySetting.dart';
 import 'package:onelink/settingsPages/securitySettings.dart';
-class AppTheme{
-static bool light=true;
-}
+
 
 class messageSettingPage extends StatefulWidget {
   const messageSettingPage({super.key});
@@ -30,8 +29,10 @@ class _messageSettingPageState extends State<messageSettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+        foregroundColor: !AppTheme.light?Colors.white:Colors.black,
          backgroundColor: AppTheme.light?Colors.white:Colors.black,
         title: Center(
           child: Text(
@@ -69,21 +70,24 @@ class _messageSettingPageState extends State<messageSettingPage> {
           SetMethod('Assets/images/chatbackup.svg','Chat backup',AppTheme.light),
           SetMethod('Assets/images/history.svg','Chat history',AppTheme.light),
           DividerMethod(),
-          GestureDetector(
-            onTap: (){
-              setState(() {
-                print("///clicked///");
-                AppTheme.light=!AppTheme.light;
-                print(AppTheme.light);
+          // GestureDetector(
+          //   onTap: (){
+          //     setState(() {
+          //       print("///clicked///");
+          //       AppTheme.light=!AppTheme.light;
+          //       print(AppTheme.light);
+          //       Navigator.push(
+          //         context,MaterialPageRoute(builder: 
+          //         (context)=>LoadingScreen('SettingTheme'),)
+          //       );
 
-              },
-              );
-            },
-            child: SettingsMethodWithSubtitlewithArrow('Assets/images/sun.svg', "Theme",(AppTheme.light)?"Light":"Dark",AppTheme.light)),
+          //     },
+          //     );
+          //   },
+          //   child: SettingsMethodWithSubtitlewithArrow('Assets/images/sun.svg', "Theme",(AppTheme.light)?"Light":"Dark",AppTheme.light)),
           GestureDetector(
             onTap: (){
-              Navigator.push(context,
-               MaterialPageRoute(builder: (context)=>securitySettingsPage()));
+             print('Wall paper');
               
               
               },

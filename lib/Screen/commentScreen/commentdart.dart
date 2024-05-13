@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../FetchDataProvider/fetchData.dart';
@@ -92,7 +93,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
               builder: (context,
                   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                    color: Color.fromARGB(255, 244, 66, 66),
+                    size:50,
+                  ));
                 }
 
                 return ListView.builder(

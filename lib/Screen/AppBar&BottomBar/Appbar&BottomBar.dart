@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:onelink/Tabs/CommunityTab/CommunityList.dart';
+import 'package:onelink/Theme.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../../FetchDataProvider/fetchData.dart';
@@ -43,6 +45,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Fetch user data immediately when HomeScreen is initialized
+    // print("theme${AppTheme.light}");
+    // if(AppTheme.light){
+    //   setState(() {
+    //     // AppTheme.light=!AppTheme.light;
+
+        
+    //   });
+    // }
+    // if(!AppTheme.light){
+    //   setState(() {
+        
+    //   });
+
+    // }
 
     Provider.of<UserFetchController>(context, listen: false).fetchUserData();
   }
@@ -53,8 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var myUser = Provider.of<UserFetchController>(context).myUser;
     return Scaffold(
+      backgroundColor:AppTheme.light?Colors.white:Colors.black ,
       drawer: CustomDrawer(),
       appBar: AppBar(
+        backgroundColor: AppTheme.light?Colors.white:Colors.black,
         leading: Builder(builder: (BuildContext context) {
           return IconButton(
             icon: CircleAvatar(
@@ -73,7 +91,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(
           "StartUp Podero",
           style:
-              GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w700),
+              GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.w700,
+             color: !AppTheme.light?Colors.white:Colors.black
+              ),
         ),
         actions: [
           Consumer<UserFetchController>(
@@ -82,7 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 // User data is fetched, you can access it here
                 var myUser = userController.myUser;
                 return IconButton(
-                  icon: FaIcon(Bootstrap.chat, color: Colors.black, size: 20.r),
+                  icon: FaIcon(Bootstrap.chat,
+                  color: !AppTheme.light?Colors.white:Colors.black,
+                   size: 20.r),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -101,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ), IconButton(
             icon: FaIcon(
               FontAwesomeIcons.search,
-              color: Colors.black,
+              color: !AppTheme.light?Colors.white:Colors.black,
               size: 20.r,
             ),
             onPressed: () {
@@ -118,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: FaIcon(
               FontAwesomeIcons.bell,
-              color: Colors.black,
+             color: !AppTheme.light?Colors.white:Colors.black,
               size: 20.r,
             ),
             onPressed: () {
@@ -139,9 +161,9 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.light?Colors.white:Colors.black,
         selectedItemColor: Color(0xFFF44242),
-        unselectedItemColor: Colors.black,
+        unselectedItemColor:  !AppTheme.light?Colors.white:Colors.black,
         showSelectedLabels: true,
         showUnselectedLabels: false,
         iconSize: 20,

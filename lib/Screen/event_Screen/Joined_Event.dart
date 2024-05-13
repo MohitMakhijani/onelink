@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:onelink/Theme.dart';
 
 import '../../UI-Models/EventmodelUI.dart';
 
@@ -39,10 +41,15 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        foregroundColor: Colors.white,
+        foregroundColor:  AppTheme.light?Colors.white:Colors.black,
         backgroundColor: Colors.red,
-        title: Text('Participated Events',style: GoogleFonts.inter(color:Colors.white,fontSize: MediaQuery.of(context).size.width*0.06),),
+        title: Text('Participated Events',style: GoogleFonts.inter(
+          
+          color:AppTheme.light?Colors.white:Colors.black,
+          
+          fontSize: MediaQuery.of(context).size.width*0.06),),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _participatedEventsStream,
@@ -52,7 +59,10 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              color: Color.fromARGB(255, 244, 66, 66),
+              size:50,
+            ),);
           }
           List<QueryDocumentSnapshot> allEventDocs = snapshot.data!.docs;
           List<QueryDocumentSnapshot> participatedEventDocs = allEventDocs.where((doc) {

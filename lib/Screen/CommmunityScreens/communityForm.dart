@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/components/myTextField.dart';
 
 class JoinCommunityForm extends StatelessWidget {
@@ -166,8 +167,22 @@ class JoinCommunityForm extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        title: Text('Join Community Form'),
+        backgroundColor: AppTheme.light?Colors.white:Colors.black,
+        leading: IconButton(onPressed: 
+        (){
+          Navigator.pop(context);
+        }
+
+        , icon: Icon(Icons.arrow_back,
+        color: !AppTheme.light?Colors.white:Colors.black,
+        )),
+        title: Text('Join Community Form',
+        style: TextStyle(
+          color: !AppTheme.light?Colors.white:Colors.black,
+        ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -179,13 +194,20 @@ class JoinCommunityForm extends StatelessWidget {
               ...formFields, // Display form fields based on community index
               SizedBox(height: 16),
               ElevatedButton(
+                 style: ElevatedButton.styleFrom(
+    backgroundColor:!AppTheme.light?Colors.white:Colors.black, // Set the background color here
+  ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _joinCommunity();
                     Navigator.pop(context); // Navigate back after joining
                   }
                 },
-                child: Text("Join"),
+                child: Text("Join",
+                style: TextStyle(
+                  color: AppTheme.light?Colors.white:Colors.black,
+                ),
+                ),
               )
             ],
           ),

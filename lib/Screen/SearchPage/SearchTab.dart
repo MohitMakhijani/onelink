@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/Theme.dart';
 import '../../Screen/profile/profilePage.dart';
 import 'getx.dart';
 
@@ -12,7 +13,14 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-appBar: AppBar(title: Text('Search',style: TextStyle(fontSize: 22.sp,fontFamily: 'InterRegular')),),
+      backgroundColor:AppTheme.light?Colors.white:Colors.black,
+appBar: AppBar(
+  foregroundColor: !AppTheme.light?Colors.white:Colors.black ,
+  backgroundColor:AppTheme.light?Colors.white:Colors.black,
+  
+  title: Text('Search',style: TextStyle(fontSize: 22.sp,fontFamily: 'InterRegular',
+color: !AppTheme.light?Colors.white:Colors.black
+)),),
       body: Padding(
         padding: const EdgeInsets.all(12 ),
         child: Column(
@@ -23,6 +31,7 @@ appBar: AppBar(title: Text('Search',style: TextStyle(fontSize: 22.sp,fontFamily:
               decoration: BoxDecoration(
               border: Border.all(width: 1),
                 borderRadius: BorderRadius.circular(20),
+                color: Colors.white
               ),
               child: TextField(
                 controller: _controller.searchController,
@@ -48,7 +57,9 @@ appBar: AppBar(title: Text('Search',style: TextStyle(fontSize: 22.sp,fontFamily:
                   return Center(
                     child: Text(
                       'Search Jobs Events Peoples....',
-                      style: GoogleFonts.aladin(),
+                      style: GoogleFonts.aladin(
+                        color: !AppTheme.light?Colors.white:Colors.black
+                      ),
                     ),
                   );
                 } else {

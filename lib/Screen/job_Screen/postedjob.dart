@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/Theme.dart';
 
 import 'JobDetails.dart';
 class PostedJobsPage extends StatelessWidget {
@@ -14,6 +15,7 @@ class PostedJobsPage extends StatelessWidget {
         'Posted Jobs',
         style: GoogleFonts.inter(color:Colors.red,fontSize: 20, fontWeight: FontWeight.bold),
       ),),
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('jobs')
@@ -32,7 +34,11 @@ class PostedJobsPage extends StatelessWidget {
           }
           if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text('No jobs posted yet.'),
+              child: Text('No jobs posted yet.',
+              style: TextStyle(
+                color: !AppTheme.light?Colors.white:Colors.black
+              ),
+              ),
             );
           }
 
@@ -43,8 +49,16 @@ class PostedJobsPage extends StatelessWidget {
               return Column(
                 children: [  Container(child: Text("Job Status-${jobData['jobStatus']}",style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.05),),color: Colors.grey[200],),
                   ListTile(
-                    title: Text(jobData['jobTitle']??"" ),
-                    subtitle: Text(jobData['description']),
+                    title: Text(jobData['jobTitle']??"" ,
+                    style: TextStyle(
+color: AppTheme.light?Colors.white:Colors.black
+
+                    ),),
+                    subtitle: Text(jobData['description'],
+                    style: TextStyle(
+                      color: AppTheme.light?Colors.white:Colors.black
+                    ),
+                    ),
                     onTap: () {
                       // Navigate to job details page
                       Navigator.push(

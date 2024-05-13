@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/Theme.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../UI-Models/JobPostModel.dart';
@@ -15,13 +16,18 @@ final String? CurrentUserUid= FirebaseAuth.instance.currentUser!.uid;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.white,
+        foregroundColor: AppTheme.light?Colors.white:Colors.black,
         backgroundColor: Colors.red,
         title: Text(
           'Applied Jobs',
-          style: GoogleFonts.inter(fontSize: 18,color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.inter(fontSize: 18,
+          color: AppTheme.light?Colors.white:Colors.black, 
+          fontWeight: FontWeight.bold,
+          
+          ),
         ),
       ),
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {

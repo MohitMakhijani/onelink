@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:onelink/settingsPages/MessagingSettings.dart';
@@ -23,6 +24,7 @@ class _privacySettingsState extends State<privacySettings> {
     return Scaffold(
       backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+        foregroundColor:  !AppTheme.light?Colors.white:Colors.black,
         backgroundColor:AppTheme.light?Colors.white:Colors.black ,
         title: Center(
           child: Text(

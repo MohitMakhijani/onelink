@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onelink/Services/FireStoreMethod.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/components/myButton.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -86,11 +88,15 @@ class AddPostScreen extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        toolbarHeight: 25,
+        
+        toolbarHeight: 30,
         leading: _file != null
             ? IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back,
+           color: !AppTheme.light?Colors.white:Colors.black
+          ),
           onPressed: () {
             setState(() {
               _file = null;
@@ -98,7 +104,7 @@ class AddPostScreen extends StatefulWidget {
           },
         )
             : null,
-        backgroundColor: Colors.white,
+       backgroundColor:AppTheme.light?Colors.white:Colors.black,
         centerTitle: true,
 
         actions: <Widget>[
@@ -117,8 +123,8 @@ class AddPostScreen extends StatefulWidget {
               }
             },
             icon: FaIcon(
-              _file == null ? EvaIcons.flash : Icons.arrow_right,size: 18,
-              color: _file == null ? Colors.black : Colors.red,
+              _file == null ? EvaIcons.flash : Bootstrap.forward,size: 30,
+              color: _file == null ?   !AppTheme.light?Colors.white:Colors.black : Colors.red,
             ),
           ),
         ],
@@ -176,7 +182,10 @@ class AddPostScreen extends StatefulWidget {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return CameraPreview(_controller);
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: Color.fromARGB(255, 244, 66, 66),
+                    size:50,
+                  ),);
                 }
               },
             ),
@@ -198,19 +207,19 @@ class AddPostScreen extends StatefulWidget {
                 }
               },
               icon: Icon(Icons.photo_library),
-              color: Colors.black,
+              color:  !AppTheme.light?Colors.white:Colors.black,
               iconSize: 30,
             ),
               IconButton(
                 onPressed: _captureImage,
                 icon: Icon(Icons.camera),
-                color: Colors.black,
+                color:  !AppTheme.light?Colors.white:Colors.black,
                 iconSize: 30,
               ),
               IconButton(
                 onPressed: _toggleCameraLensDirection,
                 icon: Icon(Icons.flip_camera_android),
-                color: Colors.black,
+                color: !AppTheme.light?Colors.white:Colors.black,
                 iconSize: 30,
               ),
 

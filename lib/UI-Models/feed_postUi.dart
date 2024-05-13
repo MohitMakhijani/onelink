@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/Theme.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 
 import 'package:share/share.dart';
 import '../Screen/profile/profilePage.dart';
@@ -68,20 +70,37 @@ class _PostCardState extends State<PostCard> {
       context: context,
       builder: (BuildContext context) {
         return Container(
+          color:AppTheme.light?Colors.white:Colors.black,
+          
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Bootstrap.save),
-                title: Text('Save'),
+                leading: Icon(Bootstrap.save,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                
+                ),
+                title: Text('Save',
+                style: TextStyle(
+                              color:!AppTheme.light?Colors.white:Colors.black
+
+                ),
+                ),
                 onTap: () async {
                   Navigator.pop(context);
                 },
               ),
               if (widget.uid != FirebaseAuth.instance.currentUser!.uid)
                 ListTile(
-                  leading: Icon(Bootstrap.person),
-                  title: Text('follow'),
+                  leading: Icon(Bootstrap.person,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                  ),
+                  title: Text('follow',
+                  style: TextStyle(
+                              color:!AppTheme.light?Colors.white:Colors.black
+
+                  ),
+                  ),
                   onTap: () async {
                     FireStoreMethods().followUser(
                       FirebaseAuth.instance.currentUser!.uid,
@@ -94,8 +113,16 @@ class _PostCardState extends State<PostCard> {
 
               if (widget.uid == FirebaseAuth.instance.currentUser!.uid)
               ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
+                leading: Icon(Icons.edit,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                
+                ),
+                title: Text('Edit',
+                style: TextStyle(
+                              color:AppTheme.light?Colors.white:Colors.black
+
+                ),
+                ),
                 onTap: () async {
                   Navigator.pop(context);
                   postController.toggleEditing(widget.postId, true);
@@ -107,7 +134,12 @@ class _PostCardState extends State<PostCard> {
                     Icons.report,
                     color: Colors.red,
                   ),
-                  title: Text('Report'),
+                  title: Text('Report',
+                  style: TextStyle(
+                              color:!AppTheme.light?Colors.white:Colors.black
+
+                  ),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -127,7 +159,12 @@ class _PostCardState extends State<PostCard> {
                     Icons.delete,
                     color: Colors.red,
                   ),
-                  title: Text('Delete'),
+                  title: Text('Delete',
+                  style: TextStyle(
+               color:!AppTheme.light?Colors.white:Colors.black
+
+                  ),
+                  ),
                   onTap: () async {
                     await FirebaseFirestore.instance
                         .collection('posts')
@@ -192,6 +229,8 @@ class _PostCardState extends State<PostCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
+                              color:AppTheme.light?Colors.white:Colors.black
+                  ,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -224,14 +263,17 @@ class _PostCardState extends State<PostCard> {
                                 style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14.0,
-                                  color: Colors.black54,
+                  color:!AppTheme.light?Colors.white:Colors.black
+,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         IconButton(
-                          icon: Icon(Icons.more_horiz),
+                          icon: Icon(Icons.more_horiz,
+                          color: !AppTheme.light?Colors.white:Colors.black
+                          ),
                           onPressed: () {
                             _showBottomSheet(context);
                           },
@@ -261,6 +303,7 @@ class _PostCardState extends State<PostCard> {
                 ),
                 Obx(() {
                   return Container(
+                    
                     width: MediaQuery.of(context).size.width,
                     child: Row(
                       children: <Widget>[
@@ -290,7 +333,7 @@ class _PostCardState extends State<PostCard> {
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 14.0.sp,
-                                                    color: Colors.black),
+                                                   color: !AppTheme.light?Colors.white:Colors.black),
                                               ),
                                             ],
                                           ),
@@ -330,7 +373,7 @@ class _PostCardState extends State<PostCard> {
                                     );
                                   },
                                   child: FaIcon(FontAwesomeIcons.comment,
-                                      color: Colors.black),
+                                      color: !AppTheme.light?Colors.white:Colors.black),
                                 ),
                                 StreamBuilder<QuerySnapshot>(
                                   stream: commentsRef.snapshots(),
@@ -353,7 +396,7 @@ class _PostCardState extends State<PostCard> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14.sp,
-                                        color: Colors.black,
+                                        color: !AppTheme.light?Colors.white:Colors.black,
                                       ),
                                     );
                                   },
@@ -369,7 +412,7 @@ class _PostCardState extends State<PostCard> {
                                       'Check out this cool app!/username=${widget.username}');
                                 },
                                 icon: FaIcon(Bootstrap.upload,
-                                    color: Colors.black),
+                                    color: !AppTheme.light?Colors.white:Colors.black),
                               ),
                             )
                           ],
@@ -408,7 +451,9 @@ class _PostCardState extends State<PostCard> {
                                 Text(widget.username,
                                     style: GoogleFonts.inter(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16.sp)),
+                                        fontSize: 16.sp,
+                                      color:!AppTheme.light?Colors.white:Colors.black,
+                                        )),
                                 SizedBox(
                                   width: 8.w,
                                 ),

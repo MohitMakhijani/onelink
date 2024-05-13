@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/Theme.dart';
 
 class MyTextField extends StatefulWidget {
   final String hint;
@@ -46,6 +47,9 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+       // color: AppTheme.light?Colors.white:Colors.black,
+      ),
       width: 358.w,
     // height: 55.h,
       child: Padding(
@@ -61,11 +65,15 @@ class _MyTextFieldState extends State<MyTextField> {
                 //focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
                 contentPadding: EdgeInsets.all(10.w),
                 hintText: widget.hint,
-             hintStyle:   TextStyle(
-                                fontFamily: 'InterRegular',
-                                color: Color.fromARGB(255, 173, 179, 189),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w400),
+                
+             hintStyle:   
+             TextStyle(
+                   fontFamily: 'InterRegular',
+                 color: !AppTheme.light?Colors.white:Colors.black,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400
+                  
+                  ),
                 //prefixIcon: Icon(widget.preIcon),
                 suffixIcon: widget.suffixIcon != null
                     ? GestureDetector(
@@ -86,8 +94,7 @@ class _MyTextFieldState extends State<MyTextField> {
                
                               border: OutlineInputBorder(
                                  borderSide: BorderSide(
-                                color: Color.fromARGB(255, 173, 179,
-                                    189), // Specify the border color here
+                                color: AppTheme.light?Colors.white:Colors.black, // Specify the border color here
                                 // width: 2.0, // Specify the border width here
                               ),
                               borderRadius: BorderRadius.circular(8.0.r),),
@@ -95,6 +102,8 @@ class _MyTextFieldState extends State<MyTextField> {
               controller: widget.controller,
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w500,
+              color:  !AppTheme.light?Colors.white:Colors.black,
+
               )),
         ),
       ),

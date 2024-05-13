@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/settingsPages/Attributemethod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:onelink/settingsPages/MessagingSettings.dart';
@@ -22,9 +23,11 @@ class _NotificationSettingState extends State<NotificationSetting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: !AppTheme.light?Colors.white:Colors.black,
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        backgroundColor: !AppTheme.light?Colors.white:Colors.black,
+        backgroundColor: AppTheme.light?Colors.white:Colors.black,
+
+        foregroundColor:  !AppTheme.light?Colors.white:Colors.black,
         title: Center(
           child: Text(
             "Notification Settings",
@@ -32,7 +35,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                 fontSize: 16.sp,
                 fontFamily: 'InterRegular',
                 fontWeight: FontWeight.w500,
-                color: AppTheme.light?Colors.white:Colors.black
+                color: !AppTheme.light?Colors.white:Colors.black
                 ),
           ),
         ),
@@ -172,7 +175,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
           Row(
             children: [
               SvgPicture.asset(Img,
-              color:light? Colors.white:Colors.black,
+              color: !AppTheme.light?Colors.white:Colors.black,
               ),
               SizedBox(
                 width: 10,
@@ -182,7 +185,7 @@ class _NotificationSettingState extends State<NotificationSetting> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontFamily: 'InterRegular',
-                  color: light?Colors.white:Colors.black
+                  color:  !AppTheme.light?Colors.white:Colors.black,
 
                 ),
               ),

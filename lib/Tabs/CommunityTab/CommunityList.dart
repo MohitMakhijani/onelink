@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:onelink/Theme.dart';
 import '../../Models/CommunityModel.dart';
 import '../../Screen/CommmunityScreens/ChatScreens.dart';
 import '../../Screen/CommmunityScreens/communityForm.dart';
@@ -17,7 +19,10 @@ class CommunityList extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: LoadingAnimationWidget.staggeredDotsWave(
+                color: Color.fromARGB(255, 244, 66, 66),
+                size:50,
+              ),
           );
         }
         if (snapshot.hasError) {
@@ -59,6 +64,7 @@ class CommunityList extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
+                                 color: !AppTheme.light?Colors.white:Colors.black
                               ),
                             ),
                           ),
@@ -66,6 +72,10 @@ class CommunityList extends StatelessWidget {
                             padding: EdgeInsets.only(left: 18.0),
                             child: Text(
                               '${communities[index].members.length} Members',
+                              style: TextStyle(
+                                color: !AppTheme.light?Colors.white:Colors.black
+                              ),
+                              
                             ),
                           ),
                         ],
@@ -108,7 +118,8 @@ class CommunityList extends StatelessWidget {
                                 },
                                 child: Text(
                                   isUserJoined ? "Chat" : "Join",
-                                  style: TextStyle(color: Colors.black),
+                                  style: TextStyle(
+                              color: !AppTheme.light?Colors.white:Colors.black),
                                 ))),
                       ),
                     )

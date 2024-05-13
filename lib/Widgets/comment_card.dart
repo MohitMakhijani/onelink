@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:onelink/Theme.dart';
 
 
 import '../Screen/profile/profilePage.dart';
@@ -48,7 +49,8 @@ class CommentCard extends StatelessWidget {
                               style: GoogleFonts.roboto(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black,
+                     color: !AppTheme.light?Colors.white:Colors.black
+
                               ),
                             ),
                             Text(
@@ -56,7 +58,7 @@ class CommentCard extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                   color: !AppTheme.light?Colors.white:Colors.black
                               ),
                             ),
                             Padding(
@@ -65,9 +67,10 @@ class CommentCard extends StatelessWidget {
                                 DateFormat.yMMMd().format(
                                   snap.data()['datePublished'].toDate(),
                                 ),
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
+                            color: !AppTheme.light?Colors.white:Colors.black
                                 ),
                               ),
                             ),
@@ -80,8 +83,15 @@ class CommentCard extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('Delete Comment?'),
-                                content: const Text('Are you sure you want to delete this comment?'),
+                                title:  Text('Delete Comment?',
+                                style: TextStyle(
+                                   color: !AppTheme.light?Colors.white:Colors.black
+                                ),
+                                ),
+                                content:  Text('Are you sure you want to delete this comment?',
+                                style: TextStyle(
+                                   color: !AppTheme.light?Colors.white:Colors.black
+                                ),),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

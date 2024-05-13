@@ -6,7 +6,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/LoadingScreen.dart';
+import 'package:onelink/Screen/spalshscreen.dart';
+import 'package:onelink/Services/AuthFunctions.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/other/Settings%20Page/Settings.dart';
+import 'package:onelink/settingsPages/MessagingSettings.dart';
 import 'package:provider/provider.dart';
 import '../../Auth/SignUp.dart';
 import '../../FetchDataProvider/fetchData.dart';
@@ -14,13 +19,22 @@ import '../../Screen/event_Screen/CreateEvent.dart';
 import '../../Screen/profile/profilePage.dart';
 import '../../other/InvitePage.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      
       width: 250.w,
       child: Container(
-        decoration: BoxDecoration(color: Colors.white),
+        
+        decoration: BoxDecoration(
+          
+          color: AppTheme.light?Colors.white:Colors.black,),
         child: Consumer<UserFetchController>(
           builder: (context, userFetchController, _) {
             if (userFetchController.isDataFetched) {
@@ -53,7 +67,7 @@ class CustomDrawer extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: !AppTheme.light?Colors.white:Colors.black54,
                             ),
                           ),
                           SizedBox(
@@ -64,7 +78,7 @@ class CustomDrawer extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               fontSize: 11.sp,
-                              color: Colors.black54,
+                              color: !AppTheme.light?Colors.white:Colors.black54,
                             ),
                           ),
                         ],
@@ -74,12 +88,17 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.user),
+                        FaIcon(FontAwesomeIcons.user,
+                        color: !AppTheme.light?Colors.white:Colors.black,
+                        ),
                         SizedBox(width: 15.w),
                         Text(
                           'Account',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                              ),
+                            
                         ),
                       ],
                     ),
@@ -98,12 +117,17 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(Clarity.event_outline_alerted),
+                        FaIcon(Clarity.event_outline_alerted,
+                        color: !AppTheme.light?Colors.white:Colors.black,
+                        ),
                         SizedBox(width: 15),
                         Text(
                           'Create Event',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                              ),
+                              
                         ),
                       ],
                     ),
@@ -121,12 +145,17 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(Bootstrap.people),
+                        FaIcon(Bootstrap.people,
+                        color:!AppTheme.light?Colors.white:Colors.black
+                        ),
                         SizedBox(width: 15),
                         Text(
                           'Invite Friends',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              
+                              color:!AppTheme.light?Colors.white:Colors.black),
+                              
                         ),
                       ],
                     ),
@@ -164,12 +193,16 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.questionCircle),
+                        FaIcon(FontAwesomeIcons.questionCircle,
+                       color:!AppTheme.light?Colors.white:Colors.black 
+                        ),
                         SizedBox(width: 15),
                         Text(
                           'FAQs',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                              ),
                         ),
                       ],
                     ),
@@ -185,12 +218,16 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(Clarity.help_outline_badged),
+                        FaIcon(Clarity.help_outline_badged,
+                        color:!AppTheme.light?Colors.white:Colors.black
+                        ),
                         SizedBox(width: 15),
                         Text(
                           'Help',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                              ),
                         ),
                       ],
                     ),
@@ -206,12 +243,17 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(Clarity.settings_line),
+                        FaIcon(Clarity.settings_line,
+                        color:!AppTheme.light?Colors.white:Colors.black
+                        ),
                         SizedBox(width: 15),
                         Text(
                           'Settings',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              color:!AppTheme.light?Colors.white:Colors.black
+
+                              ),
                         ),
                       ],
                     ),
@@ -227,16 +269,22 @@ class CustomDrawer extends StatelessWidget {
                   ListTile(
                     title: Row(
                       children: [
-                        FaIcon(PixelArtIcons.logout),
+                        FaIcon(PixelArtIcons.logout,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                        ),
                         SizedBox(width: 15),
                         Text(
                           'Log out',
                           style: GoogleFonts.inter(
-                              fontSize: 18.sp, fontWeight: FontWeight.w600),
+                              fontSize: 18.sp, fontWeight: FontWeight.w600,
+                              color:!AppTheme.light?Colors.white:Colors.black
+                              
+                              ),
                         ),
                       ],
                     ),
                     onTap: () {
+                      AuthService.logout();
                       Navigator.pushReplacement(context, MaterialPageRoute(
                         builder: (context) {
                           return SignUpPage();
@@ -244,7 +292,9 @@ class CustomDrawer extends StatelessWidget {
                       ));
                     },
                   ),
-                  Divider(),
+                  Divider(
+                    
+                  ),
                   SizedBox(
                     height: 22.h,
                   ),
@@ -253,9 +303,17 @@ class CustomDrawer extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.bottomLeft,
                       child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                               AppTheme.light=!AppTheme.light;
+                                print(AppTheme.light);
+                                Navigator.push(context,
+                                MaterialPageRoute(builder: (context)=>LoadingScreen('Refresh')));
+                            });
+                           
+                          },
                           icon: FaIcon(
-                            Bootstrap.sun,
+                            AppTheme.light?Bootstrap.sun:Bootstrap.moon,
                             color: Colors.red,
                             size: 30,
                           )),

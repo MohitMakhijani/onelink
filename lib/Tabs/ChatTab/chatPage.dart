@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:onelink/Theme.dart';
 
 import '../../Screen/chats/chat_screen.dart';
 
@@ -34,17 +36,24 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:  AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+        backgroundColor:  AppTheme.light?Colors.white:Colors.black,
+        foregroundColor: !AppTheme.light?Colors.white:Colors.black,
           centerTitle: true,
           actions: [
-            IconButton(onPressed: () {}, icon: FaIcon(FontAwesome.note_sticky))
+            IconButton(onPressed: () {}, icon: FaIcon(FontAwesome.note_sticky,
+            color:  !AppTheme.light?Colors.white:Colors.black
+            ))
           ],
           title: Text(
-            'J.N.V ',
+            'Chat ',
             style: GoogleFonts.inter(
                 fontSize: 18.sp,
-                color: Colors.black,
-                fontWeight: FontWeight.w700),
+                //color: Colors.black,
+                fontWeight: FontWeight.w700,
+                color:  !AppTheme.light?Colors.white:Colors.black
+                ),
           )),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +66,10 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
           }),
        Padding(
          padding:  EdgeInsets.all(18.0),
-         child: Text('Message',style: GoogleFonts.inter(fontWeight: FontWeight.w500,fontSize: 18.sp),),
+         child: Text('Message',style: GoogleFonts.inter(fontWeight: FontWeight.w500,fontSize: 18.sp,
+         color:  !AppTheme.light?Colors.white:Colors.black
+         
+         ),),
        )
 ,          Expanded(
   child: StreamBuilder<QuerySnapshot>(
@@ -72,12 +84,21 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
   
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                      child: CircularProgressIndicator(color: Colors.deepPurple));
+                      child:LoadingAnimationWidget.staggeredDotsWave(
+        color: Color.fromARGB(255, 244, 66, 66),
+        size:50,
+      ),
+                      
+                      );
                 }
   
                 List<DocumentSnapshot> chatRooms = snapshot.data!.docs;
                 if (chatRooms.isEmpty) {
-                  return Center(child: Text('Start Chating'));
+                  return Center(child: Text('Start Chating',
+                  style: TextStyle(
+                    color:  !AppTheme.light?Colors.white:Colors.black
+                  ),
+                  ));
                 }
   
                 List<DocumentSnapshot> filteredChatRooms = chatRooms
@@ -87,7 +108,11 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
 
   
                 if (filteredChatRooms.isEmpty) {
-                  return Center(child: Text('No recent chats with this user'));
+                  return Center(child: Text('No recent chats with this user',
+                style: TextStyle(
+                  color: !AppTheme.light?Colors.white:Colors.black
+                ),
+                ));
                 }
   
                 return Column(
@@ -288,7 +313,9 @@ class SearchBar extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Container(
 
-              decoration: BoxDecoration( color: Colors.grey[200],
+              decoration: BoxDecoration( 
+                
+                color: Colors.grey[200],
                 border: Border.all(width: 1),
                 borderRadius: BorderRadius.circular(20),
               ),

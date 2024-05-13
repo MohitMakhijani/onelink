@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onelink/Theme.dart';
 import 'package:provider/provider.dart';
 
 import '../FetchDataProvider/fetchData.dart';
@@ -53,16 +54,28 @@ class _CommentsScreenState extends State<CommentsScreen> {
     final user = Provider.of<UserFetchController>(context).myUser;
 
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        backgroundColor: Color(0xFF888BF4),
-        title:  Text('Comments',style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.05),),
+        backgroundColor: Colors.red,
+        title:  Text('Comments',style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.05,
+         color: !AppTheme.light?Colors.white:Colors.black
+        ),),
         centerTitle: false,
       ),
       body: Column(
         children: [
-          Container(width: MediaQuery.of(context).size.width * 1.1,
+          Container(
+            decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+              width: 1
+            ),
+            color: Colors.grey
+            
+            ),
+            
+            width: MediaQuery.of(context).size.width * 1.1,
             height: MediaQuery.of(context).size.width * 0.7,
-            color: Colors.grey[400],
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
@@ -102,6 +115,16 @@ class _CommentsScreenState extends State<CommentsScreen> {
       // text input
       bottomNavigationBar: SafeArea(
         child: Container(
+          decoration: BoxDecoration(
+           color: AppTheme.light?Colors.white:Colors.black,
+           border: Border.all(
+            color: Colors.grey,
+            width: 2.0
+            
+           ),
+           borderRadius: BorderRadius.circular(10)
+
+          ),
           height: kToolbarHeight,
           margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           padding: const EdgeInsets.only(left: 16, right: 8),
@@ -115,9 +138,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 8),
                   child: TextField(
-                    style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold,
+                     color: !AppTheme.light?Colors.white:Colors.black
+                    ),
                     controller: commentEditingController,
                     decoration: InputDecoration(
+                      hintStyle: TextStyle(
+           color: !AppTheme.light?Colors.white:Colors.black,
+
+                      ),
                       hintText: 'Comment as ${user.name}',
                       border: InputBorder.none,
                     ),
@@ -134,7 +163,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                   child: const Text(
                     'Post',
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
               )

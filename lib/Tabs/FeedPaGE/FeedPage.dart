@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:onelink/Theme.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../UI-Models/feed_postUi.dart';
 import '../../Widgets/ShimmerWidget.dart';
@@ -55,6 +56,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       body: FutureBuilder<DocumentSnapshot>(
         future: _userFuture,
         builder: (context, userSnapshot) {

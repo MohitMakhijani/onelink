@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:onelink/LoadingScreen.dart';
 import 'package:onelink/Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
 
 import '../AuthScreens/SignUpMail.dart';
@@ -121,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           PageRouteBuilder(
                                             transitionDuration: Duration(
                                                 milliseconds:
-                                                    500), // Adjust duration as needed
+                                                    100), // Adjust duration as needed
                                             pageBuilder: (context, animation,
                                                     secondaryAnimation) =>
                                                 OTPScreen(
@@ -353,7 +354,7 @@ class _SignUpPageState extends State<SignUpPage> {
       print('User is signed in: ${user.uid}');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()
+        MaterialPageRoute(builder: (context) => LoadingScreen('AuthtoHome')
         ),
       );
     } else {

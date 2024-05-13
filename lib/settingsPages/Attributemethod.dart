@@ -4,6 +4,7 @@
   import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:onelink/Theme.dart';
 import 'package:onelink/settingsPages/MessagingSettings.dart';
 
 Widget SettingsMethod(String imgpath, String text, bool light) {

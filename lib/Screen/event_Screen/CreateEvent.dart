@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:onelink/Theme.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../Models/eventModel.dart';
@@ -159,6 +160,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(foregroundColor: Colors.white,
         backgroundColor: Colors.red,
         title: Text(
@@ -176,6 +178,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               MyTextField(
                 controller: _eventNameController,
                 hint: "Event Name",
+              
                 obscure: false,
                 selection: true,
               //  preIcon: Icons.drive_file_rename_outline,

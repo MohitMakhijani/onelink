@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onelink/Theme.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:validators/validators.dart' as validator;
@@ -38,12 +39,16 @@ class _JobPostingPageState extends State<JobPostingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         title: Text(
           'Post a Job',
-          style: GoogleFonts.inter(color:Colors.white,fontSize: 25),
+          style: GoogleFonts.inter(color:Colors.white,fontSize: 25,
+        //   color:
+        // !AppTheme.light?Colors.white:Colors.black
+          ),
         ),
       ),
       body: SingleChildScrollView(

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:onelink/Theme.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../profile/profilePage.dart'; // Import the shimmer package
@@ -14,14 +15,21 @@ class Notifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
+        foregroundColor:  !AppTheme.light?Colors.white:Colors.black,
+        backgroundColor:AppTheme.light?Colors.white:Colors.black,
         centerTitle: true,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Notifications',style: GoogleFonts.inter(fontSize: 19.sp),),
-          Divider()],
+            Text('Notifications',style: GoogleFonts.inter(fontSize: 19.sp,
+            color: !AppTheme.light?Colors.white:Colors.black
+            ),),
+          Divider(
+            color: !AppTheme.light?Colors.white:Colors.black,
+          )],
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -113,9 +121,10 @@ class Notifications extends StatelessWidget {
                      Text(
                       "${notification['notification'].toString().split(' ')[0]}", // Get the first part before the first space
                       style: GoogleFonts.inter(
-                        color: Colors.black,
+                       
                       fontSize: MediaQuery.of(context).size.width * 0.04,
                       fontWeight: FontWeight.bold,
+                      color: !AppTheme.light?Colors.white:Colors.black
                       ),
                       ),
                      SizedBox(width: 5.w,),
@@ -123,7 +132,7 @@ class Notifications extends StatelessWidget {
                        "${notification['notification'].toString().split(' ').skip(1).join(' ')}", // Join parts starting from the second part
                        style: GoogleFonts.inter(
                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                         color: Colors.grey[800]
+                        color: !AppTheme.light?Colors.white:Colors.black
                        ),
                      ),
 
@@ -133,10 +142,11 @@ class Notifications extends StatelessWidget {
                     style: GoogleFonts.nunitoSans(
                       fontSize: MediaQuery.of(context).size.width*0.03,
                       fontWeight: FontWeight.w500,
+                      color: !AppTheme.light?Colors.white:Colors.black
                     ),
                   ),
                 ),
-                Divider(color: Colors.grey.shade300),
+                Divider( color: !AppTheme.light?Colors.white:Colors.black),
               ],
             ),
           );
