@@ -47,13 +47,14 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
+    //  padding: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
        // color: AppTheme.light?Colors.white:Colors.black,
       ),
-      width: 358.w,
+      width: double.infinity,
     // height: 55.h,
       child: Padding(
-        padding:  EdgeInsets.symmetric(vertical: 8.h),
+        padding:  EdgeInsets.only(bottom: 20.h),
         child: AutofillGroup(
           child: TextFormField(
               validator: widget.validator, // Set the validator
