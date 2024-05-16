@@ -284,10 +284,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       ],
                     ),
                     onTap: () {
-                      AuthService.logout();
+                     // AuthService.logout();
+                      AuthService.signOut();
                       Navigator.pushReplacement(context, MaterialPageRoute(
                         builder: (context) {
-                          return SignUpPage();
+                          return LoadingScreen('logouttoHome');
                         },
                       ));
                     },
