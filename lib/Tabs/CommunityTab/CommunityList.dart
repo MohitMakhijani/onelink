@@ -69,7 +69,7 @@ class CommunityList extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 18.0),
+                            padding: EdgeInsets.only(left: 18.0,),
                             child: Text(
                               '${communities[index].members.length} Members',
                               style: TextStyle(
@@ -86,7 +86,7 @@ class CommunityList extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red, width: 1)),
+                            border: Border.all(color: Colors.red, width: 4)),
                         height: 40.h,
                         width: 100.w,
                         child: Center(
@@ -125,11 +125,11 @@ class CommunityList extends StatelessWidget {
                     )
                   ],
                 ),
-                height: 100.h,
+                height: 120.h,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red, width: 1)),
+                    border: Border.all(color: Colors.red, width: 4)),
               ),
             );
           },

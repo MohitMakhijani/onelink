@@ -169,26 +169,35 @@ class _HomeScreenState extends State<HomeScreen> {
         iconSize: 20,
         elevation: 1,
         items: [
-          const BottomNavigationBarItem(
-            icon: FaIcon(AntDesign.home_outline),
+           BottomNavigationBarItem(
+            icon: FaIcon(AntDesign.home_outline,
+            size: 30.r,),
             label: 'Home',
           ),
-          const BottomNavigationBarItem(
-            icon: FaIcon(PixelArtIcons.building_community),
+           BottomNavigationBarItem(
+            icon: FaIcon(PixelArtIcons.building_community,
+            size: 30.r
+            ),
             label: 'Community',
           ),
-          const BottomNavigationBarItem(
+           BottomNavigationBarItem(
             icon: FaIcon(
               Icons.add_circle_outline,
+              size: 30.r
             ),
             label: 'Post',
           ),
-          const BottomNavigationBarItem(
-            icon: FaIcon(Bootstrap.people),
+           BottomNavigationBarItem(
+            icon: FaIcon(Bootstrap.people,
+            size: 30.r
+            ),
             label: 'Jobs',
+            
           ),
-          const BottomNavigationBarItem(
-            icon: FaIcon(Clarity.event_outline_badged),
+           BottomNavigationBarItem(
+            icon: FaIcon(Clarity.event_outline_badged,
+            size: 30.r
+            ),
             label: 'Events',
           ),
         ],
