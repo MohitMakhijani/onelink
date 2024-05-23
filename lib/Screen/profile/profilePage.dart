@@ -9,6 +9,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onelink/Theme.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Services/FireStoreMethod.dart';
 import '../../UI-Models/feed_postUi.dart';
@@ -44,6 +45,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     getStreamData();
   }
+void launchURL(String url) async {
+  // ignore: deprecated_member_use
+  if (await canLaunch(url)) {
+    // ignore: deprecated_member_use
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
   getStreamData() async {
     FirebaseFirestore.instance
@@ -180,11 +190,88 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          userData['bio'] ?? '',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                          maxLines: 15,
-                        ),
+                       Padding(
+                         padding:  EdgeInsets.symmetric(horizontal: 0.w),
+                         child: Text( tempUserdata['profession']!,
+                         style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.sp,
+
+
+                         ),),
+                       ),
+                       Row(
+                        children: [ 
+                          
+                        ],
+                       ),
+                       userData['bio']!='' ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 0.w),
+                         child: Text(
+                            userData['bio'] ?? '',
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            maxLines: 15,
+                          ),
+                       ):SizedBox(),
+                      tempUserdata['Contact']!=''? Padding(
+                         padding:  EdgeInsets.symmetric(horizontal: 0.w),
+                         child: Row(
+                           children: [
+                            Icon(Icons.phone,
+                            size:20.r,),
+                             Text( tempUserdata['Contact']!,
+                             style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                             
+                             
+                             ),),
+                           ],
+                         ),
+                       ):SizedBox(),
+                     tempUserdata['Address']!=''?   Row(
+                       children: [
+                        Icon(Icons.home,
+                        size: 20.r,),
+                         Padding(
+                             padding:  EdgeInsets.symmetric(horizontal: 0.w),
+                             child: Text( tempUserdata['Address']!,
+                             style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                             
+                             
+                             ),),
+                           ),
+                       ],
+                     ):SizedBox(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+
+(tempUserdata['Linkedin']!='' && HidetempUserdata['Linkedin']==true)? ImgAttributeMethod('Linkedin','Assets/images/linkedin.png'):SizedBox(),
+(tempUserdata['Instagram']!='' && HidetempUserdata['Instagram']==true)? ImgAttributeMethod('Instagram','Assets/images/instagram.png'):SizedBox(),
+ (tempUserdata['Youtube']!='' && HidetempUserdata['Youtube']==true)?ImgAttributeMethod('Youtube','Assets/images/youtube.png'):SizedBox(),
+ (tempUserdata['Twitter']!='' && HidetempUserdata['Twitter']==true)?ImgAttributeMethod('Twitter','Assets/images/twitter.png'):SizedBox(),
+  (tempUserdata['Facebook']!='' && HidetempUserdata['Facebook']==true)?ImgAttributeMethod('Facebook','Assets/images/facebook.png'):SizedBox(),
+  (tempUserdata['GitHub']!='' && HidetempUserdata['GitHub']==true)?ImgAttributeMethod('GitHub','Assets/images/github.png'):SizedBox(),
+                      ],
+                     ),
+                     SizedBox(height: 10,),
+                       Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+
+(tempUserdata['website']!='' && HidetempUserdata['website']==true)? ImgAttributeMethod('website','Assets/images/web.png'):SizedBox(),
+(tempUserdata['portfolio']!='' && HidetempUserdata['portfolio']==true)? ImgAttributeMethod('portfolio','Assets/images/portfolio.png'):SizedBox(),
+ (tempUserdata['Resume']!='' && HidetempUserdata['Resume']==true)?ImgAttributeMethod('Resume','Assets/images/resume.png'):SizedBox(),
+            ],
+                     ),
                         if (userData['showEmail'] == true)
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -355,6 +442,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
     );
+  }
+
+  Widget ImgAttributeMethod(String title,String img) {
+    return GestureDetector(
+      onTap: (){
+
+        if(title=='Linkedin') {
+          launchURL(tempUserdata['Linkedin']!);
+        }
+       else  if(title=='Instagram') {
+          launchURL(tempUserdata['Instagram']!);
+
+        }
+        else  if(title=='Youtube') {
+          launchURL(tempUserdata['Youtube']!);
+
+        }
+        else  if(title=='Twitter') {
+          launchURL(tempUserdata['Twitter']!);
+
+        }
+        else  if(title=='Facebook') {
+          launchURL(tempUserdata['Facebook']!);
+
+        }
+        else  if(title=='GitHub') {
+          launchURL(tempUserdata['GitHub']!);
+
+        }
+         else  if(title=='website') {
+          launchURL(tempUserdata['website']!);
+
+        }
+         else  if(title=='portfolio') {
+          launchURL(tempUserdata['portfolio']!);
+
+        }
+         else  if(title=='Resume') {
+          launchURL(tempUserdata['Resume']!);
+
+        }
+        
+      },
+                        child: Image.asset(img,
+                        height: 30,
+                        ),
+                      );
   }
 
   Widget buildStatColumn(int num, String label) {

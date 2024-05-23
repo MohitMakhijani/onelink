@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,6 +24,39 @@ import '../../Models/UserFetchDataModel.dart';
 import '../../components/myButton.dart';
 import '../../components/myTextfield.dart';
 import 'editProfileGetx.dart';
+
+
+Map<String,String>tempUserdata={
+    'profession':'',
+     'Linkedin':'',
+      'Instagram':'',
+       'Youtube':'',
+     'Twitter':'',
+      'Facebook':'',
+     'GitHub':'',
+     'Contact':'',
+     'Address':'',
+     'website':'',
+     'portfolio':'',
+     'Resume':'',
+
+   };
+   Map<String,bool>HidetempUserdata={
+  
+     'Linkedin':false,
+      'Instagram':false,
+       'Youtube':false,
+     'Twitter':false,
+      'Facebook':false,
+     'GitHub':false,
+     'Contact':false,
+     'Address':false,
+     'website':false,
+     'portfolio':false,
+     'Resume':false,
+
+   };
+
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -86,6 +121,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
+   
+  
+
   @override
   void initState() {
     super.initState();
@@ -107,6 +145,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _nameController.text = _myUser.name ?? '';
     _linkController.text = _myUser.linkedinLink ?? '';
     _selectedDate = _myUser.dateOfBirth;
+    _profession.text=tempUserdata['profession']!;
+    _contact.text=tempUserdata['Contact']!;
+    _Address.text=tempUserdata['Address']!;
     _image =
         _myUser.profilePicture != null ? File(_myUser.profilePicture!) : null;
     _hideEmail = _myUser.showEmail;
@@ -357,27 +398,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   
                                     setState(() {
                                       if(dropdownvalue=='Linkedin'){
-                                        _linkedinLink=_link.text;
+                                      tempUserdata['Linkedin']=_link.text;
+                                      HidetempUserdata['Linkedin']=true;
   _LinkedAdded=true;
                                       }
                                       else if(dropdownvalue=="Instagram"){
-                                         _instagramLink=_link.text;
+                                         tempUserdata['Instagram']=_link.text;
+                                         HidetempUserdata['Instagram']=true;
                                         _InstagramAdded=true;
                                       }   else if(dropdownvalue=="Youtube"){
+                                         tempUserdata['Youtube']=_link.text;
+                                      HidetempUserdata['Youtube']=true;
                                          _YoutubeLink=_link.text;
                                         _YoutubeAdded=true;
                                       }
                                        else if(dropdownvalue=="Twitter"){
+                                          tempUserdata['Twitter']=_link.text;
+                                      HidetempUserdata['Twitter']=true;
+                                      
                                          _TwitterLink=_link.text;
                                         _TwitterAdded=true;
                                       }
                                         else if(dropdownvalue=="Facebook"){
+                                           tempUserdata['Facebook']=_link.text;
+                                      HidetempUserdata['Facebook']=true;
                                          _FacebookLink=_link.text;
                                         _FacebookAdded=true;
                                       }
                                         else if(dropdownvalue=="GitHub"){
+                                                  tempUserdata['GitHub']=_link.text;
+                                      HidetempUserdata['GitHub']=true;
                                          _GithubLink=_link.text;
                                         _GithubAdded=true;
+                                      }
+                                        else if(dropdownvalue=="website"){
+                                                  tempUserdata['website']=_link.text;
+                                      HidetempUserdata['website']=true;
+                                         _websiteLink=_link.text;
+                                        
+                                      }
+                                       else if(dropdownvalue=="portfolio"){
+                                                  tempUserdata['portfolio']=_link.text;
+                                      HidetempUserdata['portfolio']=true;
+                                         _PortfolioLink=_link.text;
+                                        
+                                      }
+                                       else if(dropdownvalue=="Resume"){
+                                                  tempUserdata['Resume']=_link.text;
+                                      HidetempUserdata['Resume']=true;
+                                         _ResumeLink=_link.text;
+                                        
                                       }
 });
                                   
@@ -392,12 +462,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         )
                       : SizedBox(),
 
-_LinkedAdded?  SocialMediaLinkMethod('Linkedin','Assets/images/linkedin.png',_linkedinLink,_hideLinkedIn):SizedBox(),
-_InstagramAdded?  SocialMediaLinkMethod('Instagram','Assets/images/instagram.png',_instagramLink,_hideinstagram):SizedBox(),
-_YoutubeAdded?  SocialMediaLinkMethod('Youtube','Assets/images/youtube.png',_YoutubeLink,_hideYoutube):SizedBox(),
- _TwitterAdded?  SocialMediaLinkMethod('Twitter','Assets/images/twitter.png',_TwitterLink,_hideTwitter):SizedBox(), 
-  _FacebookAdded?  SocialMediaLinkMethod('Facebook','Assets/images/facebook.png',_FacebookLink,_hideFacebook):SizedBox(), 
-    _GithubAdded?  SocialMediaLinkMethod('GitHub','Assets/images/github.png',_GithubLink,_hideGithub):SizedBox(), 
+(_LinkedAdded || tempUserdata['Linkedin']!='')?  SocialMediaLinkMethod('Linkedin','Assets/images/linkedin.png',tempUserdata['Linkedin']!,_hideLinkedIn):SizedBox(),
+(_InstagramAdded || tempUserdata['Instagram']!='')?  SocialMediaLinkMethod('Instagram','Assets/images/instagram.png',tempUserdata['Instagram']!,_hideinstagram):SizedBox(),
+(_YoutubeAdded || tempUserdata['Youtube']!='')?  SocialMediaLinkMethod('Youtube','Assets/images/youtube.png',tempUserdata['Youtube']!,_hideYoutube):SizedBox(),
+ (_TwitterAdded || tempUserdata['Twitter']!='')?  SocialMediaLinkMethod('Twitter','Assets/images/twitter.png',tempUserdata['Twitter']!,_hideTwitter):SizedBox(), 
+  (_FacebookAdded  || tempUserdata['Facebook']!='')?  SocialMediaLinkMethod('Facebook','Assets/images/facebook.png',tempUserdata['Facebook']!,_hideFacebook):SizedBox(), 
+    (_GithubAdded  || tempUserdata['GitHub']!='')?  SocialMediaLinkMethod('GitHub','Assets/images/github.png',tempUserdata['GitHub']!,_hideGithub):SizedBox(), 
                   //          SizedBox(
                   //           height: 200.h,
                   // child: ListView.builder(
@@ -496,19 +566,22 @@ _YoutubeAdded?  SocialMediaLinkMethod('Youtube','Assets/images/youtube.png',_You
                                     setState(() {
                                       if(dropdownvalue1=='Website'){
                                         _websiteLink=_link.text;
+                                        tempUserdata['website']=_link.text;
   _website=true;
                                       }
                                       else if(dropdownvalue1=="Portfolio"){
                                          _PortfolioLink=_link.text;
+                                          tempUserdata['portfolio']=_link.text;
                                         _portfolio=true;
                                       }   else if(dropdownvalue1=="Resume"){
                                          _ResumeLink=_link.text;
+                                         tempUserdata['Resume']=_link.text;
                                         _Resume=true;
                                       }
                                       
 });
                                   
-                                  print(socialMediaLinks);
+                                  print(tempUserdata);
                                 },
                                 text: "add",
                                 color: Colors.redAccent),
@@ -520,9 +593,9 @@ _YoutubeAdded?  SocialMediaLinkMethod('Youtube','Assets/images/youtube.png',_You
                       : SizedBox(),
 
 
-_website?  SocialMediaLinkMethod('Website','Assets/images/web.png',_websiteLink,_hideWeb):SizedBox(),
-_portfolio?  SocialMediaLinkMethod('Portfolio','Assets/images/portfolio.png',_PortfolioLink,_hidePortfolio):SizedBox(),
-_Resume?  SocialMediaLinkMethod('Resume','Assets/images/resume.png',_ResumeLink,_hideResume):SizedBox(),
+(_website  || tempUserdata['website']!='')?  SocialMediaLinkMethod('Website','Assets/images/web.png',tempUserdata['website']!,_hideWeb):SizedBox(),
+(_portfolio || tempUserdata['portfolio']!='')?  SocialMediaLinkMethod('Portfolio','Assets/images/portfolio.png',tempUserdata['portfolio']!,_hidePortfolio):SizedBox(),
+(_Resume || tempUserdata['Resume']!='')?  SocialMediaLinkMethod('Resume','Assets/images/resume.png', tempUserdata['Resume']!,_hideResume):SizedBox(),
   Padding(
                     padding: EdgeInsets.only(bottom: 15.h,),
                     child: Container(
@@ -777,6 +850,33 @@ _Resume?  SocialMediaLinkMethod('Resume','Assets/images/resume.png',_ResumeLink,
                                 Provider.of<UserFetchController>(context,
                                     listen: false);
                             userFetchController.fetchUserData();
+                            setState(() {
+                              
+  tempUserdata['profession']=_profession.text;
+  tempUserdata['Contact']=_contact.text;
+  tempUserdata['Address']=_Address.text;
+  HidetempUserdata['Linkedin']=!_hideLinkedIn;
+  HidetempUserdata['Instagram']=!_hideinstagram;
+  HidetempUserdata['Youtube']=!_hideYoutube;
+  HidetempUserdata['Twitter']=!_hideTwitter;
+  HidetempUserdata['GitHub']=!_hideGithub;
+  HidetempUserdata['website']=!_hideWeb;
+  HidetempUserdata['portfolio']=!_hidePortfolio;
+  HidetempUserdata['Resume']=!_hideResume;
+  //HidetempUserdata['Linkedin']=!_hideLinkedIn;
+  // tempUserdata['Linkedin']= _linkedinLink;
+  // tempUserdata['Instagram']=_instagramLink;
+  // tempUserdata['Youtube']=_YoutubeLink;
+  // tempUserdata['Twitter']=_TwitterLink;
+  // tempUserdata['Facebook']=_FacebookLink;
+  // tempUserdata['GitHub']=_GithubLink;
+  // tempUserdata['website']=_websiteLink;
+  // tempUserdata['portfolio']=_PortfolioLink;
+  // tempUserdata['Resume']=_ResumeLink;
+
+  print(tempUserdata);
+  print(HidetempUserdata);
+});
 
                             Navigator.pop(context);
                           } else {
@@ -798,7 +898,7 @@ _Resume?  SocialMediaLinkMethod('Resume','Assets/images/resume.png',_ResumeLink,
     );
   }
 
-  Padding SocialMediaLinkMethod(String title,String imgpath, String link,bool hide) {
+  Widget SocialMediaLinkMethod(String title,String imgpath, String link,bool hide) {
     return Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.r),
                   child: Container(
@@ -823,7 +923,9 @@ _Resume?  SocialMediaLinkMethod('Resume','Assets/images/resume.png',_ResumeLink,
                               SizedBox(
                                 width: 5,
                               ),
-                              Text(link),
+                             (link.length>20)? Text('${link.substring(0,20)}..',
+                              
+                              ):Text(link),
                             ],
                           ),
                           Row(
@@ -844,23 +946,42 @@ _Resume?  SocialMediaLinkMethod('Resume','Assets/images/resume.png',_ResumeLink,
                   onChanged: (value) {
                     setState(() {
                       if(title=='Linkedin')
-                      _hideLinkedIn= !_hideLinkedIn;
+                     { _hideLinkedIn= !_hideLinkedIn;
+                        print(!_hideLinkedIn);
+                     
+                     }
                       else if(title=='Instagram')
-                      _hideinstagram=!_hideinstagram;
+                     { _hideinstagram=!_hideinstagram;
+                      HidetempUserdata['Instagram']=_hideinstagram;
+                     }
                        else if(title=='Youtube')
-                      _hideYoutube=!_hideYoutube;
+                     { _hideYoutube=!_hideYoutube;
+                           HidetempUserdata['Youtube']=_hideYoutube; 
+                     }
                        else if(title=='Twitter')
-                      _hideTwitter=!_hideTwitter;
+                     { _hideTwitter=!_hideTwitter;
+                         HidetempUserdata['Twitter']=_hideTwitter;
+                     }
                        else if(title=='Facebook')
-                      _hideFacebook=!_hideFacebook;
+                     { _hideFacebook=!_hideFacebook;
+                         HidetempUserdata['Facebook']=_hideFacebook;
+                     }
                        else if(title=='GitHub')
-                      _hideGithub=!_hideGithub;
+                      {_hideGithub=!_hideGithub;
+                         HidetempUserdata['GitHub']=_hideGithub;
+                      }
                       else if(title=='Website')
-                      _hideWeb=!_hideWeb;
+                     { _hideWeb=!_hideWeb;
+                         HidetempUserdata['website']=_hideWeb;
+                     }
                       else if(title=='Portfolio')
-                      _hidePortfolio=!_hidePortfolio;
+                     { _hidePortfolio=!_hidePortfolio;
+                       HidetempUserdata['portfolio']=_hidePortfolio;
+                     }
                       else if(title=='Resume')
-                      _hideResume=!_hideResume;
+                      {_hideResume=!_hideResume;
+                           HidetempUserdata['Resume']=_hideResume;
+                      }
 
                     });
                   },
@@ -869,40 +990,49 @@ _Resume?  SocialMediaLinkMethod('Resume','Assets/images/resume.png',_ResumeLink,
                                   onTap: () {
                                     setState(() {
   if(title=="Linkedin"){
-    
+    tempUserdata['Linkedin']='';
     _LinkedAdded=false;
+     HidetempUserdata['Linkedin']=false;
   
   }
    else if(title=="Instagram"){
-       
+        tempUserdata['Instagram']='';
       _InstagramAdded=false;
+      HidetempUserdata['Instagram']=false;
     }   else if(title=="Youtube"){
-     
+      tempUserdata['Youtube']='';
       _YoutubeAdded=false;
+      HidetempUserdata['Youtube']=false;
     }
      else if(title=="Twitter"){
-      
+       tempUserdata['Twitter']='';
       _TwitterAdded=false;
+      HidetempUserdata['Twitter']=false;
     }
       else if(title=="Facebook"){
-      
+       tempUserdata['Facebook']='';
       _FacebookAdded=false;
+      HidetempUserdata['Facebook']=false;
     }
       else if(title=="GitHub"){
-      
+       tempUserdata['GitHub']='';
       _GithubAdded=false;
+      HidetempUserdata['GitHub']=false;
     }
      else if(title=="Website"){
-      
+       tempUserdata['website']='';
       _website=false;
+      HidetempUserdata['Website']=false;
     }
      else if(title=="Portfolio"){
-      
+       tempUserdata['portfolio']='';
       _portfolio=false;
+      HidetempUserdata['Portfolio']=false;
     }
      else if(title=="Resume"){
-      
+       tempUserdata['Resume']='';
       _Resume=false;
+      HidetempUserdata['Resume']=false;
     }
 });
 
