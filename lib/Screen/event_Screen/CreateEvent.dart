@@ -27,6 +27,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   File? _image;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  TimeOfDay? _endTime;
   String _selectedEventType = 'Physical Event';
   Uuid uuid = Uuid();
   final UserID = FirebaseAuth.instance.currentUser!.uid;
@@ -57,9 +58,23 @@ class _CreateEventPageState extends State<CreateEventPage> {
     if (picked != null && picked != _selectedTime) {
       setState(() {
         _selectedTime = picked;
+
       });
     }
   }
+   Future<void> _EndTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _endTime = picked;
+      });
+    }
+  }
+
 
   // Function to upload event
   void _uploadEvent() async {
@@ -233,17 +248,46 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             ? ''
                             : _selectedTime!.format(context),
                       ),
-                      hint: "Select Time",
+                      hint: "Start Time",
                       obscure: false,
                       selection: true,
                      // preIcon: FontAwesomeIcons.timesCircle,
                       keyboardtype: TextInputType.name,
                     ),
                   ),
+                  
                   SizedBox(width: 8.0),
                   ElevatedButton(
                     style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () => _selectTime(context),
+                    child: Text(
+                      'Select Time',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+               Row(
+                children: [
+                  Expanded(
+                    child: MyTextField(
+                      controller: TextEditingController(
+                        text: _endTime == null
+                            ? ''
+                            : _endTime!.format(context),
+                      ),
+                      hint: "End Time",
+                      obscure: false,
+                      selection: true,
+                     // preIcon: FontAwesomeIcons.timesCircle,
+                      keyboardtype: TextInputType.name,
+                    ),
+                  ),
+                  
+                  SizedBox(width: 8.0),
+                  ElevatedButton(
+                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    onPressed: () => _EndTime(context),
                     child: Text(
                       'Select Time',
                       style: TextStyle(color: Colors.white),
