@@ -18,7 +18,6 @@ import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onelink/Screen/chats/ChatSettingPage.dart';
 import 'package:onelink/Screen/chats/check_block_Controller.dart';
-import 'package:onelink/Theme.dart';
 
 import '../../Widgets/Audio/Video.dart';
 
@@ -191,10 +190,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _fetchMessages(); // Initial fetch of messages
 
     return Scaffold(
-      backgroundColor: !AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        foregroundColor: !AppTheme.light?Colors.white:Colors.black,
-        backgroundColor:AppTheme.light?Colors.white:Colors.black ,
         title: GestureDetector(
           onTap: () {
             Navigator.push(
@@ -221,7 +217,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
-                 
+                  color: Colors.black,
                 ),
               ),
             ],
@@ -340,7 +336,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: FaIcon(Iconsax.image_bold),
             onPressed: () async {
               final pickedFile =
-              await picker.getImage(source: ImageSource.gallery);
+              await picker.pickImage(source: ImageSource.gallery);
               if (pickedFile != null) {
                 File image = File(pickedFile.path);
                 _sendMessage('', image, null, null); // Send image file
@@ -351,7 +347,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: FaIcon(Iconsax.video_add_bold),
             onPressed: () async {
               final pickedFile =
-              await picker.getVideo(source: ImageSource.gallery);
+              await picker.pickVideo(source: ImageSource.gallery);
               if (pickedFile != null) {
                 File videoFile = File(pickedFile.path);
                 _sendMessage('', null, videoFile, null); // Send video file

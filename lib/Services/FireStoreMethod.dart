@@ -238,7 +238,9 @@ class FireStoreMethods {
           .doc(currentUserUid)
           .set({
         'blockUsers':[],
-        'following': [], // Initialize with an empty array
+        'following': [],
+        'SocialLinks':[]
+        // Initialize with an empty array
       }, SetOptions(merge: true)); // Merge with existing document if it exists
 
       print('Followers and following arrays created successfully.');
@@ -356,8 +358,6 @@ print(currentUser);
         profilePicture: profilePicture,
         bio: bio,
         achievements: achievements,
-        instagramLink: instagramLink,
-        linkedinLink: linkedinLink,
       );
 
       await FirebaseFirestore.instance

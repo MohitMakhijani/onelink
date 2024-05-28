@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:onelink/Theme.dart';
 
+import '../../Theme.dart';
 import '../../UI-Models/EventmodelUI.dart';// Import your EventPost widget or data model
 
 class My_events extends StatefulWidget {
@@ -43,14 +43,14 @@ class _EventsPageState extends State<My_events> {
     return Scaffold(
       backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-           foregroundColor: AppTheme.light?Colors.white:Colors.black,
+           foregroundColor: !AppTheme.light?Colors.white:Colors.black,
         backgroundColor: Colors.red,
         // leading: IconButton(onPressed: (){
 
         // }, icon: Icon(Icons)),
         title: Text('Hosted Events',style:
          GoogleFonts.inter(
-          color:AppTheme.light?Colors.white:Colors.black,
+          color:!AppTheme.light?Colors.white:Colors.black,
           fontSize: MediaQuery.of(context).size.width*0.06),),
 
       ),
@@ -77,8 +77,7 @@ class _EventsPageState extends State<My_events> {
               return Column(
                 children: [
                   Container(
-                      color: Colors.grey[200],
-                      child: Text("Event Status- ${eventData['EventStatus']}",style: GoogleFonts.acme(fontSize: 15),)),
+                      child: Text("Event Status- ${eventData['EventStatus']}",style: GoogleFonts.inter(fontSize: 15,color: AppTheme.light?Colors.black:Colors.white),)),
                   EventUICard(
                     eventName: eventData['eventName'],
                     location: eventData['location'],
@@ -90,6 +89,7 @@ class _EventsPageState extends State<My_events> {
                     userId: eventData['userUid'],
                     eventDate: eventData['datePublished'],
                     EventStatus: eventData['EventStatus'],
+                      price:eventData['EventPrice']
                   ),
                 ],
               );

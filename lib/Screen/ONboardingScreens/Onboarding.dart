@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:velocity_x/velocity_x.dart';
 import '../../Auth/SignUp.dart';
 import '../../Models/ONboardingModel.dart';
 import '../../Widgets/dotWidget.dart';

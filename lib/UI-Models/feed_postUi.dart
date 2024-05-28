@@ -119,7 +119,7 @@ class _PostCardState extends State<PostCard> {
                 ),
                 title: Text('Edit',
                 style: TextStyle(
-                              color:AppTheme.light?Colors.white:Colors.black
+                              color:!AppTheme.light?Colors.white:Colors.black
 
                 ),
                 ),
@@ -320,7 +320,7 @@ class _PostCardState extends State<PostCard> {
                                               : Icons.favorite_border,
                                           color: isLiked
                                               ? Colors.red
-                                              : Colors.black,
+                                              : AppTheme.light?Colors.black:Colors.white,
                                           size: 30,
                                         ),
                                         Padding(
@@ -429,7 +429,7 @@ class _PostCardState extends State<PostCard> {
                       postController.isEditing(widget.postId)
                           ? Column(
                               children: [
-                                TextField(
+                                TextField(style: TextStyle(color: AppTheme.light?Colors.black:Colors.white),
                                   controller: descriptionController,
                                   decoration: InputDecoration(
                                     hintText: 'Edit Description',

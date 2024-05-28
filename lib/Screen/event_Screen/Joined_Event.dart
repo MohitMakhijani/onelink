@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:onelink/Theme.dart';
 
+
+import '../../Theme.dart';
 import '../../UI-Models/EventmodelUI.dart';
 
 class MyParticipatedEventsPage extends StatefulWidget {
@@ -43,11 +44,11 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
     return Scaffold(
       backgroundColor: AppTheme.light?Colors.white:Colors.black,
       appBar: AppBar(
-        foregroundColor:  AppTheme.light?Colors.white:Colors.black,
+        foregroundColor:  !AppTheme.light?Colors.white:Colors.black,
         backgroundColor: Colors.red,
         title: Text('Participated Events',style: GoogleFonts.inter(
           
-          color:AppTheme.light?Colors.white:Colors.black,
+          color:!AppTheme.light?Colors.white:Colors.black,
           
           fontSize: MediaQuery.of(context).size.width*0.06),),
       ),
@@ -91,7 +92,7 @@ class _MyParticipatedEventsPageState extends State<MyParticipatedEventsPage> {
                 eventID: eventData['eventID'],
                 userId: eventData['userUid'],
                 eventDate: eventData['datePublished'],
-                EventStatus: eventData['EventStatus'],
+                EventStatus: eventData['EventStatus'], price:eventData['EventPrice'],
               );
             },
           );

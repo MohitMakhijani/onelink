@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 
+import '../../Theme.dart';
 import '../../UI-Models/Job Detail model.dart';
 import '../../components/myButton.dart';
 import 'apply_JOb.dart';
@@ -18,9 +18,10 @@ class JobDetailScreen extends StatelessWidget {
     final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
+      backgroundColor: !AppTheme.light?Colors.black:Colors.white,
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.red,
+        foregroundColor: AppTheme.light?Colors.black:Colors.white,
+        backgroundColor: !AppTheme.light?Colors.black:Colors.white,
         title: Text('Job Details',style: TextStyle(color: Colors.white),),
       ),
       body: FutureBuilder<QuerySnapshot>(

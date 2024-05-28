@@ -12,6 +12,7 @@ import 'package:onelink/Theme.dart';
 
 import '../../Screen/chats/chat_screen.dart';
 
+import '../../Theme.dart';
 import 'getx_chatsearch.dart'; // Import the SearchTabController
 
 class RecentChatsPage extends StatefulWidget {
@@ -125,7 +126,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
                           children: searchController.searchResults.map((doc) {
                             String userName = doc['name'] ?? 'Unknown';
                             String UserProfile =
-                                doc['profilePicture'] ?? 'Unknown';
+                                doc['profImage'] ?? 'Unknown';
   
                             return GestureDetector(
                               onTap: () => Navigator.push(
@@ -134,7 +135,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
                                     builder: (context) => ChatScreen(
                                         chatRoomId: id,
                                         UserName: doc['name'],
-                                        ProfilePicture: doc['profilePicture'],
+                                        ProfilePicture: doc['profImage'],
                                         UId: doc['userId']),
                                   )),
                               child: Row(
@@ -161,7 +162,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
                                         Text(
                                           'Tap to chat',
                                           style:
-                                              TextStyle(color: Colors.grey),
+                                              TextStyle(color:AppTheme.light?Colors.black:Colors.white),
                                         ),
                                       ],
                                     ),
@@ -189,7 +190,7 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
                           return UserTile(
                             uid: otherUserUid,
                             onTap: () {
-                              FirebaseFirestore.instance
+                             FirebaseFirestore.instance
                                   .collection('users')
                                   .doc(otherUserUid)
                                   .get()
@@ -197,9 +198,9 @@ class _RecentChatsPageState extends State<RecentChatsPage> {
                                 if (userData.exists) {
                                   String userName = userData['name'] ?? 'Unknown';
                                   String profilePicture =
-                                      userData['profilePicture'] ?? '';
+                                      userData['profileImage'] ?? '';
                                   String UID = userData['userId'] ?? '';
-                                  Navigator.push(
+                                return Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ChatScreen(
@@ -274,7 +275,7 @@ class UserTile extends StatelessWidget {
                     children: [
                       Text(
                         userData['name'] ?? '',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 15.sp),
+                        style: GoogleFonts.inter(fontWeight: FontWeight.bold,fontSize: 15.sp,color: AppTheme.light?Colors.black:Colors.white),
                       ),
                       SizedBox(height: 4.h),
                       Text(overflow: TextOverflow.ellipsis,
@@ -285,8 +286,10 @@ class UserTile extends StatelessWidget {
                   ),
                 ),
                 IconButton(onPressed: () {
-                  
-                }, icon: FaIcon(Bootstrap.camera,color: Colors.black,)),
+
+
+
+                }, icon: FaIcon(Bootstrap.camera,color: AppTheme.light?Colors.black:Colors.white,)),
               ],
             ),
           ),

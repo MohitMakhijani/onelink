@@ -90,6 +90,7 @@ color: !AppTheme.light?Colors.white:Colors.black
                                   Text(
                                     _controller.searchResults[index]['name'],
                                     style: GoogleFonts.inter(
+                                      color: AppTheme.light?Colors.black:Colors.white,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 16.sp,
                                     ),

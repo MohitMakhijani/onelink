@@ -13,18 +13,17 @@ import 'Screen/ONboardingScreens/Onboarding.dart';
 import 'components/Notifications.dart';
 import 'firebase_options.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   @pragma('vm:entry-point')
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
     await Firebase.initializeApp();
   }
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
- /* try {
- 
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  /* try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
         apiKey: "AIzaSyCINRuerToLYoumEM7PBN-79oJNQs4twAk",
@@ -38,9 +37,9 @@ void main() async{
       await Firebase.initializeApp();
     }
   }*/
- await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
 
   runApp(
     MultiProvider(
@@ -51,6 +50,7 @@ void main() async{
     ),
   );
 }
+
 class MyApp extends StatefulWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -58,29 +58,27 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-
 class _MyAppState extends State<MyApp> {
-
   var isLoggedIn = false;
   var auth = FirebaseAuth.instance;
-  NotificationServices notificationServices = NotificationServices();
+
+  // NotificationServices notificationServices = NotificationServices();
   @override
   void initState() {
     super.initState();
-    notificationServices.requestNotificationPermission();
-    notificationServices.foregroundMessage();
-    notificationServices.firebaseInit(context);
-    notificationServices.setupInteractMessage(context);
-    notificationServices.isTokenRefresh();
-    notificationServices.getDeviceToken().then((value) {
-      if (kDebugMode) {
-        print('device token');
-        print(value);
-      }
+    // notificationServices.requestNotificationPermission();
+    // notificationServices.foregroundMessage();
+    // notificationServices.firebaseInit(context);
+    // notificationServices.setupInteractMessage(context);
+    // notificationServices.isTokenRefresh();
+    // notificationServices.getDeviceToken().then((value) {
+    //   if (kDebugMode) {
+    //     print('device token');
+    //     print(value);
+    //   }
 
-      UserFetchController();
-      checkIfLoggedIn();
-    });
+    UserFetchController();
+    checkIfLoggedIn();
   }
 
   void checkIfLoggedIn() {
@@ -92,30 +90,26 @@ class _MyAppState extends State<MyApp> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
-  //FirebaseAuth auth = FirebaseAuth.instance;
-  double width=MediaQuery.sizeOf(context).width;
-  double height=MediaQuery.sizeOf(context).height;
-  print(width);
-  print(height);
-  // Get the current user
-  //User? user = auth.currentUser;
+    //FirebaseAuth auth = FirebaseAuth.instance;
+    double width = MediaQuery.sizeOf(context).width;
+    double height = MediaQuery.sizeOf(context).height;
+    print(width);
+    print(height);
+    // Get the current user
+    //User? user = auth.currentUser;
 
-  return ScreenUtilInit(designSize: Size(width,height), 
-minTextAdapt: true,
-splitScreenMode: true,
-builder: (context, child) => MaterialApp(
-  debugShowCheckedModeBanner: false,
-  home: child,
-
-  
-),
-
-    child:  isLoggedIn ? HomeScreen() : spalshscreen(),
-  );
-    
+    return ScreenUtilInit(
+      designSize: Size(width, height),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: child,
+      ),
+      child:spalshscreen(isLoggedIn),
+    );
   }
 }
-
-

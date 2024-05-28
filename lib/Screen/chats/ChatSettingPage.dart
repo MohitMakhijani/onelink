@@ -11,6 +11,8 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:onelink/components/MyToast.dart';
 
 import '../../Services/FireStoreMethod.dart';
+import '../../Theme.dart';
+import '../../Widgets/callPage.dart';
 import 'ChatMediaPage.dart';
 import 'check_block_Controller.dart';
 
@@ -23,7 +25,8 @@ class ChatSettingsPage extends StatefulWidget {
       {super.key,
       required this.UserName,
       required this.ProfilePicture,
-      required this.UId, required this.chatroomId});
+      required this.UId,
+      required this.chatroomId});
 
   @override
   State<ChatSettingsPage> createState() => _ChatSettingsPageState();
@@ -44,7 +47,11 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
     final CheckBlockController _checkBlockController =
         Get.put(CheckBlockController());
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: !AppTheme.light ? Colors.black : Colors.white,
+      appBar: AppBar(
+        foregroundColor: AppTheme.light ? Colors.black : Colors.white,
+        backgroundColor: !AppTheme.light ? Colors.black : Colors.white,
+      ),
       body: Column(
         children: [
           Container(
@@ -65,7 +72,9 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                   child: Text(
                     widget.UserName,
                     style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w700, fontSize: 24.sp),
+                        color: AppTheme.light ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24.sp),
                   ),
                 ),
                 SizedBox(
@@ -82,7 +91,17 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                               backgroundColor: Colors.grey[400],
                               radius: 20.r,
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => CallPage(
+                                    //         callID:widget.chatroomId,
+                                    //         userid: widget.UId,
+                                    //         userName: widget.UserName, isVideo: false,
+                                    //       ),
+                                    //     ));
+                                  },
                                   icon: FaIcon(
                                     Icons.call,
                                     color: Colors.white,
@@ -100,7 +119,18 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                               backgroundColor: Colors.grey[400],
                               radius: 20.r,
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => CallPage(
+                                    //         callID:widget.chatroomId,
+                                    //         userid: FirebaseAuth
+                                    //             .instance.currentUser!.uid,
+                                    //         userName: widget.UserName, isVideo: true,
+                                    //       ),
+                                    //     ));
+                                  },
                                   icon: FaIcon(
                                     Icons.videocam,
                                     color: Colors.white,
@@ -144,16 +174,24 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                 Text(
                   'Media',
                   style: GoogleFonts.inter(
-                      fontSize: 17.sp, fontWeight: FontWeight.w500),
+                      color: AppTheme.light ? Colors.black : Colors.white,
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w500),
                 ),
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: CircleAvatar(
                       backgroundColor: Colors.grey[200],
                       child: IconButton(
-                        onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return ChatMediaPage(chatRoomId: widget.chatroomId,);
-                        },));},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return ChatMediaPage(
+                                chatRoomId: widget.chatroomId,
+                              );
+                            },
+                          ));
+                        },
                         icon: FaIcon(Iconsax.gallery_add_bold),
                       )),
                 )
@@ -175,12 +213,18 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                       ? Text(
                           'Unblock',
                           style: GoogleFonts.inter(
-                              fontSize: 17.sp, fontWeight: FontWeight.w500),
+                              color:
+                                  AppTheme.light ? Colors.black : Colors.white,
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w500),
                         )
                       : Text(
                           'Block',
                           style: GoogleFonts.inter(
-                              fontSize: 17.sp, fontWeight: FontWeight.w500),
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w500,
+                              color:
+                                  AppTheme.light ? Colors.black : Colors.white),
                         ),
                 ),
                 Padding(
@@ -238,7 +282,9 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
                 Text(
                   'Notifications',
                   style: GoogleFonts.inter(
-                      fontSize: 17.sp, fontWeight: FontWeight.w500),
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.light ? Colors.black : Colors.white),
                 ),
                 Padding(
                   padding: EdgeInsets.all(8.0),

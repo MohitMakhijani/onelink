@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../Theme.dart';
+
 class SuccessWidget extends StatefulWidget {
   final String text1;
   final String text2;
@@ -33,6 +35,7 @@ class _OTPScreenState extends State<SuccessWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: !AppTheme.light?Colors.black:Colors.white,
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
@@ -74,7 +77,7 @@ class _OTPScreenState extends State<SuccessWidget> {
                 child: Text(
                   "Success!",
                   style:
-                  GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.bold),
+                  GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.bold,color: !AppTheme.light?Colors.black:Colors.white),
                 ),
               ),
             ),Padding(
@@ -83,7 +86,7 @@ class _OTPScreenState extends State<SuccessWidget> {
                 child: Text(
                   "${widget.text1 }\n   ${widget.text2}",
                   style:
-                  GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w700,color: Colors.grey),
+                  GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w700,color: !AppTheme.light?Colors.grey:Colors.white),
                 ),
               ),
             ),

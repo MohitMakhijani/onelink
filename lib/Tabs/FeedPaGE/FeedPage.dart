@@ -92,7 +92,7 @@ class _HomeTabState extends State<HomeTab> {
                     username: post['username'] ?? '',
                     likes: post['likes'] ?? "0",
                     time: post['datePublished'],
-                    profilePicture: post['profImage'] ?? '',
+                    profilePicture: post['profilePicture'] ?? '',
                     image: post['postUrl'] ?? '',
                     description: post['description'],
                     postId: post['postId'],

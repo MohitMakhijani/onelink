@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Adjust the import path for your constants file
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../Theme.dart';
 import '../../components/myButton.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Authentication
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../utils/utils.dart';
-import 'EventForm.dart'; // Adjust the import path for your EventForm
+import 'EventForm.dart';
 
 class JoinEvent extends StatefulWidget {
   final String eventName;
@@ -14,9 +15,12 @@ class JoinEvent extends StatefulWidget {
   final String time;
   final String description;
   final String imageUrl;
+  final String price;
   final String eventType;
   final String eventId;
   final String userId;
+
+
 
   JoinEvent({
     required this.eventName,
@@ -27,6 +31,7 @@ class JoinEvent extends StatefulWidget {
     required this.eventType,
     required this.eventId,
     required this.userId,
+    required this.price,
   });
 
   @override
@@ -50,19 +55,15 @@ class _JoinEventState extends State<JoinEvent> {
 
   Future<void> _deleteEvent() async {
     try {
-      QuerySnapshot eventSnapshot = await FirebaseFirestore.instance
-          .collection('events')
-          .where('eventID', isEqualTo: widget.eventId)
-          .get();
+      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(widget.eventId);
+      DocumentSnapshot eventSnapshot = await eventRef.get();
 
-      if (eventSnapshot.docs.isNotEmpty) {
-        for (DocumentSnapshot doc in eventSnapshot.docs) {
-          await doc.reference.delete();
-          showSnackBar(context, "Event Deleted Successfully");
-          Navigator.pop(context);
-        }
+      if (eventSnapshot.exists) {
+        await eventRef.delete();
+        showSnackBar(context, "Event Deleted Successfully");
+        Navigator.pop(context);
       } else {
-        print('No documents found with eventId: ${widget.eventId}');
+        print('No document found with eventId: ${widget.eventId}');
       }
     } catch (e) {
       print('Error deleting event: $e');
@@ -114,119 +115,154 @@ class _JoinEventState extends State<JoinEvent> {
   @override
   Widget build(BuildContext context) {
     bool createdByCurrentUser = _currentUser != null && _currentUser!.uid == widget.userId;
-print(widget.userId);
-print(_currentUser!.phoneNumber);
+
     return Scaffold(
+      backgroundColor: AppTheme.light ? Colors.white : Colors.black,
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.red,
-        title: Text('Event Details',style: GoogleFonts.inter(fontSize: 25.sp,color: Colors.white),),
+        title: Text(
+          'Event Details',
+          style: GoogleFonts.inter(fontSize: 25.sp, color: Colors.white),
+        ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(widget.imageUrl),
-                  fit: BoxFit.cover,
+        child: Padding(
+          padding: EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 5,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Image.network(
+                    widget.imageUrl,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 10.0),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: 20.0),
+              Text(
+                widget.eventName,
+                style: GoogleFonts.abrilFatface(
+                  fontSize: 24.sp,
+                  color: AppTheme.light ? Colors.black : Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+              SizedBox(height: 10.0),
+              Row(
                 children: <Widget>[
+                  FaIcon(FontAwesomeIcons.indianRupeeSign, color: AppTheme.light ? Colors.red : Colors.red),
+                  SizedBox(width: 8.0),
                   Text(
-                    widget.eventName,
-                    style: GoogleFonts.abrilFatface(),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
-                  SizedBox(height: 5.0),
-                  Row(
-                    children: <Widget>[
-                      FaIcon(FontAwesomeIcons.locationCrosshairs),
-                      SizedBox(width: 8.0),
-                      Text(widget.location),
-                    ],
-                  ),
-                  SizedBox(height: 13.0),
-                  Row(
-                    children: <Widget>[
-                      FaIcon(
-                        FontAwesomeIcons.meetup,
-                        color: Colors.red,
-                      ),
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Text(
-                        widget.eventType,
-                        style: TextStyle(
-                          color: widget.eventType == 'Physical Event'
-                              ? Colors.red
-                              : Colors.green,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 13.0),
-                  Row(
-                    children: <Widget>[
-                      FaIcon(FontAwesomeIcons.clock),
-                      SizedBox(width: 8.0),
-                      Text(widget.time),
-                    ],
-                  ),
-                  SizedBox(height: 12.0),
-                  Text(
-                    widget.description,
-                  ),
-                  SizedBox(height: 12.0),
-                  Divider(),
-                  Column(
-                    children: [
-                      Text(
-                        createdByCurrentUser ? "" : (_userJoinedEvent ? "Leave Event" : "Join Event"),
-                      ),
-                      if (createdByCurrentUser)
-                        MyButton(
-                          onTap: _deleteEvent,
-                          text: "Delete Event",
-                          color: Colors.red,
-                        )
-                      else if (_userJoinedEvent)
-                        MyButton(
-                          onTap: () => _leaveEvent(),
-                          text: "Leave Event",
-                          color: Colors.red,
-                        )
-                      else
-                        MyButton(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EventForm(eventId: widget.eventId),
-                              ),
-                            );
-                          },
-                          text: "Fill Form to Join Event",
-                          color: Colors.red,
-                        ),
-                    ],
+                    widget.price+"/-",
+                    style: TextStyle(color: AppTheme.light ? Colors.red : Colors.red, fontSize: 16.sp),
                   ),
                 ],
               ),
-            ),
-          ],
+              SizedBox(height: 10.0),
+              Row(
+                children: <Widget>[
+                  FaIcon(FontAwesomeIcons.locationCrosshairs, color: AppTheme.light ? Colors.black : Colors.white),
+                  SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      widget.location,
+                      style: TextStyle(color: AppTheme.light ? Colors.black : Colors.white, fontSize: 16.sp),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                children: <Widget>[
+                  FaIcon(FontAwesomeIcons.clock, color: AppTheme.light ? Colors.black : Colors.white),
+                  SizedBox(width: 8.0),
+                  Text(
+                    widget.time,
+                    style: TextStyle(color: AppTheme.light ? Colors.black : Colors.white, fontSize: 16.sp),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                children: <Widget>[
+                  FaIcon(FontAwesomeIcons.meetup, color: widget.eventType == 'Physical Event' ? Colors.red : Colors.green),
+                  SizedBox(width: 8.0),
+                  Text(
+                    widget.eventType,
+                    style: TextStyle(
+                      color: widget.eventType == 'Physical Event' ? Colors.red : Colors.green,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.sp,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.0),
+              Text(
+                widget.description,
+                style: TextStyle(color: AppTheme.light ? Colors.black : Colors.white, fontSize: 16.sp),
+              ),
+              SizedBox(height: 20.0),
+              Divider(),
+              if (createdByCurrentUser)
+                MyButton(
+                  onTap: () async {
+                    bool confirmDelete = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Confirm Delete'),
+                          content: Text('Are you sure you want to delete this Event?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirmDelete != null && confirmDelete) {
+                      await _deleteEvent();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Event deleted')),
+                      );
+                      Navigator.pop(context); // Pop back to previous screen after deletion
+                    }
+                  },
+                  text: "Delete Event",
+                  color: Colors.red,
+                )
+              else
+                MyButton(
+                  onTap: _userJoinedEvent ? _leaveEvent : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EventForm(eventId: widget.eventId, price: widget.price,),
+                      ),
+                    );
+                  },
+                  text: _userJoinedEvent ? "Leave Event" : "Fill Form to Join Event",
+                  color: Colors.red,
+                ),
+            ],
+          ),
         ),
       ),
     );

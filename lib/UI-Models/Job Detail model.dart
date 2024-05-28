@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../Theme.dart';
+
 class JobDetailModel extends StatefulWidget {
   final String jobTitle;
   final String description;
@@ -65,7 +67,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             widget.description,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.black87,
+              color: AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),
@@ -80,7 +82,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
                 widget.location,
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: Colors.black87,
+                  color: AppTheme.light?Colors.black:Colors.white,
                 ),
               ),
             ],
@@ -97,7 +99,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
                 widget.salary,
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: Colors.black87,
+                  color: AppTheme.light?Colors.black:Colors.white,
                 ),
               ),
             ],
@@ -114,7 +116,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
                 widget.experience,
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: Colors.black87,
+                  color: AppTheme.light?Colors.black:Colors.white,
                 ),
               ),
             ],
@@ -131,7 +133,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
                 widget.companyName,
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: Colors.black87,
+                  color: AppTheme.light?Colors.black:Colors.white,
                 ),
               ),
             ],
@@ -144,7 +146,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             'Posted ${widget.jobPosted} ago',
             style: TextStyle(
               fontSize: 12.0,
-              color: Colors.grey,
+              color: AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),
@@ -166,7 +168,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             widget.aboutCompany,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.black87,
+              color: AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),
@@ -188,7 +190,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             widget.aboutJob,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.black87,
+              color:AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),
@@ -210,7 +212,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             widget.skillRequired,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.black87,
+              color:AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),
@@ -232,7 +234,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             widget.whoCanApply,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.black87,
+              color: AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),
@@ -254,7 +256,7 @@ class _JobDetailModelState extends State<JobDetailModel> {
             widget.numberOfOpenings.toString(),
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.black87,
+              color: AppTheme.light?Colors.black:Colors.white,
             ),
           ),
         ),

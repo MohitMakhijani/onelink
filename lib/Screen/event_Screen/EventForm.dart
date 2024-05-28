@@ -1,12 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:upi_india/upi_india.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../components/myButton.dart';
+import '../../email.dart';
 class EventForm extends StatefulWidget {
   final String eventId;
+  final String price;
 
-  EventForm({required this.eventId});
+  EventForm({required this.eventId, required this.price});
 
   @override
   _EventFormState createState() => _EventFormState();
@@ -21,60 +22,126 @@ class _EventFormState extends State<EventForm> {
   TextEditingController _genderController = TextEditingController();
   TextEditingController _educationController = TextEditingController();
 
-  Future<void> _joinEvent() async {
-    print(widget.eventId);
-    try {
-      // Query the collection for the event document where 'eventId' is equal to widget.eventId
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('events')
-          .where('eventID', isEqualTo: widget.eventId)
-          .get();
+  UpiIndia _upiIndia = UpiIndia();
+  List<UpiApp>? apps;
+  Future<UpiResponse>? _transaction;
 
-      // Check if the query returned any documents
-      if (querySnapshot.docs.isNotEmpty) {
-        // Get the reference to the first document (assuming eventId is unique)
-        DocumentReference eventRef = querySnapshot.docs.first.reference;
+  TextStyle header = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
 
-        // Create participant data
-        Map<String, dynamic> participantData = {
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'phone': _phoneController.text,
-          'occupation': _occupationController.text,
-          'gender': _genderController.text,
-          'education': _educationController.text,
-          'UserId':FirebaseAuth.instance.currentUser!.uid.toString()
-        };
+  TextStyle value = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+  );
 
-        // Add participant data to the event document
-        await eventRef.update({
-          'participants': FieldValue.arrayUnion([participantData]),
-        });
+  @override
+  void initState() {
+    super.initState();
+    _upiIndia.getAllUpiApps(mandatoryTransactionId: false).then((value) {
+      setState(() {
+        apps = value;
+      });
+    }).catchError((e) {
+      apps = [];
+    });
+  }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Applied for the event successfully'),
-            backgroundColor: Colors.green,
+  Future<UpiResponse> initiateTransaction(UpiApp app) async {
+    return _upiIndia.startTransaction(
+      app: app,
+      receiverUpiId: "6263788922788@paytm",
+      receiverName: 'StartUpodero',
+      transactionRefId: 'Event_${widget.eventId}',
+      transactionNote: 'Payment for event: ${widget.eventId}',
+      amount: double.parse(widget.price),
+    );
+  }
+
+  Widget displayUpiApps() {
+    if (apps == null) {
+      return Center(child: CircularProgressIndicator());
+    } else if (apps!.isEmpty) {
+      return Center(
+        child: Text(
+          "No apps found to handle transaction.",
+          style: header,
+        ),
+      );
+    } else {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Wrap(
+            children: apps!.map<Widget>((UpiApp app) {
+              return GestureDetector(
+                onTap: () {
+                  _transaction = initiateTransaction(app);
+                  setState(() {});
+                },
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image.memory(
+                        app.icon,
+                        height: 60,
+                        width: 60,
+                      ),
+                      Text(app.name),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-        );
-        Navigator.pop(context);
-      } else {
-        // Handle case where no document with matching eventId is found
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Event not found'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error applying for the event: $e'),
-          backgroundColor: Colors.red,
         ),
       );
     }
+  }
+
+  String _upiErrorHandler(Object error) {
+    if (error is UpiIndiaAppNotInstalledException) {
+      return 'Requested app not installed on device';
+    } else if (error is UpiIndiaUserCancelledException) {
+      return 'You cancelled the transaction';
+    } else if (error is UpiIndiaNullResponseException) {
+      return 'Requested app didn\'t return any response';
+    } else if (error is UpiIndiaInvalidParametersException) {
+      return 'Requested app cannot handle the transaction';
+    } else {
+      return 'An Unknown error has occurred';
+    }
+  }
+
+  void _checkTxnStatus(String status) {
+    switch (status) {
+      case UpiPaymentStatus.SUCCESS:
+        print('Transaction Successful');
+        _submitEventForm();
+        break;
+      case UpiPaymentStatus.SUBMITTED:
+        print('Transaction Submitted');
+        break;
+      case UpiPaymentStatus.FAILURE:
+        print('Transaction Failed');
+        break;
+      default:
+        print('Received an Unknown transaction status');
+    }
+  }
+
+  void _submitEventForm() {
+    // Submit event form code goes here
+    print('Event Form Submitted');
+
+    ApiFunc().mail(targetuser:FirebaseAuth.instance.currentUser!.email.toString());
+    // Add your form submission logic here
   }
 
   String? _validateName(String? value) {
@@ -100,11 +167,28 @@ class _EventFormState extends State<EventForm> {
     return null;
   }
 
+  Widget displayTransactionData(String title, String body) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("$title: ", style: header),
+          Flexible(
+            child: Text(
+              body,
+              style: value,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:  Color(0xFF888BF4),
         title: Text('Apply for Event'),
       ),
       body: SingleChildScrollView(
@@ -148,12 +232,59 @@ class _EventFormState extends State<EventForm> {
                   decoration: InputDecoration(labelText: 'Education'),
                 ),
                 SizedBox(height: 20),
-                MyButton1(onTap: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Form is valid, proceed with submission
-                    _joinEvent();
-                  }
-                }, text: "Join Event", color: Color(0xFF888BF4))
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Form is valid, proceed with UPI payment and submission
+                      _transaction = initiateTransaction(apps!.first); // Assuming the first app
+                      setState(() {});
+                    }
+                  },
+                  child: Text('Join Event'),
+                ),
+                SizedBox(height: 20),
+                FutureBuilder(
+                  future: _transaction,
+                  builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            _upiErrorHandler(snapshot.error!),
+                            style: header,
+                          ),
+                        );
+                      }
+
+                      UpiResponse _upiResponse = snapshot.data!;
+
+                      String txnId = _upiResponse.transactionId ?? 'N/A';
+                      String resCode = _upiResponse.responseCode ?? 'N/A';
+                      String txnRef = _upiResponse.transactionRefId ?? 'N/A';
+                      String status = _upiResponse.status ?? 'N/A';
+                      String approvalRef = _upiResponse.approvalRefNo ?? 'N/A';
+                      _checkTxnStatus(status);
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            displayTransactionData('Transaction Id', txnId),
+                            displayTransactionData('Response Code', resCode),
+                            displayTransactionData('Reference Id', txnRef),
+                            displayTransactionData('Status', status.toUpperCase()),
+                            displayTransactionData('Approval No', approvalRef),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Center(
+                        child: Text(''),
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ),

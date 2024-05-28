@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../Screen/job_Screen/JobDetails.dart';
+import '../Theme.dart';
 import '../components/myButton.dart';
 
 class JobUICard extends StatefulWidget {
@@ -64,6 +65,7 @@ class _JobTabState extends State<JobUICard> {
   Widget build(BuildContext context) {
     // Check if the JobStatus is 'Accepted'
     return Card(
+      color: !AppTheme.light?Colors.black:Colors.white,
       elevation: 4.0,
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
@@ -79,7 +81,7 @@ class _JobTabState extends State<JobUICard> {
               style: GoogleFonts.poppins(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppTheme.light?Colors.black:Colors.white,
               ),
             ),
             SizedBox(height: 8.0),
@@ -87,7 +89,7 @@ class _JobTabState extends State<JobUICard> {
               widget.description,
               style: GoogleFonts.acme(
                 fontSize: 16.0,
-                color: Colors.grey[800],
+                color: AppTheme.light?Colors.black:Colors.white,
               ),
             ),
             SizedBox(height: 12.0),
@@ -159,7 +161,7 @@ class _JobTabState extends State<JobUICard> {
                       }));
                     },
                     text: "View Details",
-                    color: Color(0xFF888BF4),
+                    color: Colors.red,
                   ),
                 ),
                 SizedBox(width: 12.0),

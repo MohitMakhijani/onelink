@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:onelink/Screen/profile/profilePage.dart';
 
+import '../../Theme.dart';
+
 class FollowFollowing extends StatelessWidget {
   final String uid;
   FollowFollowing({required this.uid});
@@ -12,11 +14,13 @@ class FollowFollowing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: !AppTheme.light?Colors.black:Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF888BF4),
+        foregroundColor: AppTheme.light?Colors.black:Colors.white,
+        backgroundColor: Colors.red,
         title: Text(
           'Following',
-          style: GoogleFonts.aladin(fontSize: 20, fontWeight: FontWeight.w700),
+          style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700,color: AppTheme.light?Colors.black:Colors.white),
         ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -33,12 +37,12 @@ class FollowFollowing extends StatelessWidget {
           }
 
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(child: Text('No user data found.'));
+            return Center(child: Text('No user data found.',style: TextStyle(color: AppTheme.light?Colors.black:Colors.white),));
           }
 
           Map<String, dynamic>? userData = snapshot.data!.data() as Map<String, dynamic>?;
           if (userData == null || !userData.containsKey('following')) {
-            return Center(child: Text('No following data found.'));
+            return Center(child: Text('No following data found.',style: TextStyle(color: AppTheme.light?Colors.black:Colors.white),));
           }
 
           List<String> followingNames = [];
@@ -49,7 +53,7 @@ class FollowFollowing extends StatelessWidget {
           following.forEach((element) {
             if (element is Map<String, dynamic> && element.containsKey('name')) {
               String name = element['name'] as String? ?? 'Unknown';
-              String img = element['profilePicture'] as String? ?? 'Unknown';
+              String img = element['profImage'] as String? ?? 'Unknown';
               String uid = element['uid'] as String? ?? 'Unknown';
               followingNames.add(name);
               followingUid.add(uid);
@@ -58,7 +62,7 @@ class FollowFollowing extends StatelessWidget {
           });
 
           if (followingNames.isEmpty) {
-            return Center(child: Text('No users in following.'));
+            return Center(child: Text('No users in following.',style: TextStyle(color: AppTheme.light?Colors.black:Colors.white),));
           }
 
           return ListView.builder(
@@ -75,7 +79,7 @@ class FollowFollowing extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(uid: uuid),));
                     },
                     leading: CircleAvatar(backgroundImage:CachedNetworkImageProvider(img) ,),
-                    title: Text(name),
+                    title: Text(name,style: TextStyle(color:  AppTheme.light?Colors.black:Colors.white),),
                     // You can add more data to the ListTile as needed
                   ),Divider()
                 ],
@@ -96,11 +100,13 @@ class FollowFollowing1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: !AppTheme.light?Colors.black:Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF888BF4),
+        foregroundColor: AppTheme.light?Colors.black:Colors.white,
+        backgroundColor: Colors.red,
         title: Text(
           'Followers',
-          style: GoogleFonts.aladin(fontSize: 20, fontWeight: FontWeight.w700),
+          style: GoogleFonts.aladin(fontSize: 20, fontWeight: FontWeight.w700,color: AppTheme.light?Colors.black:Colors.white),
         ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -130,7 +136,7 @@ class FollowFollowing1 extends StatelessWidget {
           following.forEach((element) {
             if (element is Map<String, dynamic> && element.containsKey('name')) {
               String name = element['name'] as String? ?? 'Unknown';
-              String img = element['profilePicture'] as String? ?? 'Unknown';
+              String img = element['profImage'] as String? ?? 'Unknown';
               String uid = element['uid'] as String? ?? 'Unknown';
               followingNames.add(name);
               followingUid.add(uid);
@@ -139,7 +145,7 @@ class FollowFollowing1 extends StatelessWidget {
           });
 
           if (followingNames.isEmpty) {
-            return Center(child: Text('No users in following.'));
+            return Center(child: Text('No users in following.',style: TextStyle(color:  AppTheme.light?Colors.black:Colors.white),));
           }
 
           return ListView.builder(
@@ -156,7 +162,7 @@ class FollowFollowing1 extends StatelessWidget {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(uid: uuid),));
                     },
                     leading: CircleAvatar(backgroundImage:CachedNetworkImageProvider(img) ,),
-                    title: Text(name),
+                    title: Text(name,style: GoogleFonts.inter(color: AppTheme.light?Colors.black:Colors.white),),
                     // You can add more data to the ListTile as needed
                   ),Divider()
                 ],

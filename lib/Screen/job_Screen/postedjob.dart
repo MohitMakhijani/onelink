@@ -5,21 +5,27 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:onelink/Theme.dart';
 
 import 'JobDetails.dart';
+
 class PostedJobsPage extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(backgroundColor: Colors.red, title:   Text(
-        'Posted Jobs',
-        style: GoogleFonts.inter(color:Colors.red,fontSize: 20, fontWeight: FontWeight.bold),
-      ),),
-      backgroundColor: AppTheme.light?Colors.white:Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        title: Text(
+          'Posted Jobs',
+          style: GoogleFonts.inter(
+              color: AppTheme.light ? Colors.black : Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+      ),
+      backgroundColor: AppTheme.light ? Colors.white : Colors.black,
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('jobs')
-            .where('UserId', isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
+            .where('UserId',
+                isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -34,10 +40,10 @@ class PostedJobsPage extends StatelessWidget {
           }
           if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text('No jobs posted yet.',
-              style: TextStyle(
-                color: !AppTheme.light?Colors.white:Colors.black
-              ),
+              child: Text(
+                'No jobs posted yet.',
+                style: TextStyle(
+                    color: !AppTheme.light ? Colors.white : Colors.black),
               ),
             );
           }
@@ -45,26 +51,38 @@ class PostedJobsPage extends StatelessWidget {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              var jobData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              var jobData =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
               return Column(
-                children: [  Container(child: Text("Job Status-${jobData['jobStatus']}",style: GoogleFonts.aladin(fontSize: MediaQuery.of(context).size.width*0.05),),color: Colors.grey[200],),
-                  ListTile(
-                    title: Text(jobData['jobTitle']??"" ,
-                    style: TextStyle(
-color: AppTheme.light?Colors.white:Colors.black
-
-                    ),),
-                    subtitle: Text(jobData['description'],
-                    style: TextStyle(
-                      color: AppTheme.light?Colors.white:Colors.black
+                children: [
+                  SizedBox(height: 10,),
+                  Container(
+                    child: Text(
+                      "Job Status-${jobData['jobStatus']}",
+                      style: GoogleFonts.inter(color: AppTheme.light?Colors.black:Colors.white,
+                          fontSize: MediaQuery.of(context).size.width * 0.040),
                     ),
+
+                  ),
+                  ListTile(
+                    title: Text(
+                      jobData['jobTitle'] ?? "",
+                      style: TextStyle(
+                          color: AppTheme.light ? Colors.black : Colors.white),
+                    ),
+                    subtitle: Text(
+                      jobData['description'],
+                      style: TextStyle(
+                          color: AppTheme.light ? Colors.black : Colors.white),
                     ),
                     onTap: () {
                       // Navigate to job details page
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => JobDetailScreen(jobId: jobData['JobId'],),
+                          builder: (context) => JobDetailScreen(
+                            jobId: jobData['JobId'],
+                          ),
                         ),
                       );
                     },

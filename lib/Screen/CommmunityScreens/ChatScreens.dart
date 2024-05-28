@@ -203,7 +203,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
     TextEditingController _messageController = TextEditingController();
 
     Future<void> _getImage(ImageSource source) async {
-      final pickedFile = await picker.getImage(source: source);
+      final pickedFile = await picker.pickImage(source: source);
       if (pickedFile != null) {
         File imageFile = File(pickedFile.path);
         final userFetchController =

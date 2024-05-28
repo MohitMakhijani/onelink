@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onelink/Theme.dart';
+import 'package:onelink/other/blockusers.dart';
 import 'package:onelink/settingsPages/AboutUs.dart';
 import 'package:onelink/settingsPages/AccountSettings.dart';
 import 'package:onelink/settingsPages/MessagingSettings.dart';
@@ -95,7 +96,7 @@ class Settings1 extends StatelessWidget {
             ),
             SettingsItem(title: 'Privacy',
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => privacySettings(),));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => BlockListScreen(),));
             },
             imgpath: 'Assets/images/security-safe.svg',
             ),

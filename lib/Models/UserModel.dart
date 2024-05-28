@@ -13,8 +13,6 @@ class UserModel {
   final String profilePicture;
   final String bio;
   final String achievements;
-  final String instagramLink;
-  final String linkedinLink;
   final bool IsVerified;
 
   UserModel({
@@ -31,8 +29,6 @@ class UserModel {
     required this.profilePicture,
     required this.bio,
     required this.achievements,
-    required this.instagramLink,
-    required this.linkedinLink,
   });
 
   factory UserModel.fromSnapshot(DocumentSnapshot snapshot) {
@@ -50,8 +46,6 @@ class UserModel {
       profilePicture: data['profilePicture'] ?? '',
       bio: data['bio'] ?? '',
       achievements: data['achievements'] ?? '',
-      instagramLink: data['instagramLink'] ?? '',
-      linkedinLink: data['linkedinLink'] ?? '',
       IsVerified: false,
     );
   }
@@ -70,8 +64,6 @@ class UserModel {
       'profilePicture': profilePicture,
       'bio': bio,
       'achievements': achievements,
-      'instagramLink': instagramLink,
-      'linkedinLink': linkedinLink,
     };
   }
 

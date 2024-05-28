@@ -70,7 +70,7 @@ class _MyTextFieldState extends State<MyTextField> {
              hintStyle:   
              TextStyle(
                    fontFamily: 'InterRegular',
-                 color: !AppTheme.light?Colors.white:Colors.black,
+                 color: Colors.grey,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w400
                   

@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
-import 'package:velocity_x/velocity_x.dart';
 import '../FetchDataProvider/fetchData.dart';
 import '../Screen/AppBar&BottomBar/Appbar&BottomBar.dart';
 import '../Services/FireStoreMethod.dart';

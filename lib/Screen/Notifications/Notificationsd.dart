@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,21 +16,26 @@ class Notifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.light?Colors.white:Colors.black,
+      backgroundColor: AppTheme.light ? Colors.white : Colors.black,
       appBar: AppBar(
-        foregroundColor:  !AppTheme.light?Colors.white:Colors.black,
-        backgroundColor:AppTheme.light?Colors.white:Colors.black,
+        foregroundColor: !AppTheme.light ? Colors.white : Colors.black,
+        backgroundColor: AppTheme.light ? Colors.white : Colors.black,
         centerTitle: true,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Notifications',style: GoogleFonts.inter(fontSize: 19.sp,
-            color: !AppTheme.light?Colors.white:Colors.black
-            ),),
-          Divider(
-            color: !AppTheme.light?Colors.white:Colors.black,
-          )],
+            Text(
+              'Notifications',
+              style: GoogleFonts.inter(
+                fontSize: 19.sp,
+                color: !AppTheme.light ? Colors.white : Colors.black,
+              ),
+            ),
+            Divider(
+              color: !AppTheme.light ? Colors.white : Colors.black,
+            )
+          ],
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -54,7 +60,24 @@ class Notifications extends StatelessWidget {
             return ListView.builder(
               itemCount: notifications.length,
               itemBuilder: (context, index) {
-                return _buildNotificationItem(context, notifications[index]);
+                return Dismissible(
+                  key: Key(notifications[index].id),
+                  onDismissed: (direction) {
+                    // Delete the notification from Firestore
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .collection('notifications')
+                        .doc(notifications[index].id)
+                        .delete();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Notification deleted')),
+                    );
+                  },
+                  background: Container(decoration: BoxDecoration(borderRadius:BorderRadius.circular(20) ,color: Colors.transparent)),
+                  child: _buildNotificationItem(context, notifications[index]),
+                );
               },
             );
           }
@@ -108,45 +131,37 @@ class Notifications extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 ListTile(
                   leading: CircleAvatar(
-                    radius: 21.r,backgroundColor: Colors.red,
+                    radius: 21.r, backgroundColor: Colors.red,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(userProfilePicture),
+                      backgroundImage: CachedNetworkImageProvider(userProfilePicture),
                     ),
                   ),
-                 title: Row(
-                   children: [
-                     Text(
-                      "${notification['notification'].toString().split(' ')[0]}", // Get the first part before the first space
-                      style: GoogleFonts.inter(
-                       
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
-                      fontWeight: FontWeight.bold,
-                      color: !AppTheme.light?Colors.white:Colors.black
+                  title: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          "${notification['notification'].toString().split(' ')[0]} " +
+                              "${notification['notification'].toString().split(' ').skip(1).join(' ')}",
+                          style: GoogleFonts.inter(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            fontWeight: FontWeight.w600,
+                            color: !AppTheme.light ? Colors.white : Colors.black,
+                          ),
+                        ),
                       ),
-                      ),
-                     SizedBox(width: 5.w,),
-                      Text(
-                       "${notification['notification'].toString().split(' ').skip(1).join(' ')}", // Join parts starting from the second part
-                       style: GoogleFonts.inter(
-                         fontSize: MediaQuery.of(context).size.width * 0.04,
-                        color: !AppTheme.light?Colors.white:Colors.black
-                       ),
-                     ),
-
-                   ],
-                 ), subtitle : Text(
-                   formattedDate,
+                    ],
+                  ),
+                  subtitle: Text(
+                    formattedDate,
                     style: GoogleFonts.nunitoSans(
-                      fontSize: MediaQuery.of(context).size.width*0.03,
+                      fontSize: MediaQuery.of(context).size.width * 0.03,
                       fontWeight: FontWeight.w500,
-                      color: !AppTheme.light?Colors.white:Colors.black
+                      color: !AppTheme.light ? Colors.white : Colors.black,
                     ),
                   ),
                 ),
-                Divider( color: !AppTheme.light?Colors.white:Colors.black),
               ],
             ),
           );

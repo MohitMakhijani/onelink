@@ -4,6 +4,7 @@ import 'package:intl/intl.dart'; // Import the intl package for date formatting
 class EventModel {
   String name;
   String location;
+  String EventPrice;
   String time;
   String description;
   String imageUrl;
@@ -15,6 +16,7 @@ class EventModel {
   String EventType;
 
   EventModel({
+    required this.EventPrice,
     required this.EventStatus,
     required this.name,
     required this.location,
@@ -42,6 +44,7 @@ class EventModel {
       'eventDate': formattedDate, // Store formatted event date
       'eventID': eventID,
       'eventType': EventType,
+      'EventPrice':EventPrice,
       'EventStatus': EventStatus
     };
   }

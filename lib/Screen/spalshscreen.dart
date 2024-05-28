@@ -11,6 +11,8 @@ import 'package:onelink/Widgets/dotWidget.dart';
 import 'package:onelink/main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 class spalshscreen extends StatefulWidget {
+  final bool IsLogin;
+  spalshscreen(this.IsLogin);
   @override
   _spalshscreenState createState() => _spalshscreenState();
 }
@@ -39,7 +41,7 @@ class _spalshscreenState extends State<spalshscreen> {
     Timer.periodic(Duration(seconds: 3), (timer) {
  
       Navigator.pushReplacement(context, MaterialPageRoute(builder:
-       (Context)=>Onboarding()
+       (Context)=> widget.IsLogin ? HomeScreen() : Onboarding()
       ));
     });
   }

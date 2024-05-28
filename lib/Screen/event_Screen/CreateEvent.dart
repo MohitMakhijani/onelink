@@ -3,14 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:onelink/Theme.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../Models/eventModel.dart';
+import '../../Theme.dart';
 import '../../Widgets/Success Widget.dart';
 import '../../components/myButton.dart';
 import '../../components/myTextfield.dart';
@@ -24,6 +26,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _eventPrice = TextEditingController();
   File? _image;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
@@ -31,7 +34,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
   String _selectedEventType = 'Physical Event';
   Uuid uuid = Uuid();
   final UserID = FirebaseAuth.instance.currentUser!.uid;
-
+  // void _pickLocation() async {
+  //   LatLng? pickedLocation = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => LocationPickerPage()),
+  //   );
+  //
+  //   if (pickedLocation != null) {
+  //     _locationController.text =
+  //     '${pickedLocation.latitude}, ${pickedLocation.longitude}';
+  //   }
+  // }
   // Function to select date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -99,6 +112,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
 
     EventModel newEvent = EventModel(
+      EventPrice: _eventPrice.text.trim(),
       userUid: "${UserID}",
       eventID: uuid.v1(),
       name: _eventNameController.text.trim(),
@@ -144,14 +158,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
           context,
           MaterialPageRoute(
             builder: (context) => SuccessWidget(
-                text1: 'Your Job is Posted',
+                text1: 'Your Event is Posted',
                 text2: 'It will apporved by admin shortly'),
-          ));// Close create event page
+          )); // Close create event page
     } catch (e) {
       print('Error uploading event: $e');
       // Handle error if any occurred during upload
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading event. Please try again later.')),
+        SnackBar(
+            content: Text('Error uploading event. Please try again later.')),
       );
     }
   }
@@ -175,12 +190,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.light?Colors.white:Colors.black,
-      appBar: AppBar(foregroundColor: Colors.white,
+      backgroundColor: AppTheme.light ? Colors.white : Colors.black,
+      appBar: AppBar(
+        foregroundColor: Colors.white,
         backgroundColor: Colors.red,
         title: Text(
           'Event Details',
-          style: GoogleFonts.aladin(color: Colors.white,fontSize: 20, fontWeight: FontWeight.bold),
+          style: GoogleFonts.aladin(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -193,24 +210,41 @@ class _CreateEventPageState extends State<CreateEventPage> {
               MyTextField(
                 controller: _eventNameController,
                 hint: "Event Name",
-              
+
                 obscure: false,
                 selection: true,
-              //  preIcon: Icons.drive_file_rename_outline,
+                //  preIcon: Icons.drive_file_rename_outline,
                 keyboardtype: TextInputType.name,
                 validator: _validateName,
               ),
               SizedBox(height: 16),
-              MyTextField(
-                controller: _locationController,
-                hint: "Event Location",
-                obscure: false,
-                selection: true,
-               // preIcon: FontAwesomeIcons.locationArrow,
-                keyboardtype: TextInputType.name,
-                validator: _validateLocation,
-              ),
-              SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: MyTextField(
+                      controller: TextEditingController(
+                        text: _locationController.text
+
+                      ),
+                      hint: "Select Location",
+                      obscure: false,
+                      selection: true,
+                      // preIcon: FontAwesomeIcons.calendar,
+                      keyboardtype: TextInputType.name,
+                    ),
+                  ),
+                  SizedBox(width: 8.0),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    onPressed: () {},
+                    child: Text(
+                      'Pick Location',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
@@ -223,13 +257,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       hint: "Select Date",
                       obscure: false,
                       selection: true,
-                     // preIcon: FontAwesomeIcons.calendar,
+                      // preIcon: FontAwesomeIcons.calendar,
                       keyboardtype: TextInputType.name,
                     ),
                   ),
                   SizedBox(width: 8.0),
                   ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () => _selectDate(context),
                     child: Text(
                       'Select Date',
@@ -251,14 +286,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       hint: "Start Time",
                       obscure: false,
                       selection: true,
-                     // preIcon: FontAwesomeIcons.timesCircle,
+                      // preIcon: FontAwesomeIcons.timesCircle,
                       keyboardtype: TextInputType.name,
                     ),
                   ),
                   
                   SizedBox(width: 8.0),
                   ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () => _selectTime(context),
                     child: Text(
                       'Select Time',
@@ -301,8 +337,34 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 hint: "Add Description",
                 obscure: false,
                 selection: true,
-              //  preIcon: Icons.description,
+                //  preIcon: Icons.description,
                 keyboardtype: TextInputType.text,
+              ),
+              SizedBox(height: 16),
+              Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: MyTextField(
+                      controller: _eventPrice,
+                      hint: "Add Price",
+                      obscure: false,
+                      selection: true,
+                      //  preIcon: Icons.description,
+                      keyboardtype: TextInputType.number,
+                    ),
+                  ),  SizedBox(width: 11.w),
+                  Container(
+                    decoration: BoxDecoration(color: Colors.red,borderRadius: BorderRadius.circular(15)),
+                    width: 50.w,
+                    height: 50.h,
+                    child: Center(
+                      child: Text('Rs',style: GoogleFonts.inter(
+                        fontSize: 15.sp,color: Colors.white,fontWeight: FontWeight.bold
+                      ),),
+                    ),
+                  )
+                ],
               ),
               SizedBox(height: 16),
               Container(
@@ -310,16 +372,21 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 width: double.infinity,
                 decoration: _image != null
                     ? BoxDecoration(
-                  image: DecorationImage(
-                    image: FileImage(_image!),
-                    fit: BoxFit.cover,
-                  ),
-                )
+                        image: DecorationImage(
+                          image: FileImage(_image!),
+                          fit: BoxFit.cover,
+                        ),
+                      )
                     : BoxDecoration(),
                 child: _image == null
                     ? Center(
-                  child: Text('No image selected'),
-                )
+                        child: Text(
+                          'No image selected',
+                          style: TextStyle(
+                              color:
+                                  AppTheme.light ? Colors.black : Colors.white),
+                        ),
+                      )
                     : null,
               ),
               SizedBox(height: 16),
@@ -327,10 +394,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.red)),
                     onPressed: () async {
                       final imagePicker = ImagePicker();
-                      final pickedImage = await imagePicker.getImage(source: ImageSource.gallery);
+                      final pickedImage = await imagePicker.pickImage(
+                          source: ImageSource.gallery);
                       if (pickedImage != null) {
                         setState(() {
                           _image = File(pickedImage.path);
@@ -343,14 +412,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     ),
                   ),
                   DropdownButton<String>(
-                    value: _selectedEventType.isEmpty ? null : _selectedEventType,
+                    value:
+                        _selectedEventType.isEmpty ? null : _selectedEventType,
                     items: [
                       DropdownMenuItem(
-                        child: Text('Physical Event'),
+                        child: Text('Physical Event',
+                            style: TextStyle(color: Colors.red)),
                         value: 'Physical Event',
                       ),
                       DropdownMenuItem(
-                        child: Text('Virtual Event'),
+                        child: Text('Virtual Event',
+                            style: TextStyle(color: Colors.red)),
                         value: 'Virtual Event',
                       ),
                     ],
